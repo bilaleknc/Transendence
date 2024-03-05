@@ -2,6 +2,8 @@ body{
 	margin: 0; padding: 0;
 	align-items: center;
 	text-align: center;
+	overflow: hidden;
+	background: #000;
 }
 canvas {
 	background: #000;
