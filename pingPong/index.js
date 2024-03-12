@@ -3,7 +3,7 @@ class Draw {
         this._x = x;
         this._y = y;
         this._radius = radius;
-        this.end = end;
+        this._end = end;
         this._color = color;
         this.ctx = ctx;
         this._width;     // canvas genişliği;
@@ -12,7 +12,7 @@ class Draw {
         this.Rx = this._x;
         this.Ry = this._y;
         this.Rradius = this._radius;
-        this.Rend = this.end;
+        this.Rend = this._end;
     };
 
     set x(number) {
@@ -23,21 +23,26 @@ class Draw {
         this._y = number
     };
 
+    set end(number) {
+        this._end = number;
+    }
+
     get x()         { return this._x };
     get y()         { return this._y };
     get radius()    { return this._radius; }
+    get end()       { return this._end };
 
     reset() {
         this._x = this.Rx; 
         this._y = this.Ry; 
         this._radius = this.radius; 
-        this.end = this.Rend; 
+        this._end = this.Rend; 
     }
 
     drawRect() {
         this.ctx.beginPath();
         this.ctx.fillStyle = this._color;
-        this.ctx.fillRect(this._x, this._y, this._radius, this.end);
+        this.ctx.fillRect(this._x, this._y, this._radius, this._end);
         
     }
 
@@ -64,14 +69,19 @@ class Screen {
     get height()        { return this._height };
     get ctx()           { return this._ctx };
 
+    set width(number)         { 
+        this._width = number;
+        this._canvas.width = number
+    };
+    set height(number)        {  
+        this._height = number 
+        this._canvas.height = number;
+    };
+
     
     set ratio(number)   { this._ratio = number };
 
 
-    resize() {
-        this._canvas.height = window.innerHeight;
-        this._canvas.width = window.innerWidth;
-    }
     /** 
      * paddellarımızın başlangıç konumlarını hesaplamak için bu fonksiyon lazım 
      * h / 2 = 150, paddleH = 50 ise başlangıç konumu 125 olması lazım. */
@@ -90,7 +100,7 @@ class Screen {
     putScore(plyrLeft, plyrRight) {
         this._ctx.font = "30px Arial";
         this._ctx.textAlign = "justify";
-        this._ctx.fillText(`${plyrLeft}-${plyrRight}`, this.width / 2, this.paddleHeight());
+        this._ctx.fillText(`${plyrLeft}-${plyrRight}`, this.width / 2, 90);
     };
 
     clear() { this._ctx.clearRect(0, 0, this.width, this.height); };
@@ -135,10 +145,10 @@ class Game {
         this.screen.clear();
         if (this.leftPlyrScore || this.rightPlyrScore) {
             let text = this.rightPlyrScore < this.leftPlyrScore ? "Left player won!" : "Right player won!";
-            this.screen.putText(text, this.screen.width / 2, this.screen.height / 2 - 200);
+            this.screen.putText(text, this.screen.width / 2, 40);
             this.screen.putScore(this.leftPlyrScore, this.rightPlyrScore);
         }
-        this.screen.putText("Press enter to start the game", this.screen.width / 2, this.screen.height / 2 - 100)
+        this.screen.putText("Press enter to start the game", this.screen.width / 2, this.screen.height / 2 - 35)
         this.leftPaddle.drawRect();
         this.rightPaddle.drawRect();
         this.ball.drawArc();
@@ -148,7 +158,6 @@ class Game {
         game.keyCntrl();
         this.screen.clear();
         if (this.rightPlyrScore == this.maxScore || this.leftPlyrScore == this.maxScore) {
-            console.log("selam");
             this.#reset();
             this.animationFlag = false;
             this.beginPos = true;
@@ -178,7 +187,6 @@ class Game {
         } else {
             array = [-135, -150, -165, 180, 180, 165, 150, 135];
         }
-
         let divided = [];
         let paddleDiv = (this.screen.paddleHeight() + this.ball.radius) / 8;
         let y = paddle.y;
@@ -186,13 +194,13 @@ class Game {
             divided[i] = Math.floor(y);
         }
         let res = new Map();
-        for (let i = 0, key = -3, j = 0; i < 8; 
-                 i++, key++, j++) {
-            
+        let i = 0, key = -3;
+        while ( i < 8) {
             res.set(key, {
                 degree: array[i],
-                area: divided[j],
+                area: divided[i],
             });
+            i++, key++;
         }
         return res;
     }
@@ -201,12 +209,8 @@ class Game {
      * @param {Draw} paddle 
      */
     #calculateCollision(paddle, left) {
-        let parserMap;
         let moment = 2.75;
-        if (left)
-            parserMap = this.#fillMap(paddle, left);    
-        else
-            parserMap = this.#fillMap(paddle, left);
+        let parserMap = this.#fillMap(paddle, left);    
         
         let element;
         for (let el of parserMap) {
@@ -225,9 +229,9 @@ class Game {
 
     #checkPaddleCollision(paddle, left) {
         if (left && this.ball.x <= paddle.x + paddle.radius + this.ball.radius && this.ball.x >= paddle.x - paddle.radius + this.ball.radius)
-            console.log("true");
+            ;
         else if (!left && this.ball.x >= paddle.x - this.ball.radius && this.ball.x <= paddle.x + paddle.radius + this.ball.radius)
-            console.log("true");
+            ;
         else
             return false;
         if(this.ball.y <= paddle.y + this.screen.paddleHeight() + this.ball.radius && this.ball.y >= paddle.y - this.ball.radius) {
@@ -238,8 +242,6 @@ class Game {
 
     
     #moveTheBall() {
-        
-
         //üst ve alt duvara çarpma durumunun kontrolü
         if (this.ball.y - this.ball.radius  <= 0){
             this.dirY = Math.abs(this.dirY);
@@ -329,13 +331,44 @@ let ball = new Draw(screen.width / 2, screen.height / 2, 20, 0, screen.ctx);
 
 let game = new Game(leftPpddl, rightPddl, ball, screen);
 
+
 function loop() {
     if (game.isOpen()) {
         game.begin();
     } else {
+        console.log("selam");
         game.inception();
     }
     requestAnimationFrame(loop);
 };
 
 loop();
+
+window.addEventListener("resize", () => {
+    screen = new Screen();
+    pdlIceptionHeight = screen.getHghtOfPdlIncLoc();
+    leftPpddl = new Draw(10, pdlIceptionHeight, 20, screen.paddleHeight(), screen.ctx);
+    rightPddl = new Draw(screen.width - 30, pdlIceptionHeight, 20, screen.paddleHeight(), screen.ctx);
+    ball = new Draw(screen.width / 2, screen.height / 2, 20, 0, screen.ctx);
+    game = new Game(leftPpddl, rightPddl, ball, screen);
+
+})
+
+const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const message = data['message'];
+    // Handle incoming message
+};
+
+chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+};
+
+// Send message to server
+function sendMessage(message) {
+    chatSocket.send(JSON.stringify({
+        'message': message
+    }));
+}
