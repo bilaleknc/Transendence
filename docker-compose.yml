@@ -22,6 +22,7 @@ services:
       - "8082:8082"
     volumes:
       - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend:/usr/share/nginx/html/  # Bu satırı ekledik
     depends_on:
       - backend
     networks:

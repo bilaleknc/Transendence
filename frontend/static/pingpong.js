@@ -2,6 +2,8 @@ import { Game } from './game.js';
 import { Draw } from './draw.js';
 import { Screen } from './screen.js';
 
+
+
 const room_name = 'room1';
 // const room_name = "{{ room.slug }}";  // Use the room name from the context
 const gameSocket = new WebSocket('ws://127.0.0.1:8081/ws/socket-server/' + room_name + '/');
@@ -85,13 +87,13 @@ async function loop() {
 		console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
 		game.animationFlag = false;
 	}
-    if (game.isOpen()) {
+	if (game.isOpen()) {
 		if (game.rightPlyrScore == game.maxScore || game.leftPlyrScore == game.maxScore) {
 			reset();
 			game.animationFlag = false;
 			game.beginPos = true;
 		}
-    } else {
+	} else {
 		if (game.leftPlyrScore || game.rightPlyrScore)
 			// text = game.rightPlyrScore < game.leftPlyrScore ? "Left player won!" : "Right player won!";
 			;
@@ -101,7 +103,7 @@ async function loop() {
 	lpaddle.drawRect();
 	rpaddle.drawRect();
 	ball.drawArc();
-    requestAnimationFrame(loop);
+	requestAnimationFrame(loop);
 };
 
 loop();
@@ -144,3 +146,5 @@ function sendMessage(message) {
 }
 
 loop();
+
+
