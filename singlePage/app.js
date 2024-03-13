@@ -1,5 +1,6 @@
 import HTMLTemplate from "./ModulesJS/HTMLTemplate.js";
 import "./ModulesJS/SPA.js";
+import "./Components/UsAbbout.js"
 
 
 
