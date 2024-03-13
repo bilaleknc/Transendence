@@ -48,11 +48,10 @@ class SPA {
   }
 
   async urlLocationHandler() {
-    console.log("burdayız");
     const location = window.location.pathname;
     if (location.length == 0) location = "/";
 
-    
+
     const route = this.urlRoutes[location] || this.urlRoutes[404];
     const temp_href = new HTMLTemplate(route.title);
 

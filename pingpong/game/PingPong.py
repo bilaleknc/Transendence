@@ -11,7 +11,7 @@ class PingPong:
 		self.ball = Ball()
 		self.game = Game()
   
-		self.speedPlayer = 150
+		self.speedPlayer = 15
 		self.ready = False
 		self.game_over = False
   
@@ -115,6 +115,8 @@ class PingPong:
 		self.paddle_l._y = self.paddle_l.Ry
 		self.paddle_r._y = self.paddle_r.Ry
 		self.game_over = False
+		self.dir_x = 10
+		self.dir_y = 8
 
   
 	def move_the_ball(self):

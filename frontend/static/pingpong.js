@@ -8,6 +8,7 @@ const room_name = 'room1';
 // const room_name = "{{ room.slug }}";  // Use the room name from the context
 const gameSocket = new WebSocket('ws://127.0.0.1:8081/ws/socket-server/' + room_name + '/');
 
+
 let screen = new Screen();
 
 let pdlIceptionHeight = screen.getHghtOfPdlIncLoc();
@@ -145,6 +146,6 @@ function sendMessage(message) {
 	}));
 }
 
-loop();
+export default loop();
 
 
