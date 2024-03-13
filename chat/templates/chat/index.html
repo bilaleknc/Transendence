@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -16,7 +17,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
     />
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="{% static 'chat/css/style.css' %}" />
     <title>Live Chat</title>
   </head>
   <body>
@@ -121,16 +122,7 @@
           </div>
         </div>
         <div class="col-7 px-0">
-          <div class="px-4 py-5 chat-box bg-white">
-            <!-- Sender Message-->
-            <div class="media-body ml-3">
-              <div class="bg-light rounded py-2 px-3 mb-2">
-                <p class="text-small mb-0 text-muted">
-                  Test which is a new approach all solutions
-                </p>
-              </div>
-            </div>
-
+          <div class="px-4 py-5 chat-box bg-white">            
             <!-- Reciever Message-->
             <div class="media w-50 ml-auto mb-3">
               <div class="media-body">
@@ -150,27 +142,6 @@
                 </p>
               </div>
             </div>
-
-            <!-- Reciever Message-->
-            <div class="media w-50 ml-auto mb-3">
-              <div class="media-body">
-                <div class="bg-primary rounded py-2 px-3 mb-2">
-                  <p class="text-small mb-0 text-white">
-                    Apollo University, Delhi, India Test
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Sender Message-->
-            <div class="media-body ml-3">
-              <div class="bg-light rounded py-2 px-3 mb-2">
-                <p class="text-small mb-0 text-muted">
-                  Test, which is a new approach
-                </p>
-              </div>
-            </div>
-
             <!-- Reciever Message-->
             <div class="media w-50 ml-auto mb-3">
               <div class="media-body">
@@ -202,6 +173,7 @@
         </div>
       </div>
     </div>
-    <script src="./app.js"></script>
+    {{room_name|json_script:"room-name"}}
+    <script src={% static 'chat/js/app.js' %}></script>
   </body>
 </html>
