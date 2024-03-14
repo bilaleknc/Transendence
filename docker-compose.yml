@@ -11,6 +11,7 @@ services:
     command: python3 manage.py runserver 0.0.0.0:8081
     volumes:
       - ./backend:/code
+      - ./backend:/app
     ports:
       - "8081:8081"
     networks:
@@ -27,6 +28,8 @@ services:
       - backend
     networks:
       - nw
+    environment:
+      - DJANGO_SETTINGS_MODULE=backend.settings.development
   db:
     build: ./postgres
     container_name: dbi
