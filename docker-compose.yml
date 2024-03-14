@@ -1,0 +1,43 @@
+version: '3'
+
+networks:
+  nw:
+    driver: bridge
+
+services:
+  backend:
+    container_name: backendbi
+    build: ./pingpong
+    command: python3 manage.py runserver 0.0.0.0:8081
+    volumes:
+      - ./pingpong:/code
+    ports:
+      - "8081:8081"
+    networks:
+      - nw
+  nginx:
+    build: ./frontend
+    container_name: frontendbi
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend:/usr/share/nginx/html/  # Bu satırı ekledik
+    depends_on:
+      - backend
+    networks:
+      - nw
+  db:
+    build: ./postgres
+    container_name: dbi
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "8083:8083"
+    networks:
+      - nw
+
+volumes:
+  postgres_data:
