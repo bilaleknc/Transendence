@@ -1,3 +1,4 @@
+import setup from '../static/pingpong.js'
 const template = document.createElement('template');
 
 template.innerHTML = `
@@ -28,11 +29,8 @@ class Game extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     
     this.shadowRoot.appendChild(template.content.cloneNode(true));
-    
-    const scriptElement = document.createElement('script');
-    scriptElement.src = "../static/pingpong.js";
-    scriptElement.type = "module";
-    this.shadowRoot.appendChild(scriptElement);
+
+    setup();
   }
 }
 

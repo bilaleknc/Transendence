@@ -18,7 +18,10 @@ export default class HTMLTepmlate {
 	 */
 	bindingToElement(element) {
 	  this.getContent()
-		.then((res) => (element.innerHTML = res))
+		.then((res) =>  {
+			console.log(res);
+			element.innerHTML = res
+		} )
 		.catch((err) => console.log(`ERROR [Component.innerHtml]: ${err}`));
 	}
   }
