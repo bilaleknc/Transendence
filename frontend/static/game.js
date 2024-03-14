@@ -22,15 +22,15 @@ export class Game {
 
 	updateGameInterface(gameState) {
 		if (gameState.score !== undefined)
-			screen.putScore(gameState.score);
+   			screen.putScore(gameState.score);
 		if (gameState['paddle_l'] !== undefined)
-			this.lpaddle.y = gameState['paddle_l'];
+			this.lpaddle.y = gameState['paddle_l'] / 1000 * window.innerHeight;
 		if (gameState['paddle_r'] !== undefined)
-			this.rpaddle.y = gameState['paddle_r'];
+			this.rpaddle.y = gameState['paddle_r'] / 1000 * window.innerHeight;
 		if (gameState['ball_x'] !== undefined)
-			this.ball.x = gameState['ball_x'];
+			this.ball.x = gameState['ball_x'] / 1000 * window.innerWidth;
 		if (gameState['ball_y'] !== undefined)
-			this.ball.y = gameState['ball_y'];
+			this.ball.y = gameState['ball_y'] / 1000 * window.innerHeight;
 		if (gameState['rightPlyrScore'] !== undefined)
 			this.rightPlyrScore = gameState['rightPlyrScore'];
 		if (gameState['leftPlyrScore'] !== undefined)

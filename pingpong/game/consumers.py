@@ -26,7 +26,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 		)
 
 	async def countdown(self):
-		for i in range(3, 0, -1):
+		for i in range(5, 0, -1):
 			await self.channel_layer_group_send('countdown', str(i))
 			await asyncio.sleep(1)
 

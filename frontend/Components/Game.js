@@ -18,10 +18,11 @@ template.innerHTML = `
 
     <main id="main-content">
         <div id="game-area">
-            <canvas id="game-canvas" width="700" height="500"></canvas>
+            <canvas id="game-canvas" width="100%" height="100%" ></canvas>
         </div>	
     </main>
 `
+
 class Game extends HTMLElement {
   constructor() {
     super();

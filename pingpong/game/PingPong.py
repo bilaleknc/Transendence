@@ -11,7 +11,7 @@ class PingPong:
 		self.ball = Ball()
 		self.game = Game()
   
-		self.speedPlayer = 15
+		self.speedPlayer = 100
 		self.ready = False
 		self.game_over = False
   
@@ -35,8 +35,8 @@ class PingPong:
 			self.reset()
 			self.game.leftPlyrScore = 0
 			self.game.rightPlyrScore = 0
-			self.dir_x = 10
-			self.dir_y = 8
+			self.dir_x = 3
+			self.dir_y = 1
 		if direction == 'UP':
 			if self.paddle_l._y - self.speedPlayer >= 0:
 				self.paddle_l._y -= self.speedPlayer
@@ -115,8 +115,8 @@ class PingPong:
 		self.paddle_l._y = self.paddle_l.Ry
 		self.paddle_r._y = self.paddle_r.Ry
 		self.game_over = False
-		self.dir_x = 10
-		self.dir_y = 8
+		self.dir_x = 3
+		self.dir_y = 1
 
   
 	def move_the_ball(self):
