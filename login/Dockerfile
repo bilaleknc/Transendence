@@ -28,7 +28,7 @@ COPY . .
 # RUN python3 manage.py makemigrations
 
 # Uygulama için gerekli portu aç
-EXPOSE 8081
+EXPOSE 8080
 
 # Django uygulamasını başlatma komutu
-CMD ["daphne", "-u", "/tmp/daphne.sock", "-b", "0.0.0.0", "-p", "8080", "login.asgi:application"]
+CMD python3 manage.py runsslserver 127.0.0.1:8080 --certificate /etc/ssl/certs/certificate.crt --key /etc/ssl/private/certificate.key

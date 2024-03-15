@@ -2,6 +2,9 @@ import requests
 from django.http import JsonResponse
 from django.conf import settings
 
+def index(request):
+    return JsonResponse({'message': 'Hello, world!'})
+
 def login_via_42(request):
     print("l!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ogin_via_42 code")
     print(code)

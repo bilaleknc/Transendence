@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "sslserver",
 ]
 
 MIDDLEWARE = [
@@ -97,7 +98,8 @@ CORS_ALLOW_HEADERS = [
 CORS_ALLOWED_ORIGINS = [
     "https://localhost",  # Example: React development server
     "http://localhost:5500",
-    "https:/127.0.0.1:8082"
+    "https://127.0.0.1:8082",
+    "https://127.0.0.1:8080",
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 SECURE_SSL_REDIRECT = True
@@ -113,6 +115,7 @@ ALLOWED_HOSTS = ['*']  # for development, you might want to restrict this in pro
 CORS_ORIGIN_WHITELIST = (
     'https://0.0.0.0',
 	"https://127.0.0.1:8082",
+	'https://127.0.0.1:8080',
     )
 
 # Database
