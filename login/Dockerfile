@@ -9,15 +9,16 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 # PostgreSQL client'ı kur
-RUN apt-get update && apt-get install -y postgresql-client
+# RUN apt-get update && apt-get install -y postgresql-client
 
 # Bağımlılıkları kur
 COPY requirements.txt .
+COPY certificate.crt /etc/ssl/certs/certificate.crt
+COPY certificate.key /etc/ssl/private/certificate.key
 
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     pip install requests psycopg2-binary djangorestframework
-
 
 
 # Uygulama kodunu kopyala
@@ -30,4 +31,4 @@ COPY . .
 EXPOSE 8081
 
 # Django uygulamasını başlatma komutu
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8081"]
+CMD ["daphne", "-u", "/tmp/daphne.sock", "-b", "0.0.0.0", "-p", "8080", "login.asgi:application"]
