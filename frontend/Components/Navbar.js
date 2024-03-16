@@ -47,10 +47,41 @@ class Navbar extends HTMLElement {
 		e.preventDefault();
 		// Burada OAuth işlemi için gerekli yönlendirme yapılabilir
 		// Örneğin:
-		window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59&redirect_uri=https%3A%2F%2F127.0.0.1%3A8080%2F42api%2F&response_type=code";
+		window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59&redirect_uri=https%3A%2F%2F127.0.0.1%3A8082%2Flogin%2F42api&response_type=code";
+	
+		console.log('Redirect işlemi yapıldı.');
+
+		const queryParams = new URLSearchParams(window.location.search);
+    	const code = queryParams.get('code');
+
 	});
 	}
   }
   
+	function encodeURIComponent42(string) {
+		return encodeURIComponent(string).replace(/[!'()*]/g, function (c) {
+			return '%' + c.charCodeAt(0).toString(16);
+		});
+	}
+
+  document.addEventListener('DOMContentLoaded', async function () {
+	const code = new URLSearchParams(window.location.search).get('code');
+	if (code) {
+		try {
+			const response = await fetch("https://127.0.0.1:8080/42api?code=" + encodeURIComponent(code));
+			const data = await response.json();
+			console.log(data);
+			if (data && data.message === 'Success') {
+				localStorage.setItem('accessToken', data.access);
+				localStorage.setItem('refreshToken', data.refresh);
+			}
+			// redirect to home page
+			window.location.href = '/';
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	}
+}
+);
   customElements.define('my-navbar', Navbar);
   

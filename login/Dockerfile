@@ -31,4 +31,4 @@ COPY . .
 EXPOSE 8080
 
 # Django uygulamasını başlatma komutu
-CMD python3 manage.py runsslserver 127.0.0.1:8080 --certificate /etc/ssl/certs/certificate.crt --key /etc/ssl/private/certificate.key
+CMD python3 manage.py runserver 0.0.0.0:8080

@@ -21,6 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-^aak9*pyy=3t=+zj%73u1_+q(p+oj*5pz!h)yl9wpx%q$-)9@+'
+SECRET_42 = "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"
+UID_42 = "u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59"
+REDIRECT_URI_42 = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59&redirect_uri=https%3A%2F%2F127.0.0.1%3A8082%2Flogin%2F42api&response_type=code"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -101,22 +104,22 @@ CORS_ALLOWED_ORIGINS = [
     "https://127.0.0.1:8082",
     "https://127.0.0.1:8080",
 ]
-CORS_ALLOW_ALL_ORIGINS = True
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_ALL_ORIGINS = True
+# # SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# X_FRAME_OPTIONS = 'DENY'
+# CORS_ALLOW_CREDENTIALS = True
 
 ALLOWED_HOSTS = ['*']  # for development, you might want to restrict this in production
 
-CORS_ORIGIN_WHITELIST = (
-    'https://0.0.0.0',
-	"https://127.0.0.1:8082",
-	'https://127.0.0.1:8080',
-    )
+# CORS_ORIGIN_WHITELIST = (
+#     'https://0.0.0.0',
+# 	"https://127.0.0.1:8082",
+# 	'https://127.0.0.1:8080',
+#     )
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
