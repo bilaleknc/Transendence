@@ -1,17 +1,15 @@
 import requests
 from django.http import JsonResponse
 from django.conf import settings
-
+from login.utils import getUser
 
 def index(request):
     return JsonResponse({'message': 'Hello, world!'})
 
 def login_via_42(request):
     code = request.GET.get('code', '')
-    print("code :::  ",code)
     if code:
         try:
-            print("code :::  ",code)
             data = {
 				'grant_type': 'authorization_code',
 				'client_id': settings.UID_42,
@@ -22,10 +20,12 @@ def login_via_42(request):
             response = requests.post('https://api.intra.42.fr/oauth/token', data=data)
             data = response.json()
             print(data)
-            if data and data.get('message') == 'Success':
+            if data and data.get('access_token'):
+                user = getUser(data.get('access_token'))
+                print(user)
                 return JsonResponse({
-                    'accessToken': data.get('access'),
-                    'refreshToken': data.get('refresh'), # database'e ekle dönderme
+                    'accessToken': data.get('access_token'),
+                    'refreshToken': data.get('refresh_token'), # database'e ekle dönderme
                 })
             return JsonResponse({'error': 'No token found'}, status=400)
         except requests.exceptions.RequestException as e:
