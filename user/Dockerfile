@@ -13,13 +13,12 @@ WORKDIR /app
 
 # Bağımlılıkları kur
 COPY requirements.txt .
-COPY certificate.crt /etc/ssl/certs/certificate.crt
-COPY certificate.key /etc/ssl/private/certificate.key
+COPY certs/certificate.crt /etc/ssl/certs/certificate.crt
+COPY certs/certificate.key /etc/ssl/private/certificate.key
 
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     pip install requests psycopg2-binary djangorestframework
-
 
 # Uygulama kodunu kopyala
 COPY . .

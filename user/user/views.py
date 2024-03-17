@@ -1,7 +1,7 @@
 import requests
 from django.http import JsonResponse
 from django.conf import settings
-from login.utils import getUser
+from user.utils import getUser
 
 def index(request):
     return JsonResponse({'message': 'Hello, world!'})
