@@ -1,5 +1,6 @@
 # Base image olarak Python 3.9 slim sürümünü kullan
 FROM python:3.9-slim
+FROM python:3.9-slim
 
 # Ortam değişkenlerini ayarla
 ENV PYTHONUNBUFFERED=1 \
@@ -16,7 +17,7 @@ COPY requirements.txt .
 
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
-    pip install requests psycopg2-binary djangorestframework \
+    pip install requests psycopg2-binary djangorestframework django-cors-headers
 
 
 
