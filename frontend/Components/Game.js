@@ -7,7 +7,7 @@ template.innerHTML = `
 `;
 
 class Game extends HTMLElement {
-    constructor() {
+    constructor(){
         super();
 
 		this.attachShadow({ mode: 'open' });

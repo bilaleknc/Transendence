@@ -1,0 +1,34 @@
+version: '3'
+
+networks:
+  nw:
+    driver: bridge
+
+services:
+  user:
+    container_name: user
+    build: ./service
+    restart: always
+    command: bash /app/start.sh
+    volumes:
+      - ./service:/code
+      - ./service:/app
+    ports:
+      - "9091:9091"
+    networks:
+      - nw
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: mydb # database ismi
+      POSTGRES_USER: root # database erişim sağlayacağımız kullanıcı ismi psql -U root -d mydb
+      POSTGRES_PASSWORD: mysecretpassword # dışarıdan erişim şifresi
+    volumes:
+      - user_data:/var/lib/postgresql/data # burada yeni servisler oluştururken dikkat edilmesi gereken servislerimizi barındırdığımız bilgisayar aynı olduğu için volume isimleri uniq olması lazım eğer aynı olursa problemler yaşanıyor err link https://github.com/docker-library/postgres/issues/453
+    networks:
+      - nw
+
+volumes:  # Volumes bölümü servisler bölümünün dışında olmalı
+  user_data: #uniq volume ismi {service_name}_data
