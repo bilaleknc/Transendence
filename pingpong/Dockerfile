@@ -1,30 +1,25 @@
 # Base image olarak Python 3.9 slim sürümünü kullan
 FROM python:3.9-slim
-
-# Ortam değişkenlerini ayarla
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
-
-# Çalışma dizinini oluştur
 WORKDIR /app
+
 
 # PostgreSQL client'ı kur
 RUN apt-get update && apt-get install -y postgresql-client
-
-# Bağımlılıkları kur
-COPY requirements.txt .
-
+RUN apt-get install -y postgresql postgresql-contrib
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install requests psycopg2-binary djangorestframework
+    pip install --no-cache-dir -r requirements.txt
+RUN /etc/init.d/postgresql start &&\
+    psql --command "CREATE USER docker WITH SUPERUSER PASSWORD 'docker';" &&\
+    createdb -O docker docker
+RUN python3 manage.py makemigrations > log/makemigrations.log
+RUN python3 manage.py migrate > log/migrate.log
 
 
-
-# Uygulama kodunu kopyala
 COPY . .
 
+
 # Veritabanı migrasyonlarını yap
-# RUN python3 manage.py makemigrations
+RUN python3 manage.py makemigrations
 
 # Uygulama için gerekli portu aç
 EXPOSE 8081

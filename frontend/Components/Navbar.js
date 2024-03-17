@@ -51,8 +51,8 @@ class Navbar extends HTMLElement {
 	
 		console.log('Redirect işlemi yapıldı.');
 
-		const queryParams = new URLSearchParams(window.location.search);
-    	const code = queryParams.get('code');
+		// const queryParams = new URLSearchParams(window.location.search);
+    	// const code = queryParams.get('code');
 
 	});
 	}
