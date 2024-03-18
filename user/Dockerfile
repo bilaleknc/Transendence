@@ -8,19 +8,16 @@ ENV PYTHONUNBUFFERED=1 \
 # Çalışma dizinini oluştur
 WORKDIR /app
 
-# PostgreSQL client'ı kur
-# RUN apt-get update && apt-get install -y postgresql-client
-
 # Bağımlılıkları kur
-COPY requirements.txt .
 COPY certs/certificate.crt /etc/ssl/certs/certificate.crt
 COPY certs/certificate.key /etc/ssl/private/certificate.key
+COPY requirements.txt .
 
+RUN apt-get update && apt-get install -y postgresql-client
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     pip install requests psycopg2-binary djangorestframework
 
-# Uygulama kodunu kopyala
 COPY . .
 
 # Veritabanı migrasyonlarını yap
