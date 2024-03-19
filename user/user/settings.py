@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^aak9*pyy=3t=+zj%73u1_+q(p+oj*5pz!h)yl9wpx%q$-)9@+'
 SECRET_42 = "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"
 UID_42 = "u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59"
-REDIRECT_URI_42 = "https://127.0.0.1:8082/login/42api"
+REDIRECT_URI_42 = "https://127.0.0.1:8082/user/42api"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -127,8 +127,12 @@ ALLOWED_HOSTS = ['*']  # for development, you might want to restrict this in pro
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'user_db', 
+        'USER': 'user1', 
+        'PASSWORD': 'user',
+        'HOST': 'db_user', 
+        'PORT': '5432',
     }
 }
 

@@ -7,7 +7,9 @@ def index(request):
     return JsonResponse({'message': 'Hello, world!'})
 
 def login_via_42(request):
+    print()
     code = request.GET.get('code', '')
+    print(code)
     if code:
         try:
             data = {
@@ -25,7 +27,7 @@ def login_via_42(request):
                 print(user)
                 return JsonResponse({
                     'accessToken': data.get('access_token'),
-                    'refreshToken': data.get('refresh_token'), # database'e ekle dönderme
+                    'refreshToken': data.get('refresh_token'), 
                 })
             return JsonResponse({'error': 'No token found'}, status=400)
         except requests.exceptions.RequestException as e:

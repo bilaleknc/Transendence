@@ -20,4 +20,11 @@ re:
 	make build
 	make up
 
+
+makemigrate:
+	docker compose exec user python manage.py makemigrations
+	docker compose exec user python manage.py migrate
+
+
+
 .PHONY: build up down logs ps
