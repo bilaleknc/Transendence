@@ -1,14 +1,7 @@
 CREATE DATABASE user_db;
-CREATE USER user1 WITH PASSWORD '123';
+CREATE USER root WITH PASSWORD 'mysecretpassword';
 
 -- create user table
-CREATE TABLE user_table (
-	id SERIAL PRIMARY KEY,
-	username VARCHAR(50) NOT NULL,
-	password VARCHAR(50) NOT NULL,
-	email VARCHAR(50) NOT NULL,
-	created_on TIMESTAMP NOT NULL
-);
 
 GRANT ALL PRIVILEGES ON DATABASE user_db TO user1;
 ALTER ROLE user1 WITH SUPERUSER;

@@ -22,9 +22,7 @@ services:
     image: postgres
     restart: always
     environment:
-      - POSTGRES_DB=user_db
-      - POSTGRES_USER=user1
-      - POSTGRES_PASSWORD=123
+      POSTGRES_PASSWORD: mysecretpassword
     volumes:
       - user_data:/var/lib/postgresql/data
       - ./user/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
