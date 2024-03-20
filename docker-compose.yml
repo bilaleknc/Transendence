@@ -21,6 +21,7 @@ services:
       - nw
     depends_on:
       - user_db
+
   user_db:
     container_name: user_db
     build:
@@ -35,9 +36,12 @@ services:
       - nw
 
 
+
   pinpong:
     container_name: pingpong
-    build: ./pingpong
+    build:
+      context: ./pingpong
+      dockerfile: DockerfilePingPong
     command: python3 manage.py runserver 0.0.0.0:8081
     volumes:
       - ./pingpong:/app
