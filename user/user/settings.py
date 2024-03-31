@@ -127,15 +127,14 @@ ALLOWED_HOSTS = ['*']  # for development, you might want to restrict this in pro
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'user_db',
-        'USER': 'root', 
-        'PASSWORD': 'secret',
-        'HOST': 'user_db', 
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabase',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

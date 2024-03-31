@@ -1,7 +1,6 @@
-CREATE DATABASE user_db;
-CREATE USER root WITH PASSWORD 'secret';
+CREATE DATABASE userdb;
+CREATE USER myuser WITH PASSWORD 'mypassword';
 
-
-GRANT ALL PRIVILEGES ON DATABASE user_db TO root;
-ALTER ROLE root WITH SUPERUSER;
-ALTER ROLE root WITH CREATEROLE;
+ALTER ROLE myuser SET client_encoding TO 'utf8';
+ALTER ROLE myuser SET default_transaction_isolation TO 'read committed';
+ALTER ROLE myuser SET timezone TO 'UTC';

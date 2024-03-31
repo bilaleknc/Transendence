@@ -20,22 +20,18 @@ services:
     networks:
       - nw
     depends_on:
-      - user_db
+      - db
 
-  user_db:
-    container_name: user_db
-    build:
-      context: ./user
-      dockerfile: DockerfileDb
-    volumes:
-      - user_data:/var/lib/postgresql/data
-      - ./user/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
     ports:
       - "5432:5432"
     networks:
       - nw
-
-
 
   pinpong:
     container_name: pingpong
@@ -47,20 +43,6 @@ services:
       - ./pingpong:/app
     ports:
       - "8081:8081"
-    networks:
-      - nw2
-    depends_on:
-      - pingpong_db
-  pingpong_db:
-    container_name: pingpong_db
-    build:
-      context: ./pingpong
-      dockerfile: DockerfileDb
-    volumes:
-      - pingpong_data:/var/lib/postgresql/data
-      - ./pingpong/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
-    ports:
-      - "5433:5432"
     networks:
       - nw2
 
