@@ -104,6 +104,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5500",
     "https://127.0.0.1:8082",
     "https://127.0.0.1:8080",
+    "http://user_db:5432",
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
 # # SECURE_SSL_REDIRECT = True
@@ -129,7 +130,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'user_db',
-        'USER': 'root', 
+        'USER': 'biekinci', 
         'PASSWORD': 'secret',
         'HOST': 'user_db', 
         'PORT': '5432',
