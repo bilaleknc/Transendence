@@ -47,12 +47,13 @@ class Navbar extends HTMLElement {
 		e.preventDefault();
 		// Burada OAuth işlemi için gerekli yönlendirme yapılabilir
 		// Örneğin:
-		window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59&redirect_uri=https%3A%2F%2F127.0.0.1%3A8082%2Fuser%2F42api&response_type=code";
+		base_url = 'https://api.intra.42.fr/oauth/authorize?'
+		client_id = 'u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59'
+		redirect_uri = 'https%3A%2F%2F127.0.0.1%3A8082%2Fuser%2F42api&response_type=code'
+		window.location.href = base_url + 'client_id=' + client_id + '&redirect_uri=' + redirect_uri;
 	
 		console.log('Redirect işlemi yapıldı.');
 
-		// const queryParams = new URLSearchParams(window.location.search);
-    	// const code = queryParams.get('code');
 
 	});
 	}

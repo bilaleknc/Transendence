@@ -15,8 +15,8 @@ COPY requirements.txt .
 
 RUN apt-get update && apt-get install -y postgresql-client
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install requests psycopg2-binary djangorestframework
+    pip install -r requirements.txt 
+# --no-cache-dir
 
 COPY . .
 
@@ -27,4 +27,4 @@ COPY . .
 EXPOSE 8080
 
 # Django uygulamasını başlatma komutu
-CMD python3 manage.py runserver 0.0.0.0:8080
+CMD python3 manage.py runsslserver 0.0.0.0:8080

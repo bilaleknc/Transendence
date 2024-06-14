@@ -4,3 +4,11 @@ Django>=3.2,<4.2.10
 uvicorn
 django-sslserver
 requests_oauthlib
+pyotp
+django-rest-swagger
+djangorestframework
+drf-yasg
+djangorestframework_simplejwt
+Pillow
+psycopg2-binary
+requests

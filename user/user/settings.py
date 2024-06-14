@@ -40,8 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user',
     "sslserver",
-    "oauthlib"
+    "oauthlib",
+    'rest_framework_swagger',
+    'rest_framework',
+    'drf_yasg',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -106,22 +111,22 @@ CORS_ALLOWED_ORIGINS = [
     "https://127.0.0.1:8080",
     "http://user_db:5432",
 ]
-# CORS_ALLOW_ALL_ORIGINS = True
-# # SECURE_SSL_REDIRECT = True
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-# SECURE_BROWSER_XSS_FILTER = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# X_FRAME_OPTIONS = 'DENY'
-# CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+CORS_ALLOW_CREDENTIALS = True
 
 ALLOWED_HOSTS = ['*']  # for development, you might want to restrict this in production
 
-# CORS_ORIGIN_WHITELIST = (
-#     'https://0.0.0.0',
-# 	"https://127.0.0.1:8082",
-# 	'https://127.0.0.1:8080',
-#     )
+CORS_ORIGIN_WHITELIST = (
+    'https://0.0.0.0',
+	'https://127.0.0.1:8082',
+	'https://127.0.0.1:8080',
+    )
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
