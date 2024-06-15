@@ -56,8 +56,8 @@ class Draw {
 
 class Screen {
     constructor() {
-        let shadowRoot = document.querySelector('my-game').shadowRoot;
-		this._canvas = shadowRoot.querySelector("canvas");
+        let shadowRoot = document.querySelector('my-game');
+		this._canvas = document.querySelector("canvas");
         this._ctx = this._canvas.getContext("2d");
         this._canvas.width = window.innerWidth;
         this._canvas.height = window.innerHeight;
@@ -156,7 +156,7 @@ class Game {
     }
 
     begin() {
-        game.keyCntrl();
+        this.keyCntrl();
         this.screen.clear();
         if (this.rightPlyrScore == this.maxScore || this.leftPlyrScore == this.maxScore) {
             this.#reset();
@@ -183,6 +183,7 @@ class Game {
     #fillMap(paddle, left) {
         let array; 
 
+        let speedFactors = [1.2, 1.15, 1.1, 1, 1, 1.1, 1.15, 1.2];
         if (left) {
             array = [-45, -30, -15, 0, 0, 15, 30, 45];
         } else {
@@ -200,6 +201,7 @@ class Game {
             res.set(key, {
                 degree: array[i],
                 area: divided[i],
+                speed: speedFactors[i]
             });
             i++, key++;
         }
@@ -210,7 +212,7 @@ class Game {
      * @param {Draw} paddle 
      */
     #calculateCollision(paddle, left) {
-        let moment = 2.75;
+        let moment = 2.90;
         let parserMap = this.#fillMap(paddle, left);    
         
         let element;
@@ -224,6 +226,7 @@ class Game {
         
         let degree = element[1].degree + element[1].area - this.ball.y;
         let radyan = degree * (Math.PI / 180);
+        moment *= element[1].speed;
         this.dirX = Math.cos(radyan) * moment;
         this.dirY = Math.sin(radyan) * moment;
     }
@@ -319,38 +322,28 @@ class Game {
     isOpen() { return this.animationFlag; }    
 };
 
-function setup() {
 
+export default class Play {
+    constructor() {
+        // window.addEventListener("resize", this.loop.bind(this));
+        this.screen = new Screen();
+        this.pdlIceptionHeight = this.screen.getHghtOfPdlIncLoc();
+        this.leftPpddl = new Draw(10, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
+        this.rightPddl = new Draw(this.screen.width - 30, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
+        this.ball = new Draw(this.screen.width / 2, this.screen.height / 2, 20, 0, this.screen.ctx);
+        this.game = new Game(this.leftPpddl, this.rightPddl, this.ball, this.screen);
+    }
+
+    loop() {
+        if (window.gameEnd) {
+            return;
+        }
+        if (this.game.isOpen()) {
+            this.game.begin();
+        } else {
+            this.game.inception();
+        }
+        requestAnimationFrame(this.loop.bind(this));
+    }
 }
 
-let screen = new Screen();
-
-let pdlIceptionHeight = screen.getHghtOfPdlIncLoc();
-let leftPpddl = new Draw(10, pdlIceptionHeight, 20, screen.paddleHeight(), screen.ctx);
-let rightPddl = new Draw(screen.width - 30, pdlIceptionHeight, 20, screen.paddleHeight(), screen.ctx);
-let ball = new Draw(screen.width / 2, screen.height / 2, 20, 0, screen.ctx);
-
-let game = new Game(leftPpddl, rightPddl, ball, screen);
-
-
-function loop() {
-    if (game.isOpen()) {
-        game.begin();
-    } else {
-        console.log("selam");
-        game.inception();
-    }
-    requestAnimationFrame(loop);
-};
-
-loop();
-
-window.addEventListener("resize", () => {
-    screen = new Screen();
-    pdlIceptionHeight = screen.getHghtOfPdlIncLoc();
-    leftPpddl = new Draw(10, pdlIceptionHeight, 20, screen.paddleHeight(), screen.ctx);
-    rightPddl = new Draw(screen.width - 30, pdlIceptionHeight, 20, screen.paddleHeight(), screen.ctx);
-    ball = new Draw(screen.width / 2, screen.height / 2, 20, 0, screen.ctx);
-    game = new Game(leftPpddl, rightPddl, ball, screen);
-
-})

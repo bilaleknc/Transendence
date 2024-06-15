@@ -1,0 +1,19 @@
+FROM python:3.9-slim
+WORKDIR /app
+
+COPY requirements.txt .
+
+# PostgreSQL client'ı kur
+RUN apt-get update && apt-get install -y postgresql-client
+RUN apt-get install -y postgresql postgresql-contrib
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# RUN python3 manage.py makemigrations
+
+EXPOSE 8081
+
+# Django uygulamasını başlatma komutu
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8081"]
