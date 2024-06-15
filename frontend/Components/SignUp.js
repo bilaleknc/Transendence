@@ -55,6 +55,7 @@ class Signup extends HTMLElement {
         .addEventListener('click', () => this.setAttribute('active', 'false'));
         this.querySelector('#login-42')
         .addEventListener('click', () => this.Api42Sign());
+        this.querySelector('#google-login').addEventListener('click', () => this.googleSign())
 
 	}
 
@@ -86,8 +87,16 @@ class Signup extends HTMLElement {
         // const code = queryParams.get('code');
     }
 
-    googleSign() {
-        
+    // Google OAuth 2.0 ile giriş işlemi
+    async  googleSign() {
+        const googleClientId = '204922017437-i21jnhaels3usdqpacphkc8r093f4lq6.apps.googleusercontent.com';
+        const redirectUri = 'https://127.0.0.1:8082';
+        const scope = 'profile email';
+        const responseType = 'token';
+    
+        // Google giriş penceresini aç
+        const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
+        const googleWindow = window.open(authUrl, '_target');
     }
 }
 
