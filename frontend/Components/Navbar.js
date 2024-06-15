@@ -3,7 +3,7 @@ class Navbar extends HTMLElement {
 	  super();
 	  this.innerHTML = `
 	  <nav class="navbar navbar-expand-xl navbar-dark bg-dark border-bottom">
-	  <a class="navbar-brand" href="/">
+	  <a class="navbar-brand nav-link" href="/">
 		  <img src="../Public/logo.png" class="p-1 mx-3" width="120" height="50" alt="">
 	  </a>
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,16 +24,8 @@ class Navbar extends HTMLElement {
 			  <li class="nav-item">
 				  <a class="nav-link" href="/live-chat">Live Chat</a>
 			  </li>
-			  <li class="nav-item dropdown">
-				  <li class="nav-item dropdown">
-					  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					  <span class="bi bi-person"></span>
-					  </a>
-					  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-						  <a class="dropdown-item" href="#" id="signInLink">Sign In</a>
-						  <a class="dropdown-item" href="/sign-up">Sign Up</a>
-					  </div>
-				  </li>
+			  <li class="nav-item">
+				  <a class="nav-link" href="/sign-up">Sign In/Sign Up</a>
 			  </li>
 		  </ul>
 	  </div>
@@ -43,29 +35,28 @@ class Navbar extends HTMLElement {
 	}
   
 	connectedCallback() {
-	  this.querySelector('#signInLink').addEventListener('click', (e) => {
-		e.preventDefault();
-		// Burada OAuth işlemi için gerekli yönlendirme yapılabilir
-		// Örneğin:
-		base_url = 'https://api.intra.42.fr/oauth/authorize?'
-		client_id = 'u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59'
-		redirect_uri = 'https%3A%2F%2F127.0.0.1%3A8082%2Fuser%2F42api&response_type=code'
-		window.location.href = base_url + 'client_id=' + client_id + '&redirect_uri=' + redirect_uri;
-	
-		console.log('Redirect işlemi yapıldı.');
+		//   this.querySelector('#signInLink').addEventListener('click', (e) => {
+		// 	e.preventDefault();
+		// 	// Burada OAuth işlemi için gerekli yönlendirme yapılabilir
+		// 	// Örneğin:
+		// 	window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59&redirect_uri=https%3A%2F%2F127.0.0.1%3A8082%2Fuser%2F42api&response_type=code";
+		
+		// 	console.log('Redirect işlemi yapıldı.');
 
+		// 	// const queryParams = new URLSearchParams(window.location.search);
+		// 	// const code = queryParams.get('code');
 
-	});
+		// });
 	}
-  }
+}
   
-	function encodeURIComponent42(string) {
-		return encodeURIComponent(string).replace(/[!'()*]/g, function (c) {
-			return '%' + c.charCodeAt(0).toString(16);
-		});
-	}
+function encodeURIComponent42(string) {
+	return encodeURIComponent(string).replace(/[!'()*]/g, function (c) {
+		return '%' + c.charCodeAt(0).toString(16);
+	});
+}
 
-  document.addEventListener('DOMContentLoaded', async function () {
+document.addEventListener('DOMContentLoaded', async function () {
 	const code = new URLSearchParams(window.location.search).get('code');
 	if (code) {
 		try {
@@ -82,7 +73,6 @@ class Navbar extends HTMLElement {
 			console.error('Error:', error);
 		}
 	}
-}
-);
-  customElements.define('my-navbar', Navbar);
-  
+});
+
+customElements.define('my-navbar', Navbar);
