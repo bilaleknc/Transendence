@@ -31,17 +31,22 @@ def connect_api_42(code):
 
 
 def login_with_42(username, email, image):
-    print("2!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("2!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! login with 42")
     
-    if not User.objects.filter(email=email).exists():
-        print("3!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        
+    if not User.objects.filter(email=email).exists(): 
+        print("3!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! email yoksa gir")
         if User.objects.filter(username=username).exists():
             username = username + "_" + str(random.randint(1000, 9999))
         serializer = RegisterWith42Serializer(data={"username": username, "email": email})
+        print("serilizarden önce!")
         if not serializer.is_valid():
             return Response(serializer.errors, status=400)
         user = serializer.save()
+        print("!!!!!!!!!!!!!!!!!!!!!!!! user kaydedildi")
+    else:
+        print("4!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! email var çık")
+        return Response(data={'user':  User.objects.filter(email=email).exists()}, status=200) 
+
     user = User.objects.get(email=email)
     print(user)
     if user.profile.profile_picture == 'profile-pictures/default.jpeg':

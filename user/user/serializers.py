@@ -1,4 +1,6 @@
 import uuid
+import random
+import string
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
@@ -13,19 +15,25 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'first_name', 'last_name']
 
 
+
 class RegisterSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())]
-    )
     password = serializers.CharField(
         write_only=True,
         required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())],
+        min_length=6,
+        max_length=68
     )
     password2 = serializers.CharField(
         write_only=True,
         required=True,
+        min_length=6,
+        max_length=68
+    )
+    email = serializers.EmailField(
+        required=True,
+        validators=[
+            UniqueValidator(queryset=User.objects.all(), message='This email address is already in use.')
+        ]
     )
 
     class Meta:
@@ -34,20 +42,37 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match."})
         return attrs
 
     def create(self, validated_data):
-        user = User.objects.create(
+        user = User.objects.create_user(
             username=validated_data['username'],
-            email=validated_data['email']
+            email=validated_data['email'],
         )
-        
         user.set_password(validated_data['password'])
         user.save()
 
+        
+        nickname = validated_data['username']
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", nickname)
+        
+        while Profile.objects.filter(nickname=nickname).exists():
+            suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+            nickname = f"{validated_data['username']}{suffix}"
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", nickname)
+        profile, created = Profile.objects.get_or_create(
+			user=user,
+			defaults={'nickname': validated_data['username']}
+		)
+        if not created:
+            profile.nickname = nickname
+            profile.save()
+
         return user
 
+ 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(
         write_only=True,
@@ -94,13 +119,26 @@ class RegisterWith42Serializer(serializers.Serializer):
             email=validated_data['email'],
         )
         user.set_password(str(uuid.uuid1()))
+        user.save()
 
-        profile = Profile.objects.create(
-            user=user,
+        # profile = Profile.objects.create(
+        #     user=user,
+        #     nickname=validated_data['username'],
+        #     stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
+        # )
+        nickname = validated_data['username']
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", nickname)
+        
+        while Profile.objects.filter(nickname=nickname).exists():
+            suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
+            nickname = f"{validated_data['username']}{suffix}"
+        profile, created = Profile.objects.get_or_create(
+			user=user,
             nickname=validated_data['username'],
             stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
-        )
-        profile.save()
-        user.save()
+		)
+        if not created:
+            profile.nickname = nickname
+            profile.save()
 
         return user

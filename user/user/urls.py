@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from .views import login_with_42, direct_42_login_page, change_password, verify_email_and_login, send_verification_email, register, login_via_42
+from .views import login_with_42, direct_42_login_page, change_password, verify_email_and_login, send_verification_email, register, login, game
 from django.urls import path, re_path
 from rest_framework_swagger.views import get_swagger_view
 from django.urls import re_path
@@ -42,12 +42,12 @@ urlpatterns = [
 	path('login_with_42', login_with_42, name='login_with_42'),
 	path('direct_42_login_page', direct_42_login_page, name='direct_42_login_page'),
 	path('change_password', change_password, name='change_password'),
-	path('verify_email_and_login', verify_email_and_login, name='verify_email_and_login'),
-	path('send_verification_email', send_verification_email, name='send_verification_email'),
 	path('register', register, name='register'),
-	path('login_via_42', login_via_42, name='login_via_42'),
+	path('login', login, name='login'),
+    path('game', game, name='game'),
+	# path('verify_email_and_login', verify_email_and_login, name='verify_email_and_login'),
+	# path('send_verification_email', send_verification_email, name='send_verification_email'),
  	re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-
 ]

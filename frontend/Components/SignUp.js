@@ -26,25 +26,27 @@ class Signup extends HTMLElement {
                     <div class="g-signin2" data-onsuccess="onSignIn"></div>
                 </div>
             </form>
-            <form id="register-form" class="form">
-                <h2>Üye Ol</h2>
-                <div class="input-group">
-                    <label for="register-username">Kullanıcı Adı</label>
-                    <input type="text" id="register-username" required>
-                </div>
-				<div class="input-group">
-					<label for="register-email">Email</label>
-					<input type="email" id="register-email" required>
-				</div>
-                <div class="input-group">
-                    <label for="register-password">Şifre</label>
-                    <input type="password" id="register-password" required>
-                </div>
-				<div class="input-group">
-					<label for="register-password2">Şifre Tekrar</label>
-					<input type="password" id="register-password2" required>
-				</div>
-                <button type="submit" class="btn">Üye Ol</button>
+		<form id="register-form" class="form">
+			<h2>Üye Ol</h2>
+			<div class="input-group">
+				<label for="register-username">Kullanıcı Adı</label>
+				<input type="text" id="register-username" name="username" required>
+			</div>
+			<div class="input-group">
+				<label for="register-email">Email</label>
+				<input type="email" id="register-email" name="email" required>
+			</div>
+			<div class="input-group">
+				<label for="register-password">Şifre</label>
+				<input type="password" id="register-password" name="password" required>
+			</div>
+			<div class="input-group">
+				<label for="register-password2">Şifre Tekrar</label>
+				<input type="password" id="register-password2" name="password2" required>
+			</div>
+			<button type="submit" class="btn">Üye Ol</button>
+		</form>
+
             </div>
         </form>
     </div>
@@ -138,25 +140,33 @@ class Signup extends HTMLElement {
 		e.preventDefault();
 		const username = this.querySelector('#login-username').value;
 		const password = this.querySelector('#login-password').value;
-		const data = {
-			username: username,
-			password: password
-		}
-		const response = await fetch('https://localhost:8080/login', {
+
+		fetch('https://localhost:8080/login', {
 			method: 'POST',
 			headers: {
+				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
 			},
-			body: JSON.stringify(data)
-		});
-		const resData = await response.json();
-		if (resData.error) {
-			notify(resData.error, 3, 'error');
-		}else {
-			notify('Logged in', 3, 'success');
-			window.route({ target: { href: '/' } });
-		}
+			body: JSON.stringify(
+				{
+					username: username,
+					password: password
+				})
+		}).then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				alert(data.error);
+			}else {
+                const { token } = data;
+                localStorage.setItem('access_token', token);
+                console.log(localStorage.getItem('access_token'));
+				alert('Logged in success');
+				window.route({ target: { href: '/' } });
+			}
+		}).catch((error) => {
+            console.error('Error:', error);
+        });
 	}
 
     async register(e) {
@@ -193,7 +203,8 @@ class Signup extends HTMLElement {
                 alert(resData.error, 3, 'error');
             } else {
                 alert('Registered', 3, 'success');
-                window.route({ target: { href: '/' } });
+                // window.route({ target: { href: '/' } });
+				window.location.href = '/sign-up';
             }
         } catch (error) {
             console.error('Error:', error);
