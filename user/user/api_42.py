@@ -10,6 +10,7 @@ from user.utils import send_email
 
 
 def connect_api_42(code):
+    print("1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     response = requests.post(f"https://api.intra.42.fr/oauth/token", data={
         'grant_type': 'authorization_code',
         'code': code,
@@ -22,25 +23,36 @@ def connect_api_42(code):
             f"https://api.intra.42.fr/v2/me",
             headers={'Authorization': f'Bearer {response.json()["access_token"]}'}
         )
+        print("1.5!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print(data_42.json()["login"])
         return login_with_42(data_42.json()["login"], data_42.json()["email"], data_42.json()["image"]["link"])
     else:
         return Response({"error": "Access denied"}, status=400)
 
 
 def login_with_42(username, email, image):
+    print("2!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    
     if not User.objects.filter(email=email).exists():
+        print("3!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        
         if User.objects.filter(username=username).exists():
             username = username + "_" + str(random.randint(1000, 9999))
         serializer = RegisterWith42Serializer(data={"username": username, "email": email})
         if not serializer.is_valid():
             return Response(serializer.errors, status=400)
-        serializer.save()
+        user = serializer.save()
     user = User.objects.get(email=email)
+    print(user)
     if user.profile.profile_picture == 'profile-pictures/default.jpeg':
         user.profile.save_image_from_url(image)
+    print("user save'den önce")
     user.profile.save()
+    print("user save'den sonra")
     if user:
-        send_email(user)
+        print("5!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        
+        # send_email(user)
         return Response(data={'user': UserSerializer(user).data}, status=200)
     else:
         return Response(data={'error': 'User not found'}, status=404)

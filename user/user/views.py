@@ -11,16 +11,29 @@ from rest_framework.permissions import *
 from user.auth_tools import Authenticator, TokenGenerator
 from user.utils import *
 from user.api_42 import connect_api_42
+from rest_framework.exceptions import APIException
+import json
 
+
+
+# def register(request):
+#     serializer = RegisterSerializer(data=request.data)
+#     serializer.is_valid(raise_exception=True)
+#     serializer.save()
+#     return Response(data={'message': 'User created successfully!'}, status=201)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
-    serializer = RegisterSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return Response(serializer.data, status=201)
-
+    if request.method == 'POST':
+        serializer = RegisterSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid():
+            print("serializer valid")
+            user = serializer.save()
+            print("save'den sonra")
+            return Response({"success": "User registered successfully"}, status=201)
+        return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -79,15 +92,28 @@ def direct_42_login_page(request):
     return Response({"oauth_url": oauth_url}, status=200)
 
 
-@api_view(['POST'])
-def login_with_42(request, code):
-    return connect_api_42(code)
+@api_view(['POST', 'GET'])
+def login_with_42(request):
+    try:
+        code = request.data.get('code') if request.method == 'POST' else request.GET.get('code')
+        print(request)
+        print(code)
+        if not code:
+            raise APIException("Code not provided")
+        return connect_api_42(code)
+    except Exception as e:
+        # Log the exception
+        print(e)
+        # Return a 500 response
+        return Response({"error": "Internal Server Error"}, status=500)
+    except:
+        # Handle any other exceptions here
+        return Response({"error": "An error occurred"}, status=500)
 
-
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def login_via_42(request):
-    print()
     code = request.GET.get('code', '')
-    print(code)
     if code:
         try:
             data = {
@@ -99,13 +125,39 @@ def login_via_42(request):
 			}
             response = requests.post('https://api.intra.42.fr/oauth/token', data=data)
             data = response.json()
-            print(data)
             if data and data.get('access_token'):
                 user = getUser(data.get('access_token'))
                 print(user)
+                # datayı kaydet
+                user.save()
                 return JsonResponse({
                     'accessToken': data.get('access_token'),
                     'refreshToken': data.get('refresh_token'), 
+                })
+            return JsonResponse({'error': 'No token found'}, status=400)
+        except requests.exceptions.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'No code provided'}, status=400)
+
+def google_login(request):
+    code = request.GET.get('code', '')
+    if code:
+        try:
+            data = {
+                'client_id': settings.GOOGLE_CLIENT_ID,
+                'client_secret': settings.GOOGLE_CLIENT_SECRET,
+                'code': code,
+                'redirect_uri': settings.GOOGLE_REDIRECT_URI,
+                'grant_type': 'authorization_code',
+            }
+            response = requests.post('https://oauth2.googleapis.com/token', data=data)
+            data = response.json()
+            if data and data.get('access_token'):
+                user = getUser(data.get('access_token'))
+                return JsonResponse({
+                    'accessToken': data.get('access_token'),
+                    'refreshToken': data.get('refresh_token'),
                 })
             return JsonResponse({'error': 'No token found'}, status=400)
         except requests.exceptions.RequestException as e:

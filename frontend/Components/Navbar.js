@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 	const code = new URLSearchParams(window.location.search).get('code');
 	if (code) {
 		try {
-			const response = await fetch("https://127.0.0.1:8080/42api?code=" + encodeURIComponent(code));
+			const response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
 			const data = await response.json();
 			console.log(data);
 			if (data && data.message === 'Success') {

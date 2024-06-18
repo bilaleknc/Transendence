@@ -14,11 +14,9 @@ def getUser(token):
 
     try:
         response = requests.get(f'{base_url}/v2/me', headers=headers)
-        
         if response.status_code == 200:
-            print('Kullanıcı bilgileri:')
+            print('Kullanıcı bilgileri alındı.')
             data = response.json()
-            print(data)
         else:
             print('Kullanıcı bilgileri alınamadı.')
     

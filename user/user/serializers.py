@@ -14,23 +14,18 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
     password = serializers.CharField(
         write_only=True,
         required=True,
-        min_length=6,
-        max_length=68
+        validators=[UniqueValidator(queryset=User.objects.all())],
     )
     password2 = serializers.CharField(
         write_only=True,
         required=True,
-        min_length=6,
-        max_length=68
-    )
-    email = serializers.EmailField(
-        required=True,
-        validators=[
-            UniqueValidator(queryset=User.objects.all(), message='This email address is already in use.')
-        ]
     )
 
     class Meta:
@@ -39,27 +34,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError(
-                {"password": "Password fields didn't match."})
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
         return attrs
 
     def create(self, validated_data):
         user = User.objects.create(
             username=validated_data['username'],
-            email=validated_data['email'],
+            email=validated_data['email']
         )
+        
         user.set_password(validated_data['password'])
-
-        profile = Profile.objects.create(
-            user=user,
-            nickname=validated_data['username'],
-            stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
-        )
-        profile.save()
         user.save()
 
         return user
-
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(

@@ -21,7 +21,7 @@ RUN pip install --upgrade pip && \
 COPY . .
 
 # Veritabanı migrasyonlarını yap
-RUN python3 manage.py makemigrations
+# RUN python3 manage.py makemigrations
 
 
 # Uygulama için gerekli portu aç

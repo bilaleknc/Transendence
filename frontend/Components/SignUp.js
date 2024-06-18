@@ -22,7 +22,7 @@ class Signup extends HTMLElement {
                 <button type="submit" class="btn">Giriş Yap</button>
                 <div class="social-login">
                     <button id= "login-42" type="button" class="btn social-btn">42 API ile Giriş Yap</button>
-                    <button id= "google-login" type="button" class="btn social-btn" >Google ile Giriş Yap</button>
+                    <button id= "login-google" type="button" class="btn social-btn" >Google ile Giriş Yap</button>
                     <div class="g-signin2" data-onsuccess="onSignIn"></div>
                 </div>
             </form>
@@ -32,10 +32,18 @@ class Signup extends HTMLElement {
                     <label for="register-username">Kullanıcı Adı</label>
                     <input type="text" id="register-username" required>
                 </div>
+				<div class="input-group">
+					<label for="register-email">Email</label>
+					<input type="email" id="register-email" required>
+				</div>
                 <div class="input-group">
                     <label for="register-password">Şifre</label>
                     <input type="password" id="register-password" required>
                 </div>
+				<div class="input-group">
+					<label for="register-password2">Şifre Tekrar</label>
+					<input type="password" id="register-password2" required>
+				</div>
                 <button type="submit" class="btn">Üye Ol</button>
             </div>
         </form>
@@ -47,16 +55,31 @@ class Signup extends HTMLElement {
       
 	}
   
+    async autoValue (){
+        // username ve password değerlerini otomatik doldur
+        const username = this.querySelector('#login-username').value;
+        const email = this.querySelector('#register-email').value;
+        const password = this.querySelector('#login-password').value;
+        const password2 = this.querySelector('#register-password2').value;
+
+        this.querySelector('#register-username').value = "eren";
+        this.querySelector('#register-email').value = "eren@gmail.com";
+        this.querySelector('#register-password').value = "123456";
+        this.querySelector('#register-password2').value = "123456";
+    }
+
 	connectedCallback() {
 		this.render();
+        this.autoValue();
         this.querySelector('#login-toggle')
         .addEventListener('click', () => this.setAttribute('active', 'true'));
 		this.querySelector('#register-toggle')
         .addEventListener('click', () => this.setAttribute('active', 'false'));
         this.querySelector('#login-42')
         .addEventListener('click', () => this.Api42Sign());
-        this.querySelector('#google-login').addEventListener('click', () => this.googleSign())
-
+        this.querySelector('#login-google').addEventListener('click', () => this.googleSign())
+		this.querySelector('#login-form').addEventListener('submit', (e) => this.login(e));
+		this.querySelector('#register-form').addEventListener('submit', (e) => this.register(e));
 	}
 
 	static get observedAttributes() {
@@ -67,7 +90,13 @@ class Signup extends HTMLElement {
 		this.render();
 	}
 
+    // Giriş yap ve Üye ol formunu göster
 	render() {
+		// if(getCookie("access_token"))
+		// {
+		// 	window.route({ target: { href: '/' } });
+		// 	notify('Already logged in', 3, 'success')
+		// }
 		const todosArr = this.attributes.active.value;
 		if (todosArr == "true") {
 			this.querySelector('#login-form').style.display = "flex";
@@ -78,13 +107,19 @@ class Signup extends HTMLElement {
 		}
 	}
 
-    Api42Sign() {
-        // Burada OAuth işlemi için gerekli yönlendirme yapılabilir
-        // Örneğin:
-        window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59&redirect_uri=https%3A%2F%2F127.0.0.1%3A8082%2Fuser%2F42api&response_type=code";
-
-        // const queryParams = new URLSearchParams(window.location.search);
-        // const code = queryParams.get('code');
+    async Api42Sign() {
+		const response = await fetch('https://localhost:8080/direct_42_login_page', {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
+			}
+		});
+		const data = await response.json();
+		if (data.oauth_url) {
+			window.location.href = data.oauth_url
+		}
+        // window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59&redirect_uri=https%3A%2F%2F127.0.0.1%3A8082%2F&response_type=code";
     }
 
     // Google OAuth 2.0 ile giriş işlemi
@@ -97,6 +132,72 @@ class Signup extends HTMLElement {
         // Google giriş penceresini aç
         const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
         const googleWindow = window.open(authUrl, '_target');
+    }
+
+	async login(e) {
+		e.preventDefault();
+		const username = this.querySelector('#login-username').value;
+		const password = this.querySelector('#login-password').value;
+		const data = {
+			username: username,
+			password: password
+		}
+		const response = await fetch('https://localhost:8080/login', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
+			},
+			body: JSON.stringify(data)
+		});
+		const resData = await response.json();
+		if (resData.error) {
+			notify(resData.error, 3, 'error');
+		}else {
+			notify('Logged in', 3, 'success');
+			window.route({ target: { href: '/' } });
+		}
+	}
+
+    async register(e) {
+        e.preventDefault();
+        console.log("register");
+    
+        const username = this.querySelector('#register-username').value;
+        const email = this.querySelector('#register-email').value;
+        const password = this.querySelector('#register-password').value;
+        const password2 = this.querySelector('#register-password2').value;
+    
+        try {
+            const response = await fetch('https://localhost:8080/register', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    password: password,
+                    password2: password2,
+                })
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const resData = await response.json();
+            if (resData.error) {
+                alert(resData.error, 3, 'error');
+            } else {
+                alert('Registered', 3, 'success');
+                window.route({ target: { href: '/' } });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 }
 
