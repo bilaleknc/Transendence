@@ -78,8 +78,8 @@ class Signup extends HTMLElement {
 		this.querySelector('#register-toggle')
         .addEventListener('click', () => this.setAttribute('active', 'false'));
         this.querySelector('#login-42')
-        .addEventListener('click', () => this.Api42Sign());
-        this.querySelector('#login-google').addEventListener('click', () => this.googleSign())
+        .addEventListener('click', () => this.ApiRemoteSign('42'));
+        this.querySelector('#login-google').addEventListener('click', () => this.ApiRemoteSign('google'))
 		this.querySelector('#login-form').addEventListener('submit', (e) => this.login(e));
 		this.querySelector('#register-form').addEventListener('submit', (e) => this.register(e));
 	}
@@ -94,11 +94,6 @@ class Signup extends HTMLElement {
 
     // Giriş yap ve Üye ol formunu göster
 	render() {
-		// if(getCookie("access_token"))
-		// {
-		// 	window.route({ target: { href: '/' } });
-		// 	notify('Already logged in', 3, 'success')
-		// }
 		const todosArr = this.attributes.active.value;
 		if (todosArr == "true") {
 			this.querySelector('#login-form').style.display = "flex";
@@ -109,20 +104,28 @@ class Signup extends HTMLElement {
 		}
 	}
 
-    async Api42Sign() {
-		const response = await fetch('https://localhost:8080/direct_42_login_page', {
+	// 42 API ve Google API ile giriş işlemi
+	async ApiRemoteSign(provider) {
+		let url = ''
+		if (provider === '42')
+			url = 'https://localhost:8080/direct_42_login_page';
+		else
+            url = 'https://localhost:8080/direct_google_login_page';
+		const response = await fetch(url, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
 				'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
 			}
 		});
+		console.log(url);
 		const data = await response.json();
+		console.log(data);
+		alert(data)
 		if (data.oauth_url) {
 			window.location.href = data.oauth_url
 		}
-        // window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59&redirect_uri=https%3A%2F%2F127.0.0.1%3A8082%2F&response_type=code";
-    }
+	}
 
     // Google OAuth 2.0 ile giriş işlemi
     async  googleSign() {
@@ -148,8 +151,7 @@ class Signup extends HTMLElement {
 				'Content-Type': 'application/json',
 				'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
 			},
-			body: JSON.stringify(
-				{
+			body: JSON.stringify({
 					username: username,
 					password: password
 				})

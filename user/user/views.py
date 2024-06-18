@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import *
 from user.auth_tools import Authenticator, TokenGenerator
 from user.utils import *
-from user.api_42 import connect_api_42
+from user.third_party_api import connect_api_42, connect_api_google
 from rest_framework.exceptions import APIException
 import json
 
@@ -103,6 +103,34 @@ def change_password(request):
         return Response({'success': 'password changed successfully'}, status=200)
 
 
+@api_view(['POST', 'GET'])
+@permission_classes([AllowAny])
+def login_with_42(request):
+    try:
+        code = request.data.get('code') if request.method == 'POST' else request.GET.get('code')
+        if not code:
+            raise APIException("Code not provided")
+        return connect_api_42(code)
+    except Exception as e:
+        print(e)
+        return Response({"error": "Internal Server Error"}, status=500)
+    except:
+        return Response({"error": "An error occurred"}, status=500)
+
+@api_view(['POST', 'GET'])
+@permission_classes([AllowAny])
+def login_with_google(request):
+	try:
+		print("request!!!", request)		
+		code = request.data.get('access_token') if request.method == 'POST' else request.GET.get('code')
+		if not code:
+			raise APIException("Code not provided")
+		return connect_api_google(code)
+	except Exception as e:
+		print(e)
+		return Response({"error": "Internal Server Error"}, status=500)
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def direct_42_login_page(request):
@@ -110,82 +138,15 @@ def direct_42_login_page(request):
 
     return Response({"oauth_url": oauth_url}, status=200)
 
-
-@api_view(['POST', 'GET'])
+@api_view(['POST'])
 @permission_classes([AllowAny])
-def login_with_42(request):
-    try:
-        code = request.data.get('code') if request.method == 'POST' else request.GET.get('code')
-        print(request)
-        print(code)
-        if not code:
-            raise APIException("Code not provided")
-        return connect_api_42(code)
-    except Exception as e:
-        # Log the exception
-        print(e)
-        # Return a 500 response
-        return Response({"error": "Internal Server Error"}, status=500)
-    except:
-        # Handle any other exceptions here
-        return Response({"error": "An error occurred"}, status=500)
+def direct_google_login_page(request):
 
-# @api_view(['GET'])
-# @permission_classes([AllowAny])
-# def login_via_42(request):
-#     code = request.GET.get('code', '')
-#     if code:
-#         try:
-#             data = {
-# 				'grant_type': 'authorization_code',
-# 				'client_id': settings.UID_42,
-# 				'client_secret': settings.SECRET_42,
-# 				'code': code,
-# 				'redirect_uri': settings.REDIRECT_URI_42
-# 			}
-#             response = requests.post('https://api.intra.42.fr/oauth/token', data=data)
-#             data = response.json()
-#             if data and data.get('access_token'):
-#                 user = getUser(data.get('access_token'))
-#                 print(user)
-#                 # datayı kaydet
-#                 user.save()
-#                 return JsonResponse({
-#                     'accessToken': data.get('access_token'),
-#                     'refreshToken': data.get('refresh_token'), 
-#                 })
-#             return JsonResponse({'error': 'No token found'}, status=400)
-#         except requests.exceptions.RequestException as e:
-#             return JsonResponse({'error': str(e)}, status=400)
+	oauth_url = f"https://accounts.google.com/o/oauth2/auth?client_id={settings.UID_GOOGLE}&redirect_uri={settings.REDIRECT_URI_GOOGLE}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email"
 
-#     return JsonResponse({'error': 'No code provided'}, status=400)
+	return Response({"oauth_url": oauth_url}, status=200)
 
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def google_login(request):
-    code = request.GET.get('code', '')
-    if code:
-        try:
-            data = {
-                'client_id': settings.GOOGLE_CLIENT_ID,
-                'client_secret': settings.GOOGLE_CLIENT_SECRET,
-                'code': code,
-                'redirect_uri': settings.GOOGLE_REDIRECT_URI,
-                'grant_type': 'authorization_code',
-            }
-            response = requests.post('https://oauth2.googleapis.com/token', data=data)
-            data = response.json()
-            if data and data.get('access_token'):
-                user = getUserbyPlatform(data.get('access_token'), 'google')
-                return JsonResponse({
-                    'accessToken': data.get('access_token'),
-                    'refreshToken': data.get('refresh_token'),
-                })
-            return JsonResponse({'error': 'No token found'}, status=400)
-        except requests.exceptions.RequestException as e:
-            return JsonResponse({'error': str(e)}, status=400)
 
-    return JsonResponse({'error': 'No code provided'}, status=400)
 
 
 @api_view(['GET', 'POST'])

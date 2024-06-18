@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,11 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-^aak9*pyy=3t=+zj%73u1_+q(p+oj*5pz!h)yl9wpx%q$-)9@+'
+env = environ.Env()
+environ.Env.read_env()
 
-SECRET_42 = "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"
-UID_42 = "u-s4t2ud-d18dddbdb080ff4297c863cacf173408025c2f1205a01ca72c0346749d360b59"
-
-REDIRECT_URI_42 = "https://127.0.0.1:8082/"
+# Environment variables
+UID_42 = env('UID_42')
+SECRET_42 = env('SECRET_42')
+REDIRECT_URI_42 = env('REDIRECT_URI_42')
+UID_GOOGLE = env('UID_GOOGLE')
+SECRET_GOOGLE = env('SECRET_GOOGLE')
+REDIRECT_URI_GOOGLE = env('REDIRECT_URI_GOOGLE')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
