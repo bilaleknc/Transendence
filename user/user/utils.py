@@ -6,22 +6,42 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from user.models import VerificationCode
 
-def getUser(token):
-    base_url = 'https://api.intra.42.fr'
-    headers = {
-        'Authorization': f'Bearer {token}'
-    }
+def getUserbyPlatform(token, platform):
+    if platform == '42':
+        base_url = 'https://api.intra.42.fr'
+        headers = {
+            'Authorization': f'Bearer {token}'
+        }
 
-    try:
-        response = requests.get(f'{base_url}/v2/me', headers=headers)
-        if response.status_code == 200:
-            print('Kullanıcı bilgileri alındı.')
-            data = response.json()
-        else:
-            print('Kullanıcı bilgileri alınamadı.')
-    
-    except Exception as e:
-        print('Hata:', e)
+        try:
+            response = requests.get(f'{base_url}/v2/me', headers=headers)
+            if response.status_code == 200:
+                print('Kullanıcı bilgileri alındı.')
+                data = response.json()
+            else:
+                print('Kullanıcı bilgileri alınamadı.')
+
+        except Exception as e:
+            print('Hata:', e)
+
+    elif platform == 'google':
+        base_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
+        headers = {
+            'Authorization': f'Bearer {token}'
+        }
+
+        try:
+            response = requests.get(f'{base_url}', headers=headers)
+            if response.status_code == 200:
+                print('Kullanıcı bilgileri alındı.')
+                data = response.json()
+            else:
+                print('Kullanıcı bilgileri alınamadı.')
+
+        except Exception as e:
+            print('Hata:', e)
+
+    return data
 
 
 
