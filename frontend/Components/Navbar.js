@@ -67,12 +67,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         "https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code)
       );
       const data = await response.json();
-      console.log(data);
-      if (data && data.message === "Success") {
-        localStorage.setItem("accessToken", data.access);
-        localStorage.setItem("refreshToken", data.refresh);
+	    console.log(data);
+      if (data.token) {
+        localStorage.setItem("accessToken", data.token);
       }
-      // redirect to home page
       window.location.href = "/";
     } catch (error) {
       console.error("Error:", error);
