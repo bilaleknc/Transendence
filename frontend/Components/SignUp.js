@@ -111,8 +111,9 @@ class Signup extends HTMLElement {
 			url = 'https://localhost:8080/direct_42_login_page';
 		else
             url = 'https://localhost:8080/direct_google_login_page';
+		console.log(url);
 		const response = await fetch(url, {
-			method: 'POST',
+			method: 'GET',
 			headers: {
 				'Accept': 'application/json',
 				'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
@@ -122,8 +123,10 @@ class Signup extends HTMLElement {
 		const data = await response.json();
 		console.log(data);
 		alert(data)
-		if (data.oauth_url) {
-			window.location.href = data.oauth_url
+		if (data.url) {
+			// bu url'istek at ve code'u al
+			
+			window.location.href = data.url
 		}
 	}
 

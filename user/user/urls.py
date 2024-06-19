@@ -1,20 +1,5 @@
-"""login URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from .views import login_with_42, login_with_google, direct_42_login_page, direct_google_login_page, change_password, register, login, game
+from .views import login_with_42, login_with_google, direct_42_login_page, direct_google_login_page, change_password, register, login
 from django.urls import path, re_path
 from rest_framework_swagger.views import get_swagger_view
 from django.urls import re_path
@@ -46,7 +31,6 @@ urlpatterns = [
 	path('change_password', change_password, name='change_password'),
 	path('register', register, name='register'),
 	path('login', login, name='login'),
-    path('game', game, name='game'),
 	# path('verify_email_and_login', verify_email_and_login, name='verify_email_and_login'),
 	# path('send_verification_email', send_verification_email, name='send_verification_email'),
  	re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

@@ -75,21 +75,3 @@ def send_email(user):
 
     VerificationCode.objects.create(code=otp_code['otp'], expired_date=otp_code['otp'], user=user.profile)
 
-
-
-
-# def createUser():
-#     #database ekleme işlemi yapılacak
-#     #kullanıcı bilgileri alınacak
-#     user = getUser
-
-# def updateUser():
-
-
-# def controlUser(data):
-#     if data and data.get('access_token'):
-#         #database de var mı kontrol et
-#         #varsa kullanıcı zaten kayıtlı mesajı ver
-#         #yoksa kayıt et
-#     else:
-#         #hata mesajı ver

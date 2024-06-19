@@ -32,10 +32,19 @@ class Navbar extends HTMLElement {
 	  </div>
 	  </nav>
 	  `;
+	  
   }
 
-  connectedCallback() {
-    const authLink = this.querySelector("#authLink");
+  static get observedAttributes() {
+	return ['active'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+	this.render();
+	}
+
+  render() {
+	const authLink = this.querySelector("#authLink");
     const accessToken = localStorage.getItem("access_token");
     if (accessToken) {
       console.log("accessToken:", accessToken);
@@ -60,18 +69,38 @@ function encodeURIComponent42(string) {
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
+	const authLink = this.querySelector("#authLink");
+    const accessToken = localStorage.getItem("access_token");
+    if (accessToken) {
+      console.log("accessToken:", accessToken);
+      authLink.textContent = "Logout";
+			authLink.onclick = async function () {
+				if (authLink.textContent === "Logout") {
+					localStorage.removeItem("access_token");
+					authLink.textContent = "Sign In/Sign Up";
+				}
+			};
+    } else {
+      authLink.textContent = "Sign In/Sign Up";
+      authLink.href = "/sign-up";
+    }
 	const code = new URLSearchParams(window.location.search).get('code');
+	let response = "";
 	if (code) {
 		try {
-			const response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
+			if (window.location.href.includes("google"))
+				response =await fetch("https://127.0.0.1:8080/login_with_google?code=" + encodeURIComponent(code));
+			else
+				response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
 			const data = await response.json();
 			console.log(data);
-			if (data && data.message === 'Success') {
-				localStorage.setItem('accessToken', data.access);
-				localStorage.setItem('refreshToken', data.refresh);
+			alert(data);
+			if (data.token) {
+				localStorage.setItem('accessToken', data.token);
 			}
 			// redirect to home page
 			window.location.href = '/';
+			document.querySelector("my-navbar", (e) => e.setAttribute('active', 'true'))
 		} catch (error) {
 			console.error('Error:', error);
 		}

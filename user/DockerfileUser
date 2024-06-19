@@ -23,6 +23,10 @@ COPY . .
 # Veritabanı migrasyonlarını yap
 # RUN python3 manage.py makemigrations
 
+# environment variables file
+COPY .env .
+
+
 
 # Uygulama için gerekli portu aç
 EXPOSE 8080

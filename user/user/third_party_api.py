@@ -41,24 +41,25 @@ def connect_api_google(code):
             f"https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token={response.json()['access_token']}"
         )
         print(data_google.json())
-        return login_with_google(data_google.json()["email"], data_google.json()["name"], data_google.json()["picture"])
+        return login_with_google(data_google.json()["email"], data_google.json()["picture"])
     else:
         return Response({"error": "Access denied"}, status=400)
 
 def login_with_42(username, email, image):
     user = User.objects.filter(email=email).first()
-    token = TokenGenerator.generate_token(user)
     if not user:
         user = User.objects.create_user(username=username, email=email)
         user.save()
+    token = TokenGenerator.generate_token(user)
+    print(token)
     return Response({"token": token}, status=status.HTTP_200_OK)
 
 
 
-def login_with_google(email, username, image):
+def login_with_google(email, image):
     user = User.objects.filter(email=email).first()
     if not user:
-        user = User.objects.create_user(username=username, email=email)
+        user = User.objects.create_user(username=email, email=email)
         user.save()
     token = TokenGenerator.generate_token(user)
     return Response({"token": token}, status=status.HTTP_200_OK)

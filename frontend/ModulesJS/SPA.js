@@ -66,14 +66,16 @@ class SPA {
       if (!accessToken) {
         alert("Oyun oynamak için giriş yapmalısınız.");
         location = "/";
-        return;
+        return false;
       }
     }
+	return true;
   }
 
   async urlLocationHandler() {
     let location = window.location.pathname;
-    this.checkAuth(location);
+    if (this.checkAuth(location) == false)
+		return;
 
     if (location.length == 0) location = "/";
     const route = this.urlRoutes[location] || this.urlRoutes["404"];

@@ -22,8 +22,8 @@ services:
     # depends_on:
     #   user_db:
     #     condition: service_healthy
-    # env_file:
-    #   - ./user/.env
+    env_file:
+      - ./user/.env
 
   # user_db:
   #   container_name: user_db
