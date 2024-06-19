@@ -1,0 +1,12 @@
+*__pycache
+.env
+pingpong/game/__pycache__/__init__.cpython-39.pyc
+user/user/urls.py
+pingpong/game/__pycache__/admin.cpython-39.pyc
+pingpong/game/__pycache__/apps.cpython-39.pyc
+pingpong/game/__pycache__/models.cpython-39.pyc
+pingpong/game/__pycache__/urls.cpython-39.pyc
+pingpong/game/__pycache__/views.cpython-39.pyc
+pingpong/pingpong/__pycache__/__init__.cpython-39.pyc
+pingpong/pingpong/__pycache__/settings.cpython-39.pyc
+pingpong/pingpong/__pycache__/urls.cpython-39.pyc
