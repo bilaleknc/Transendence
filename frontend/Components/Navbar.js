@@ -59,28 +59,22 @@ function encodeURIComponent42(string) {
   });
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
-
-	const code = new URLSearchParams(window.location.search).get("code");
+document.addEventListener('DOMContentLoaded', async function () {
+	const code = new URLSearchParams(window.location.search).get('code');
 	if (code) {
-	try {
-		let response;
-		// window.location.search google kelimesini içeriyorsa
-		if (window.location.search.includes("google")) 
-			response = await fetch(
-				"https://127.0.0.1:8080/login_with_google?code=" + encodeURIComponent(code));
-		else
-			response = await fetch(
-				"https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
-
-		const data = await response.json();
-		console.log(data);
-		if (data.token)
-			localStorage.setItem("accessToken", data.token);
-		window.location.href = "/";
-	} catch (error) {
-		console.error("Error:", error);
-	}
+		try {
+			const response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
+			const data = await response.json();
+			console.log(data);
+			if (data && data.message === 'Success') {
+				localStorage.setItem('accessToken', data.access);
+				localStorage.setItem('refreshToken', data.refresh);
+			}
+			// redirect to home page
+			window.location.href = '/';
+		} catch (error) {
+			console.error('Error:', error);
+		}
 	}
 });
 
