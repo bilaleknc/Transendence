@@ -148,7 +148,6 @@ def direct_google_login_page(request):
 
 
 
-
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def game(request):

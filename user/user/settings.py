@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-^aak9*pyy=3t=+zj%73u1_+q(p+oj*5pz!h)yl9wpx%q$-)9@+
 env = environ.Env()
 environ.Env.read_env()
 
+
 # Environment variables
 UID_42 = env('UID_42')
 SECRET_42 = env('SECRET_42')

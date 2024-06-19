@@ -10,7 +10,6 @@ from user.auth_tools import Authenticator, TokenGenerator
 from rest_framework import status
 
 def connect_api_42(code):
-    print("1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     response = requests.post(f"https://api.intra.42.fr/oauth/token", data={
         'grant_type': 'authorization_code',
         'code': code,
@@ -27,16 +26,6 @@ def connect_api_42(code):
         return login_with_42(data_42.json()["login"], data_42.json()["email"], data_42.json()["image"]["link"])
     else:
         return Response({"error": "Access denied"}, status=400)
-
-
-def login_with_42(username, email, image):
-    user = User.objects.filter(email=email).first()
-    print(user)
-    token = TokenGenerator.generate_token(user)
-    if not user:
-        user = User.objects.create_user(username=username, email=email)
-        user.save()
-    return Response({"token": token}, status=status.HTTP_200_OK)
 
 def connect_api_google(code):
     response = requests.post(f"https://oauth2.googleapis.com/token", data={
@@ -56,11 +45,20 @@ def connect_api_google(code):
     else:
         return Response({"error": "Access denied"}, status=400)
 
-
-def login_with_google(email, username, image):
+def login_with_42(username, email, image):
     user = User.objects.filter(email=email).first()
     token = TokenGenerator.generate_token(user)
     if not user:
         user = User.objects.create_user(username=username, email=email)
         user.save()
+    return Response({"token": token}, status=status.HTTP_200_OK)
+
+
+
+def login_with_google(email, username, image):
+    user = User.objects.filter(email=email).first()
+    if not user:
+        user = User.objects.create_user(username=username, email=email)
+        user.save()
+    token = TokenGenerator.generate_token(user)
     return Response({"token": token}, status=status.HTTP_200_OK)

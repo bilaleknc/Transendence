@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from .views import login_with_42, direct_42_login_page, direct_google_login_page, change_password, register, login, game
+from .views import login_with_42, login_with_google, direct_42_login_page, direct_google_login_page, change_password, register, login, game
 from django.urls import path, re_path
 from rest_framework_swagger.views import get_swagger_view
 from django.urls import re_path
@@ -40,6 +40,7 @@ urlpatterns = [
     re_path(r'^$', schema_view.as_view(), name='schema-swagger-ui'),
     path('admin/', admin.site.urls),
 	path('login_with_42', login_with_42, name='login_with_42'),
+	path('login_with_google', login_with_google, name='login_with_google'),
 	path('direct_42_login_page', direct_42_login_page, name='direct_42_login_page'),
 	path('direct_google_login_page', direct_google_login_page, name='direct_google_login_page'),
 	path('change_password', change_password, name='change_password'),
