@@ -70,27 +70,48 @@ class Profile extends HTMLElement {
   }
 
   async fetchProfile() {
-    const data = {
-      image: 'https://cdn.intra.42.fr/users/53ddddb821c330abf341a0a3ccb5fc6f/muerdoga.jpg',
-      fullname: 'Mustafa Eren Erdoğan',
-      username: 'muerdoga',
-      email: 'erenerdoga037@gmail.com',
-      registered: '2021-01-01',
-      matchHistory: [
-        { date: '2021-01-01', opponent: 'Jane Doe', score: '2-0' },
-        { date: '2021-01-02', opponent: 'Jane Doe', score: '2-1' },
-        { date: '2021-01-03', opponent: 'Jane Doe', score: '1-2' }
-      ]
-    };
+    // const mydata = {
+    //   image: 'https://cdn.intra.42.fr/users/53ddddb821c330abf341a0a3ccb5fc6f/muerdoga.jpg',
+    //   fullname: 'Mustafa Eren Erdoğan',
+    //   username: 'muerdoga',
+    //   email: 'erenerdoga037@gmail.com',
+    //   registered: '2021-01-01',
+    //   matchHistory: [
+    //     { date: '2021-01-01', opponent: 'Jane Doe', score: '2-0' },
+    //     { date: '2021-01-02', opponent: 'Jane Doe', score: '2-1' },
+    //     { date: '2021-01-03', opponent: 'Jane Doe', score: '1-2' }
+    //   ]
+    // };
 
+    try {
+      const response = await fetch('https://localhost:8080/profile', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      
+      const data = await response.json();
+      this.populateProfile(data);
+      this.populateMatchHistory(data.matchHistory);
+      this.calculateStatistics(data.matchHistory);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+  populateProfile(data) {
     this.querySelector('#profile-image').src = data.image;
     this.querySelector('#profile-fullname').value = data.fullname;
     this.querySelector('#profile-username').value = data.username;
     this.querySelector('#profile-email').value = data.email;
     this.querySelector('#profile-registered').value = data.registered;
-
-    this.populateMatchHistory(data.matchHistory);
-    this.calculateStatistics(data.matchHistory);
   }
 
   populateMatchHistory(matchHistory) {
