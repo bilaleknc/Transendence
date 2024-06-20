@@ -17,15 +17,15 @@ class SPA {
       title: "game",
       description: "Oyun Sayfası",
     },
-    "/live-chat": {
-      template: "/templates/live-chat.html",
-      title: "live-chat",
-      description: "Canlı mesajlaşma",
-    },
     "/sign-up": {
       template: "/templates/sign-up.html",
       title: "sign-up",
       description: "üye ol",
+    },
+    "/profile": {
+      template: "/templates/profile.html",
+      title: "profile",
+      description: "Profil",
     },
     loading: {
       template: "/templates/loading.html",
@@ -66,6 +66,16 @@ class SPA {
       if (!accessToken) {
         alert("Oyun oynamak için giriş yapmalısınız.");
         location = "/";
+        window.history.pushState({}, "", location);
+        return false;
+      }
+    }
+    if (location == "/profile") {
+      const accessToken = localStorage.getItem("access_token");
+      if (!accessToken) {
+        alert("Profil sayfasını görmek için giriş yapmalısınız.");
+        location = "/";
+        window.history.pushState({}, "", location);
         return false;
       }
     }

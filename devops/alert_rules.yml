@@ -1,0 +1,12 @@
+groups:
+  - name: prometheus.rules
+    rules:
+      - alert: HighResponseTime
+        expr: |
+          sum(rate(http_request_duration_seconds_sum{job="prometheus"}[5m])) / sum(rate(http_request_duration_seconds_count{job="prometheus"}[5m])) > 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High request response time detected"
+          description: "The average response time of the application is higher than 0.5 seconds for the last 5 minutes."

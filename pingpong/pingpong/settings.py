@@ -84,10 +84,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'pingpong_db',
-        'USER': 'root', 
+        'USER': 'sakkus', 
         'PASSWORD': 'secret',
         'HOST': 'pingpong_db', 
-        'PORT': '5433',
+        'PORT': '5432',
     }
 }
 

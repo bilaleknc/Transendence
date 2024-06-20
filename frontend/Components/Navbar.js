@@ -18,11 +18,11 @@ class Navbar extends HTMLElement {
 			  <li class="nav-item active">
 				  <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
 			  </li>
+				<li class="nav-item">
+						<a class="nav-link" href="/profile">Profile</a>
+				</li>
 			  <li class="nav-item">
 				  <a class="nav-link" href="/game">Game</a>
-			  </li>
-			  <li class="nav-item">
-				  <a class="nav-link" href="/live-chat">Live Chat</a>
 			  </li>
 			  <li class="nav-item">
 				  <a class="nav-link" id="authLink" href="/sign-up">Sign In/Sign Up</a>
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 			console.log(data);
 			alert(data);
 			if (data.token) {
-				localStorage.setItem('accessToken', data.token);
+				localStorage.setItem('access_token', data.token);
 			}
 			// redirect to home page
 			window.location.href = '/';

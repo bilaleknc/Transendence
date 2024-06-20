@@ -121,11 +121,11 @@ class RegisterWith42Serializer(serializers.Serializer):
         user.set_password(str(uuid.uuid1()))
         user.save()
 
-        # profile = Profile.objects.create(
-        #     user=user,
-        #     nickname=validated_data['username'],
-        #     stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
-        # )
+        profile = Profile.objects.create(
+            user=user,
+            nickname=validated_data['username'],
+            stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
+        )
         nickname = validated_data['username']
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", nickname)
         
