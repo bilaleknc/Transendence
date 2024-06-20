@@ -17,7 +17,7 @@ class Profile extends HTMLElement {
                   </div>
                   <div class="mb-3">
                     <label for="profile-fullname" class="form-label">Tam Adı</label>
-                    <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
+                    <input type="text" id="profile-fullname" name="fullname" class="form-control">
                   </div>
                   <div class="mb-3">
                     <label for="profile-username" class="form-label">Kullanıcı Adı</label>
@@ -29,16 +29,21 @@ class Profile extends HTMLElement {
                   </div>
                   <div class="mb-3">
                     <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
-                    <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
+                    <input type="text" id="profile-instagram" name="instagram" class="form-control">
                   </div>
                   <div class="mb-3">
                     <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
-                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
+                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control">
                   </div>
                   <div class="mb-3">
                     <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
                     <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
                   </div>
+                  <div class="mb-3">
+                    <label for="profile-password" class="form-label">Şifre</label>
+                    <input type="password" id="profile-password" name="password" class="form-control">
+                  </div>
+                  <button type="submit" class="btn bg-dark text-white w-100">Güncelle</button>
                 </form>
               </div>
             </div>
@@ -128,6 +133,12 @@ class Profile extends HTMLElement {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+
+      // match history data example
+      // match_history = [
+      //   {"date": "2021-06-01", "opponent": "xyz", "score": "3-1"},
+      //   {"date": "2021-06-02", "opponent": "abc", "score": "1-2"},
+      // ];
       
       const myGameRooms = [
           { name: 'Room 1' },
@@ -226,7 +237,7 @@ class Profile extends HTMLElement {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${friend}</td>
-        <td><a href="/member?username=${friend}" class="btn btn-primary">Profil</a></td>
+        <td><a href="/member?username=${friend}" class="btn bg-dark text-white">Profil</a></td>
       `;
       friendsList.appendChild(row);
     });
@@ -238,7 +249,7 @@ class Profile extends HTMLElement {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${room.name}</td>
-        <td><a href="/game-room?name=${room.name}" class="btn btn-primary">Katıl</a></td>
+        <td><a href="/game-room?name=${room.name}" class="btn bg-dark text-white">Katıl</a></td>
       `;
       gameRoomsList.appendChild(row);
     });
