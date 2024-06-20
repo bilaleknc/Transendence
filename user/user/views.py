@@ -14,6 +14,7 @@ from user.utils import *
 from user.third_party_api import connect_api_42, connect_api_google
 from rest_framework.exceptions import APIException
 import json
+from user.models import Profile
 
 
 @api_view(['POST'])
@@ -134,29 +135,40 @@ def login_with_google(request):
     except Exception as e:
         return Response({"error": "Internal Server Error"}, status=500)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profile(request):
+    user = request.user
+    
+    profile = Profile.objects.get(user=user)
+    data = {
+        "image": profile.profile_picture.url,
+        "fullname": profile.nickname,
+        "username": user.username,
+        "email": user.email,
+        "registered": user.date_joined,
+        "matchHistory": [
+            {"date": "2021-01-01", "opponent": "Jane Doe", "score": "2-0"},
+            {"date": "2021-01-02", "opponent": "Jane Doe", "score": "2-1"},
+            {"date": "2021-01-03", "opponent": "Jane Doe", "score": "1-2"}
+        ]
+    }
+    return Response(data, status=200)
 
-# def google_login(request):
-#     code = request.GET.get('code', '')
-#     if code:
-#         try:
-#             data = {
-#                 'client_id': settings.GOOGLE_CLIENT_ID,
-#                 'client_secret': settings.GOOGLE_CLIENT_SECRET,
-#                 'code': code,
-#                 'redirect_uri': settings.GOOGLE_REDIRECT_URI,
-#                 'grant_type': 'authorization_code',
-#             }
-#             response = requests.post('https://oauth2.googleapis.com/token', data=data)
-#             data = response.json()
-#             if data and data.get('access_token'):
-#                 user = getUser(data.get('access_token'))
-#                 return JsonResponse({
-#                     'accessToken': data.get('access_token'),
-#                     'refreshToken': data.get('refresh_token'),
-#                 })
-#             return JsonResponse({'error': 'No token found'}, status=400)
-#         except requests.exceptions.RequestException as e:
-#             return JsonResponse({'error': str(e)}, status=400)
-
-#     elif request.method == 'POST':
-#         return Response({"message": "Game action processed"}, status=status.HTTP_200_OK)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    data = request.data
+    if 'fullname' in data:
+        profile.nickname = data['fullname']
+    if 'username' in data:
+        user.username = data['username']
+    if 'email' in data:
+        user.email = data['email']
+    if 'password' in data:
+        user.set_password(data['password'])
+    user.save()
+    profile.save()
+    return Response({"success": "Profile updated successfully"}, status=200)

@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 			console.log(data);
 			alert(data);
 			if (data.token) {
-				localStorage.setItem('accessToken', data.token);
+				localStorage.setItem('access_token', data.token);
 			}
 			// redirect to home page
 			window.location.href = '/';

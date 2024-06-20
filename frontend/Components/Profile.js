@@ -70,7 +70,7 @@ class Profile extends HTMLElement {
   }
 
   async fetchProfile() {
-    // const mydata = {
+    // const data = {
     //   image: 'https://cdn.intra.42.fr/users/53ddddb821c330abf341a0a3ccb5fc6f/muerdoga.jpg',
     //   fullname: 'Mustafa Eren Erdoğan',
     //   username: 'muerdoga',
@@ -88,8 +88,9 @@ class Profile extends HTMLElement {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          'Content-Type': 'application/json',
+          'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+          'Authorization': `Token ${localStorage.getItem('access_token')}`
         }
       });
       
@@ -178,12 +179,13 @@ class Profile extends HTMLElement {
     const password = this.querySelector('#profile-password').value;
 
     try {
-      const response = await fetch('https://localhost:8080/profile', {
+      const response = await fetch('https://localhost:8080/update_profile', {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+          'Authorization': `Token ${localStorage.getItem('access_token')}`
         },
         body: JSON.stringify({
           fullname: fullname,
