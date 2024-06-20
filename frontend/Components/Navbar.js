@@ -10,10 +10,6 @@ class Navbar extends HTMLElement {
 		  <span class="navbar-toggler-icon"></span>
 	  </button>
 	  <div class="collapse navbar-collapse navbarNavAltMarkup">
-		  <form class="mr-3" style="width: 250px;">
-			  <input type="search" class="form-control rounded" placeholder="Find a friend"
-			  aria-label="Search" aria-describedby="search-addon" />
-		  </form>
 		  <ul class="navbar-nav">
 			  <li class="nav-item active">
 				  <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>

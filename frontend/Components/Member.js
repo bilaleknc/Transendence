@@ -5,70 +5,86 @@ class Member extends HTMLElement {
     <div id="profile-page" class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <h2 class="mb-4 text-center">Profil</h2>
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <form id="profile-form" class="form">
-              <div class="text-center mb-3">
-                <img id="profile-image" src="https://via.placeholder.com/150" class="border" alt="Profile Image" width="200" height="auto">
+        <div class="row">
+          <!-- Profil Bilgileri -->
+          <div class="col-md-6">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <form id="profile-form" class="form">
+                  <div class="text-center mb-3">
+                    <img id="profile-image" src="https://via.placeholder.com/150" class="border" alt="Profile Image" width="200" height="auto">
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-fullname" class="form-label">Tam Adı</label>
+                    <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-username" class="form-label">Kullanıcı Adı</label>
+                    <input type="text" id="profile-username" name="username" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-email" class="form-label">Email</label>
+                    <input type="email" id="profile-email" name="email" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
+                    <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
+                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
+                    <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
+                  </div>
+                </form>
               </div>
-              <div class="mb-3">
-                <label for="profile-fullname" class="form-label">Tam Adı</label>
-                <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
-              </div>
-              <div class="mb-3">
-                <label for="profile-username" class="form-label">Kullanıcı Adı</label>
-                <input type="text" id="profile-username" name="username" class="form-control" readonly>
-              </div>
-              <div class="mb-3">
-                <label for="profile-email" class="form-label">Email</label>
-                <input type="email" id="profile-email" name="email" class="form-control" readonly>
-              </div>
-              <div class="mb-3">
-                <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
-                <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
-              </div>
-              <div class="mb-3">
-                <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
-                <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
-              </div>
-              <div class="mb-3">
-                <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
-                <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
-        <div class="card mt-4 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Maç Geçmişi</h5>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">Tarih</th>
-                  <th scope="col">Rakip</th>
-                  <th scope="col">Skor</th>
-                </tr>
-              </thead>
-              <tbody id="match-history">
-                <!-- Maç geçmişi burada görünecek -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="card mt-4 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">İstatistikler</h5>
-            <table class="table table-striped">
-              <tbody id="statistics-list">
-                <!-- İstatistikler burada görünecek -->
-              </tbody>
-            </table>
+          <!-- Maç Geçmişi ve İstatistikler -->
+          <div class="col-md-6">
+            <div class="row">
+              <!-- Maç Geçmişi -->
+              <div class="col-md-12">
+                <div class="card mt-4 shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title">Maç Geçmişi</h5>
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th scope="col">Tarih</th>
+                          <th scope="col">Rakip</th>
+                          <th scope="col">Skor</th>
+                        </tr>
+                      </thead>
+                      <tbody id="match-history">
+                        <!-- Maç geçmişi burada görünecek -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <!-- İstatistikler -->
+              <div class="col-md-12 mt-4">
+                <div class="card shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title">İstatistikler</h5>
+                    <table class="table table-striped">
+                      <tbody id="statistics-list">
+                        <!-- İstatistikler burada görünecek -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>  
+  </div>
+  
     `;
   }
 
@@ -90,11 +106,13 @@ class Member extends HTMLElement {
 }
 
   populateProfile(data) {
+    const date = data.registered ? new Date(data.registered).toLocaleDateString('tr-TR') : '';
+
     this.querySelector('#profile-image').src = data.image ? data.image : 'https://via.placeholder.com/150';
     this.querySelector('#profile-fullname').value = data.fullname ? data.fullname : '';
     this.querySelector('#profile-username').value = data.username ? data.username : '';
     this.querySelector('#profile-email').value = data.email ? data.email : '';
-    this.querySelector('#profile-registered').value = data.registered ? data.registered : '';
+    this.querySelector('#profile-registered').value = date ? date : '';
     this.querySelector('#profile-instagram').value = data.instagram ? data.instagram : '';
     this.querySelector('#profile-linkedin').value = data.linkedin ? data.linkedin : '';
   }
