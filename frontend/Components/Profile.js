@@ -18,19 +18,27 @@ class Profile extends HTMLElement {
                   </div>
                   <div class="mb-3">
                     <label for="profile-username" class="form-label">Kullanıcı Adı</label>
-                    <input type="text" id="profile-username" name="username" class="form-control" required>
+                    <input type="text" id="profile-username" name="username" class="form-control" readonly>
                   </div>
                   <div class="mb-3">
                     <label for="profile-email" class="form-label">Email</label>
-                    <input type="email" id="profile-email" name="email" class="form-control" required>
+                    <input type="email" id="profile-email" name="email" class="form-control" readonly>
                   </div>
                   <div class="mb-3">
-                    <label for="profile-password" class="form-label">Yeni Şifre</label>
-                    <input type="password" id="profile-password" name="password" class="form-control">
+                    <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
+                    <input type="text" id="profile-instagram" name="instagram" class="form-control">
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
+                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control">
                   </div>
                   <div class="mb-3">
                     <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
                     <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-password" class="form-label">Yeni Şifre</label>
+                    <input type="password" id="profile-password" name="password" class="form-control">
                   </div>
                   <button type="submit" class="btn btn-primary w-100">Güncelle</button>
                 </form>
@@ -99,6 +107,7 @@ class Profile extends HTMLElement {
       }
       
       const data = await response.json();
+      console.log(data);
       this.populateProfile(data);
       this.populateMatchHistory(data.matchHistory);
       this.calculateStatistics(data.matchHistory);
@@ -108,11 +117,13 @@ class Profile extends HTMLElement {
 }
 
   populateProfile(data) {
-    this.querySelector('#profile-image').src = data.image;
-    this.querySelector('#profile-fullname').value = data.fullname;
-    this.querySelector('#profile-username').value = data.username;
-    this.querySelector('#profile-email').value = data.email;
-    this.querySelector('#profile-registered').value = data.registered;
+    this.querySelector('#profile-image').src = data.image ? data.image : 'https://via.placeholder.com/150';
+    this.querySelector('#profile-fullname').value = data.fullname ? data.fullname : '';
+    this.querySelector('#profile-username').value = data.username ? data.username : '';
+    this.querySelector('#profile-email').value = data.email ? data.email : '';
+    this.querySelector('#profile-registered').value = data.registered ? data.registered : '';
+    this.querySelector('#profile-instagram').value = data.instagram ? data.instagram : '';
+    this.querySelector('#profile-linkedin').value = data.linkedin ? data.linkedin : '';
   }
 
   populateMatchHistory(matchHistory) {
@@ -177,6 +188,8 @@ class Profile extends HTMLElement {
     const username = this.querySelector('#profile-username').value;
     const email = this.querySelector('#profile-email').value;
     const password = this.querySelector('#profile-password').value;
+    const instagram = this.querySelector('#profile-instagram').value;
+    const linkedin = this.querySelector('#profile-linkedin').value;
 
     try {
       const response = await fetch('https://localhost:8080/update_profile', {
@@ -191,6 +204,8 @@ class Profile extends HTMLElement {
           fullname: fullname,
           username: username,
           email: email,
+          instagram: instagram,
+          linkedin: linkedin,
           ...(password && { password: password })
         })
       });

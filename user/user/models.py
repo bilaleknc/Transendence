@@ -39,6 +39,14 @@ class Profile(models.Model):
     bio = models.TextField(blank=True, null=True, default=None)
     mmr = models.IntegerField(default=1000)
     blocked_users = models.ManyToManyField('Profile', blank=True, related_name='users_blocked')
+    instagram = models.URLField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    # matchHistory: [
+    #     { date: '2021-01-01', opponent: 'Jane Doe', score: '2-0' },
+    #     { date: '2021-01-02', opponent: 'Jane Doe', score: '2-1' },
+    #     { date: '2021-01-03', opponent: 'Jane Doe', score: '1-2' }
+    # ]
+    match_history = models.JSONField(default=list)
 
     def __str__(self):
         return self.nickname

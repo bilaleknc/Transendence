@@ -146,11 +146,9 @@ def profile(request):
         "username": user.username,
         "email": user.email,
         "registered": user.date_joined,
-        "matchHistory": [
-            {"date": "2021-01-01", "opponent": "Jane Doe", "score": "2-0"},
-            {"date": "2021-01-02", "opponent": "Jane Doe", "score": "2-1"},
-            {"date": "2021-01-03", "opponent": "Jane Doe", "score": "1-2"}
-        ]
+        "matchHistory": profile.match_history,
+        "instagram": profile.instagram,
+        "linkedin": profile.linkedin,
     }
     return Response(data, status=200)
 
@@ -168,6 +166,10 @@ def update_profile(request):
         user.email = data['email']
     if 'password' in data:
         user.set_password(data['password'])
+    if 'instagram' in data:
+        profile.instagram = data['instagram']
+    if 'linkedin' in data:
+        profile.linkedin = data['linkedin']
     user.save()
     profile.save()
     return Response({"success": "Profile updated successfully"}, status=200)
