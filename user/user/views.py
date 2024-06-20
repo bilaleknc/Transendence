@@ -36,7 +36,6 @@ def login(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
-        
         try:
             user = Authenticator.authenticate(username=username, password=password)
         except AuthenticationFailed as e:
@@ -142,7 +141,7 @@ def profile(request):
     
     profile = Profile.objects.get(user=user)
     data = {
-        "image": profile.profile_picture.url,
+        "image": profile.profile_picture,
         "fullname": profile.nickname,
         "username": user.username,
         "email": user.email,
