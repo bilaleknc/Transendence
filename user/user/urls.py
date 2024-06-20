@@ -2,12 +2,12 @@ from django.contrib import admin
 from .views import login_with_42, login_with_google, direct_42_login_page, direct_google_login_page, change_password, register, login
 from django.urls import path, re_path
 from rest_framework_swagger.views import get_swagger_view
-from django.urls import re_path
 
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django_prometheus.exports import ExportToDjangoView
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -40,3 +40,5 @@ urlpatterns = [
     path('metrics/', ExportToDjangoView, name='prometheus-metrics'),
 
 ]
+
+
