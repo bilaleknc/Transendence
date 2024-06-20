@@ -8,9 +8,6 @@ from user.serializers import RegisterWith42Serializer, UserSerializer
 from user.utils import send_email
 from user.auth_tools import Authenticator, TokenGenerator
 from rest_framework import status
-from user.models import Profile
-import string
-
 
 def connect_api_42(code):
     response = requests.post(f"https://api.intra.42.fr/oauth/token", data={
@@ -26,7 +23,7 @@ def connect_api_42(code):
             headers={'Authorization': f'Bearer {response.json()["access_token"]}'}
         )
         print(data_42.json()["login"])
-        return login_with_42(data_42.json())
+        return login_with_42(data_42.json()["login"], data_42.json()["email"], data_42.json()["image"]["link"])
     else:
         return Response({"error": "Access denied"}, status=400)
 
@@ -48,37 +45,16 @@ def connect_api_google(code):
     else:
         return Response({"error": "Access denied"}, status=400)
 
-# {'id': 148038, 'email': 'biekinci@student.42istanbul.com.tr', 'login': 'biekinci', 'first_name': 'Bilal', 'last_name': 'Ekinci',
-# 'usual_full_name': 'Bilal Ekinci', 'usual_first_name': None, 'url': 'https://api.intra.42.fr/v2/users/biekinci', 'phone': 'hidden',
-# 'displayname': 'Bilal Ekinci', 'kind': 'student', 'image': {'link': 'https://cdn.intra.42.fr/users/8e3625d440ae6f8eaa32bbcd3855c57d/biekinci.jpg'
-# , 'versions': {'large': 'https://cdn.intra.42.fr/users/33bf8e4c071e7076c057ac7f37451933/large_biekinci.jpg', 
-# 'medium': 'https://cdn.intra.42.fr/users/2d35134cbf80b55f0eb867b7c30bb223/medium_biekinci.jpg', 
-
-
-# login
-# email
-# usual_full_name
-# 'image': {'link': 'https://cdn.intra.42.fr/users/8e3625d440ae6f8eaa32bbcd3855c57d/biekinci.jpg'}
-
-
-def login_with_42(data: dict) -> Response:
-	
-    user = User.objects.filter(email=data["email"]).first()
+def login_with_42(username, email, image):
+    user = User.objects.filter(email=email).first()
     if not user:
-        user = User.objects.create_user(username=data["login"], email=data["email"])
-        user.first_name = data["first_name"]
-        user.last_name = data["last_name"]
+        user = User.objects.create_user(username=username, email=email)
         user.save()
-    nickname = data["login"]
-    while Profile.objects.filter(nickname=data["login"]).exists():
-        suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
-        nickname = f"{data['username']}{suffix}"
-    profile = Profile.objects.create(user=user, nickname=nickname)
-    profile.profile_picture = data["image"]["link"]
-    print(data["image"]["link"])
-    profile.save()
     token = TokenGenerator.generate_token(user)
+    print(token)
     return Response({"token": token}, status=status.HTTP_200_OK)
+
+
 
 def login_with_google(email, image):
     user = User.objects.filter(email=email).first()
