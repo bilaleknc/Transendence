@@ -191,7 +191,7 @@ class Profile extends HTMLElement {
           fullname: fullname,
           username: username,
           email: email,
-          password: password
+          ...(password && { password: password })
         })
       });
 
