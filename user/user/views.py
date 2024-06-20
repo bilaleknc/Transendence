@@ -173,3 +173,22 @@ def update_profile(request):
     user.save()
     profile.save()
     return Response({"success": "Profile updated successfully"}, status=200)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def member(request):
+    username = request.GET.get('username')
+    print(username)
+    user = User.objects.get(username=username)
+    profile = Profile.objects.get(user=user)
+    data = {
+        "image": profile.profile_picture,
+        "fullname": user.first_name + " " + user.last_name,
+        "username": user.username,
+        "email": user.email,
+        "registered": user.date_joined,
+        "matchHistory": profile.match_history,
+        "instagram": profile.instagram,
+        "linkedin": profile.linkedin,
+    }
+    return Response(data, status=200)

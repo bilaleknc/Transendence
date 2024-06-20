@@ -1,4 +1,4 @@
-class Profile extends HTMLElement {
+class Member extends HTMLElement {
   constructor() {
     super();
     this.innerHTML = `
@@ -6,7 +6,7 @@ class Profile extends HTMLElement {
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <h2 class="mb-4 text-center">Profil</h2>
-        <div class="card">
+        <div class="card shadow-sm">
           <div class="card-body">
             <form id="profile-form" class="form">
               <div class="text-center mb-3">
@@ -14,7 +14,7 @@ class Profile extends HTMLElement {
               </div>
               <div class="mb-3">
                 <label for="profile-fullname" class="form-label">Tam Adı</label>
-                <input type="text" id="profile-fullname" name="fullname" class="form-control" required>
+                <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
               </div>
               <div class="mb-3">
                 <label for="profile-username" class="form-label">Kullanıcı Adı</label>
@@ -26,25 +26,20 @@ class Profile extends HTMLElement {
               </div>
               <div class="mb-3">
                 <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
-                <input type="text" id="profile-instagram" name="instagram" class="form-control">
+                <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
               </div>
               <div class="mb-3">
                 <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
-                <input type="text" id="profile-linkedin" name="linkedin" class="form-control">
+                <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
               </div>
               <div class="mb-3">
                 <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
                 <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
               </div>
-              <div class="mb-3">
-                <label for="profile-password" class="form-label">Yeni Şifre</label>
-                <input type="password" id="profile-password" name="password" class="form-control">
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Güncelle</button>
             </form>
           </div>
         </div>
-        <div class="card mt-4">
+        <div class="card mt-4 shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Maç Geçmişi</h5>
             <table class="table table-striped">
@@ -61,7 +56,7 @@ class Profile extends HTMLElement {
             </table>
           </div>
         </div>
-        <div class="card mt-4">
+        <div class="card mt-4 shadow-sm">
           <div class="card-body">
             <h5 class="card-title">İstatistikler</h5>
             <table class="table table-striped">
@@ -73,40 +68,17 @@ class Profile extends HTMLElement {
         </div>
       </div>
     </div>
-  </div>
-
+  </div>  
     `;
   }
 
   async fetchProfile() {
-    // const data = {
-    //   image: 'https://cdn.intra.42.fr/users/53ddddb821c330abf341a0a3ccb5fc6f/muerdoga.jpg',
-    //   fullname: 'Mustafa Eren Erdoğan',
-    //   username: 'muerdoga',
-    //   email: 'erenerdoga037@gmail.com',
-    //   registered: '2021-01-01',
-    //   matchHistory: [
-    //     { date: '2021-01-01', opponent: 'Jane Doe', score: '2-0' },
-    //     { date: '2021-01-02', opponent: 'Jane Doe', score: '2-1' },
-    //     { date: '2021-01-03', opponent: 'Jane Doe', score: '1-2' }
-    //   ]
-    // };
-
     try {
-      const response = await fetch('https://localhost:8080/profile', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-          'Authorization': `Token ${localStorage.getItem('access_token')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      
+      // https://localhost:8082/member?username=muerdoga
+      // urlden username alınacak
+      const username = new URLSearchParams(window.location.search).get('username');
+      console.log(`https://localhost:8080/member?username=${username}`);
+      const response = await fetch(`https://localhost:8080/member?username=${username}`);
       const data = await response.json();
       console.log(data);
       this.populateProfile(data);
@@ -183,48 +155,6 @@ class Profile extends HTMLElement {
     `;
   }
 
-  async updateProfile(e) {
-    e.preventDefault();
-    const fullname = this.querySelector('#profile-fullname').value;
-    const username = this.querySelector('#profile-username').value;
-    const email = this.querySelector('#profile-email').value;
-    const password = this.querySelector('#profile-password').value;
-    const instagram = this.querySelector('#profile-instagram').value;
-    const linkedin = this.querySelector('#profile-linkedin').value;
-
-    try {
-      const response = await fetch('https://localhost:8080/update_profile', {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-          'Authorization': `Token ${localStorage.getItem('access_token')}`
-        },
-        body: JSON.stringify({
-          fullname: fullname,
-          username: username,
-          email: email,
-          instagram: instagram,
-          linkedin: linkedin,
-          ...(password && { password: password })
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const resData = await response.json();
-      if (resData.error) {
-        alert(resData.error);
-      } else {
-        alert('Profil güncellendi');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  }
 
   connectedCallback() {
     this.fetchProfile();
@@ -232,4 +162,4 @@ class Profile extends HTMLElement {
   }
 }
 
-customElements.define('my-profile', Profile);
+customElements.define('my-member', Member);

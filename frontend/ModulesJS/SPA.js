@@ -27,6 +27,11 @@ class SPA {
       title: "profile",
       description: "Profil",
     },
+    "/member": {
+      template: "/templates/member.html",
+      title: "member",
+      description: "Member",
+    },
     loading: {
       template: "/templates/loading.html",
       title: "loading",

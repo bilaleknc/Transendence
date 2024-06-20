@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .views import login_with_42, login_with_google, direct_42_login_page, direct_google_login_page, change_password, register, login, profile, update_profile
+from .views import login_with_42, login_with_google, direct_42_login_page, direct_google_login_page, change_password, register, login, profile, update_profile, member
 from django.urls import path, re_path
 from rest_framework_swagger.views import get_swagger_view
 
@@ -34,6 +34,8 @@ urlpatterns = [
 	path('login', login, name='login'),
     path('profile', profile, name='profile'),
     path('update_profile', update_profile, name='update_profile'),
+    # member?username=abc
+    path('member', member, name='member'),
 	# path('verify_email_and_login', verify_email_and_login, name='verify_email_and_login'),
 	# path('send_verification_email', send_verification_email, name='send_verification_email'),
  	re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

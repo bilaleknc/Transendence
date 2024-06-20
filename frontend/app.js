@@ -7,4 +7,5 @@ import "./Components/Game.js"
 import "./Components/SignUp.js"
 import "./Components/Loading.js"
 import "./Components/Profile.js"
+import "./Components/Member.js"
 

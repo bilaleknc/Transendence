@@ -42,8 +42,8 @@ class Profile(models.Model):
     instagram = models.URLField(blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
     # matchHistory: [
-    #     { date: '2021-01-01', opponent: 'Jane Doe', score: '2-0' },
-    #     { date: '2021-01-02', opponent: 'Jane Doe', score: '2-1' },
+    #     { date: '2021-01-01', opponent: 'sakkus, score: '2-0' },
+    #     { date: '2021-01-02', opponent: 'biekinci', score: '2-1' },
     #     { date: '2021-01-03', opponent: 'Jane Doe', score: '1-2' }
     # ]
     match_history = models.JSONField(default=list)
