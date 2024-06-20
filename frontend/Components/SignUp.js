@@ -153,14 +153,15 @@ class Signup extends HTMLElement {
 				})
 		}).then(response => response.json())
 		.then(data => {
-			if (data.error) {
-				alert(data.error);
-			}else {
-                const { token } = data;
+            console.log(data);
+			if (data.token) {
+				const { token } = data;
                 localStorage.setItem('access_token', token);
                 console.log(localStorage.getItem('access_token'));
 				alert('Logged in success');
 				window.route({ target: { href: '/' } });
+			}else {
+                alert('Invalid username or password');
 			}
 		}).catch((error) => {
             console.error('Error:', error);
