@@ -8,6 +8,7 @@ from user.serializers import RegisterWith42Serializer, UserSerializer
 from user.utils import send_email
 from user.auth_tools import Authenticator, TokenGenerator
 from rest_framework import status
+from user.models import Profile
 
 def connect_api_42(code):
     response = requests.post(f"https://api.intra.42.fr/oauth/token", data={
@@ -23,9 +24,29 @@ def connect_api_42(code):
             headers={'Authorization': f'Bearer {response.json()["access_token"]}'}
         )
         print(data_42.json()["login"])
-        return login_with_42(data_42.json()["login"], data_42.json()["email"], data_42.json()["image"]["link"])
+        return login_with_42(data_42.json()["login"], data_42.json()["email"], data_42.json()["first_name"], data_42.json()["last_name"], data_42.json()["image"]["link"])
     else:
         return Response({"error": "Access denied"}, status=400)
+
+
+def login_with_42(username, email, first_name, last_name, image):
+    user = User.objects.filter(email=email).first()
+    if not user:
+        user = User.objects.create_user(username=username, email=email)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        # user a ait profile kaydını bul ve nickname'i username yap
+        profile = Profile.objects.filter(user=user).first()
+        if not profile:
+            profile = Profile(user=user)
+        profile.nickname = username
+        profile.profile_picture = image
+        profile.save()
+    token = TokenGenerator.generate_token(user)
+    print(token)
+    return Response({"token": token}, status=status.HTTP_200_OK)
 
 def connect_api_google(code):
     response = requests.post(f"https://oauth2.googleapis.com/token", data={
@@ -44,16 +65,6 @@ def connect_api_google(code):
         return login_with_google(data_google.json()["email"], data_google.json()["picture"])
     else:
         return Response({"error": "Access denied"}, status=400)
-
-def login_with_42(username, email, image):
-    user = User.objects.filter(email=email).first()
-    if not user:
-        user = User.objects.create_user(username=username, email=email)
-        user.save()
-    token = TokenGenerator.generate_token(user)
-    print(token)
-    return Response({"token": token}, status=status.HTTP_200_OK)
-
 
 
 def login_with_google(email, image):

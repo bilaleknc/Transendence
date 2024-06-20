@@ -142,7 +142,7 @@ def profile(request):
     profile = Profile.objects.get(user=user)
     data = {
         "image": profile.profile_picture,
-        "fullname": profile.nickname,
+        "fullname": user.first_name + " " + user.last_name,
         "username": user.username,
         "email": user.email,
         "registered": user.date_joined,
