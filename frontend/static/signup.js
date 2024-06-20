@@ -21,34 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
         registerToggle.classList.add('active');
         loginToggle.classList.remove('active');
     });
-  
-    // Giriş formu gönderim işlemi
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const username = document.getElementById('login-username').value;
-        const password = document.getElementById('login-password').value;
-        console.log('Giriş yap:', username, password);
-        // Giriş işlemi burada gerçekleştirilebilir
-    });
-  
-    // Kayıt formu gönderim işlemi
-    registerForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const username = document.getElementById('register-username').value;
-        const password = document.getElementById('register-password').value;
-        console.log('Üye ol:', username, password);
-        // Kayıt işlemi burada gerçekleştirilebilir
-    });
-  
-    // 42 ile giriş işlemi
-    fortyTwoLogin.addEventListener('click', function() {
-      console.log('42 ile giriş yap');
-    });
-  
-    // Google ile giriş işlemi
-    googleLogin.addEventListener('click', function() {
-      console.log('Google ile giriş yap');
-    })
   });
 
   console.log("Signup")
