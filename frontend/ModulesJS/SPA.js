@@ -27,6 +27,11 @@ class SPA {
       title: "sign-up",
       description: "üye ol",
     },
+    "/profile": {
+      template: "/templates/profile.html",
+      title: "profile",
+      description: "Profil",
+    },
     loading: {
       template: "/templates/loading.html",
       title: "loading",
