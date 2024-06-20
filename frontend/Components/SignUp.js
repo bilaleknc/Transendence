@@ -56,23 +56,9 @@ class Signup extends HTMLElement {
 
       
 	}
-  
-    async autoValue (){
-        // username ve password değerlerini otomatik doldur
-        const username = this.querySelector('#login-username').value;
-        const email = this.querySelector('#register-email').value;
-        const password = this.querySelector('#login-password').value;
-        const password2 = this.querySelector('#register-password2').value;
-
-        this.querySelector('#register-username').value = "eren";
-        this.querySelector('#register-email').value = "eren@gmail.com";
-        this.querySelector('#register-password').value = "123456";
-        this.querySelector('#register-password2').value = "123456";
-    }
 
 	connectedCallback() {
 		this.render();
-        this.autoValue();
         this.querySelector('#login-toggle')
         .addEventListener('click', () => this.setAttribute('active', 'true'));
 		this.querySelector('#register-toggle')
@@ -94,15 +80,22 @@ class Signup extends HTMLElement {
 
     // Giriş yap ve Üye ol formunu göster
 	render() {
-		const todosArr = this.attributes.active.value;
-		if (todosArr == "true") {
-			this.querySelector('#login-form').style.display = "flex";
-			this.querySelector('#register-form').style.display = "none";
-		}else {
-			this.querySelector('#login-form').style.display = "none";
-			this.querySelector('#register-form').style.display = "flex";
-		}
-	}
+        const isActive = this.getAttribute('active') === 'true';
+    
+        if (isActive) {
+            this.querySelector('#login-toggle').classList.add('active');
+            this.querySelector('#register-toggle').classList.remove('active');
+    
+            this.querySelector('#login-form').classList.add('active');
+            this.querySelector('#register-form').classList.remove('active');
+        } else {
+            this.querySelector('#login-toggle').classList.remove('active');
+            this.querySelector('#register-toggle').classList.add('active');
+    
+            this.querySelector('#login-form').classList.remove('active');
+            this.querySelector('#register-form').classList.add('active');
+        }
+    }
 
 	// 42 API ve Google API ile giriş işlemi
 	async ApiRemoteSign(provider) {
