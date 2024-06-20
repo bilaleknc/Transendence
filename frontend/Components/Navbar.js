@@ -47,7 +47,6 @@ class Navbar extends HTMLElement {
 	const authLink = this.querySelector("#authLink");
     const accessToken = localStorage.getItem("access_token");
     if (accessToken) {
-      console.log("accessToken:", accessToken);
       authLink.textContent = "Logout";
 			authLink.onclick = async function () {
 				if (authLink.textContent === "Logout") {
@@ -72,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 	const authLink = this.querySelector("#authLink");
     const accessToken = localStorage.getItem("access_token");
     if (accessToken) {
-      console.log("accessToken:", accessToken);
       authLink.textContent = "Logout";
 			authLink.onclick = async function () {
 				if (authLink.textContent === "Logout") {
@@ -93,8 +91,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 			else
 				response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
 			const data = await response.json();
-			console.log(data);
-			alert(data);
 			if (data.token) {
 				localStorage.setItem('access_token', data.token);
 			}

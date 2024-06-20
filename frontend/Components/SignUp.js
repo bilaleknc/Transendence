@@ -104,7 +104,6 @@ class Signup extends HTMLElement {
 			url = 'https://localhost:8080/direct_42_login_page';
 		else
             url = 'https://localhost:8080/direct_google_login_page';
-		console.log(url);
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: {
@@ -112,13 +111,8 @@ class Signup extends HTMLElement {
 				'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
 			}
 		});
-		console.log(url);
 		const data = await response.json();
-		console.log(data);
-		alert(data)
-		if (data.url) {
-			// bu url'istek at ve code'u al
-			
+		if (data.url) {			
 			window.location.href = data.url
 		}
 	}
@@ -130,7 +124,6 @@ class Signup extends HTMLElement {
         const scope = 'profile email';
         const responseType = 'token';
     
-        // Google giriş penceresini aç
         const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
         const googleWindow = window.open(authUrl, '_target');
     }
@@ -157,7 +150,6 @@ class Signup extends HTMLElement {
 			if (data.token) {
 				const { token } = data;
                 localStorage.setItem('access_token', token);
-                console.log(localStorage.getItem('access_token'));
 				alert('Logged in success');
 				window.route({ target: { href: '/' } });
 			}else {

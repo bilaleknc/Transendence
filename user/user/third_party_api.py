@@ -37,7 +37,6 @@ def login_with_42(username, email, first_name, last_name, image):
         user.last_name = last_name
         user.save()
 
-        # user a ait profile kaydını bul ve nickname'i username yap
         profile = Profile.objects.filter(user=user).first()
         if not profile:
             profile = Profile(user=user)
@@ -62,15 +61,24 @@ def connect_api_google(code):
             f"https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token={response.json()['access_token']}"
         )
         print(data_google.json())
-        return login_with_google(data_google.json()["email"], data_google.json()["picture"])
+        # user        | {'id': '100206833384934867256', 'email': 'erenerdogan037@gmail.com', 'verified_email': True, 'name': 'Mustafa Eren Erdoğan', 'given_name': 'Mustafa Eren', 'family_name': 'Erdoğan', 'picture': 'https://lh3.googleusercontent.com/a/ACg8ocKKx0KFeVWboJlC4WQsBCi0W_i5RAA6dVSWFyjqznSC6o17QmHW6g=s96-c'}
+        return login_with_google(data_google.json()["email"], data_google.json()["picture"], data_google.json()["given_name"], data_google.json()["family_name"])
     else:
         return Response({"error": "Access denied"}, status=400)
 
 
-def login_with_google(email, image):
+def login_with_google(email, image, name, surname):
     user = User.objects.filter(email=email).first()
+    username = email.split("@")[0]
     if not user:
-        user = User.objects.create_user(username=email, email=email)
+        user = User.objects.create_user(username=username, email=email)
+        user.first_name = name
+        user.last_name = surname
         user.save()
+    profile = Profile.objects.filter(user=user).first()
+    if not profile:
+        profile = Profile(user=user)
+    profile.profile_picture = image
+    profile.save()
     token = TokenGenerator.generate_token(user)
     return Response({"token": token}, status=status.HTTP_200_OK)

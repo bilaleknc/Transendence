@@ -42,7 +42,6 @@ class SPA {
       if (target.matches("nav a"));
       else if (target.matches("a img")) e.target.parentElement.click();
       else {
-        console.log("return");
         return;
       }
       e.preventDefault();
