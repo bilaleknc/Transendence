@@ -9,3 +9,6 @@ scrape_configs:
     scheme: https
     tls_config:
       insecure_skip_verify: true
+
+rule_files:
+  - alert_rules.yml

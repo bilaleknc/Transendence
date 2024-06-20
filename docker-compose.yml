@@ -102,17 +102,20 @@ services:
     networks:
       - nw
   
-  # grafana:
-  #   container_name: grafana
-  #   image: grafana/grafana
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./devops:/var/lib/grafana
-  #   networks:
-  #     - nw
-  #   depends_on:
-  #     - prometheus
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=eren
+      - GF_SECURITY_ADMIN_PASSWORD=12345
+    volumes:
+      - ./devops:/var/lib/grafana
+    networks:
+      - nw
+    depends_on:
+      - prometheus
 
 volumes:
   user_data:
