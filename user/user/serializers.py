@@ -4,14 +4,17 @@ import string
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
-from user.models import Profile, Stats, VerificationCode
-from user.utils import generate_otp
-    
+from user.models import Profile, Stats
+
+
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name']
+
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
@@ -48,15 +51,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             email=validated_data['email'],
         )
+        user.is_active = False;
         user.set_password(validated_data['password'])
-        otp = generate_otp()['otp']
         user.save()
-        print("begin:")
-        verificationCode = VerificationCode.objects.create(
-            user=user,
-            code=generate_otp()['otp']
-        )
-        verificationCode.save()
+
+        
         nickname = validated_data['username']
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", nickname)
         
@@ -71,8 +70,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         if not created:
             profile.nickname = nickname
             profile.save()
-   
+
         return user
+
  
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(
@@ -122,11 +122,11 @@ class RegisterWith42Serializer(serializers.Serializer):
         user.set_password(str(uuid.uuid1()))
         user.save()
 
-        # profile = Profile.objects.create(
-        #     user=user,
-        #     nickname=validated_data['username'],
-        #     stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
-        # )
+        profile = Profile.objects.create(
+            user=user,
+            nickname=validated_data['username'],
+            stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
+        )
         nickname = validated_data['username']
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", nickname)
         

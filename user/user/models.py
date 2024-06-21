@@ -28,7 +28,11 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     nickname = models.CharField(max_length=100, unique=False, blank=False, null=True)
     stats = models.OneToOneField(Stats, on_delete=models.CASCADE, null=True)
-    profile_picture = models.ImageField(upload_to='profile-pictures/', default="profile-pictures/default.png")
+    profile_picture = models.URLField(
+        default='https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg',
+        blank=True,
+        null=True
+    )    
     is_online = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     friends = models.ManyToManyField('Profile', blank=True, related_name='profile_friends')
@@ -78,7 +82,7 @@ def update_friends(sender, instance, action, **kwargs):
 class VerificationCode(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     code = models.CharField(max_length=6)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     expired_date = models.DateTimeField(auto_now_add=True)
     
     class Meta:

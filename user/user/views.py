@@ -14,37 +14,51 @@ from user.utils import *
 from user.third_party_api import connect_api_42, connect_api_google
 from rest_framework.exceptions import APIException
 import json
-from django.core.mail import send_mail
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .models import VerificationCode
+from user.models import Profile
 
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_token(request):
+    token_key = request.data.get('token', None)
+    print(token_key)
+    if not token_key:
+        return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        token = Token.objects.get(key=token_key)
+        return Response({"message": "Token is valid", "user": token.user.username}, status=status.HTTP_200_OK)
+    except Token.DoesNotExist:
+        return Response({"error": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def notActive(request):
+    if request.method == 'POST':
+        print(request.data["username"])
+        user = User.objects.get(username=request.data["username"])
+        verificationCode = VerificationCode.objects.get(user=user.profile)
+        if user.is_active == False:
+            user.delete()
+            verificationCode.delete()
+        return Response({"success": "User delete"}, status=204)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def otp(request):
-    number = request.GET.get('number')
-    print(request.data)
-    if number is None:
-        return Response( {"Error": "Number paramter is required"}, status=400 )
-    return Response( {"message": "Valid number"}, status=200 )
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def checkMail(request):
-    subject = 'welcome to Transendence'
-    message = f'Hi {request.data["username"]}, thank you for registering in Transendence. Please enter this number on the registration screen. Otherwise, your registration will not be completed. {otp}'
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [request.data["email"], ]
-    print("if dışarsıx")
-    serializer = RegisterSerializer(data=request.data)
-    if serializer.is_valid():
-        print("if içersi")
-        serializer.save()
-        # send_mail( subject, message, email_from, recipient_list )
-        return Response({"otp": ""}, status=200)
-    return Response(serializer.errors, status=400)
+    if request.method == 'POST':
+        user = User.objects.get(username=request.GET.get('username'))
+        code = request.GET.get('number')
+        verificationCode = VerificationCode.objects.get(user=user.profile)
+        print(verificationCode.code)
+        print(code)
+        if int(verificationCode.code) == int(code):
+            token = TokenGenerator.generate_token(user)
+            user.is_active = True
+            user.save()
+            return Response({"success": "User registered successfully", "token": token,}, status=200)
+        else:
+            return Response({"wrong": "Please check your mailbox for incoming mail"}, status=401)
+    return Response({"success": "User registered successfully"}, status=204)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -54,8 +68,8 @@ def register(request):
         print(request.data)
         if serializer.is_valid():
             print("serializer valid")
-            sendMail(request.data)
-            # user = serializer.save()
+            user = serializer.save()
+            send_email(user);
             print("save'den sonra")
             return Response({"success": "User registered successfully"}, status=201)
         return Response(serializer.errors, status=400)
@@ -66,15 +80,12 @@ def login(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
-        
         try:
             user = Authenticator.authenticate(username=username, password=password)
         except AuthenticationFailed as e:
             return Response({"detail": str(e)}, status=401)
-        token = TokenGenerator.generate_token(user)
-        print(token)
-        
-        return Response({"token": token}, status=200)    
+        twoFactor(user)
+        return Response({"success": "logging on..."}, status=200)    
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -100,8 +111,8 @@ def verify_email_and_login(request):
     user, error_response = Authenticator.authenticate_user(verification_code)
     if error_response:
         return error_response
-
     response_data = TokenGenerator.generate_tokens(user)
+    twoFactor(user)
     return Response(data=response_data, status=200)
 
 
@@ -135,7 +146,7 @@ def direct_42_login_page(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def direct_google_login_page(request):
-    oauth_url = 'https://accounts.google.com/o/oauth2/auth?client_id=' + settings.UID_GOOGLE + '&redirect_uri=' + settings.REDIRECT_URI_GOOGLE + '&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email'
+    oauth_url = 'https://accounts.google.com/o/oauth2/auth?client_id=' + settings.UID_GOOGLE + '&redirect_uri=' + settings.REDIRECT_URI_GOOGLE + '&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile'
     return Response({"url": oauth_url}, status=200)
 
 
@@ -165,29 +176,40 @@ def login_with_google(request):
     except Exception as e:
         return Response({"error": "Internal Server Error"}, status=500)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profile(request):
+    user = request.user
+    
+    profile = Profile.objects.get(user=user)
+    data = {
+        "image": profile.profile_picture,
+        "fullname": user.first_name + " " + user.last_name,
+        "username": user.username,
+        "email": user.email,
+        "registered": user.date_joined,
+        "matchHistory": [
+            {"date": "2021-01-01", "opponent": "Jane Doe", "score": "2-0"},
+            {"date": "2021-01-02", "opponent": "Jane Doe", "score": "2-1"},
+            {"date": "2021-01-03", "opponent": "Jane Doe", "score": "1-2"}
+        ]
+    }
+    return Response(data, status=200)
 
-# def google_login(request):
-#     code = request.GET.get('code', '')
-#     if code:
-#         try:
-#             data = {
-#                 'client_id': settings.GOOGLE_CLIENT_ID,
-#                 'client_secret': settings.GOOGLE_CLIENT_SECRET,
-#                 'code': code,
-#                 'redirect_uri': settings.GOOGLE_REDIRECT_URI,
-#                 'grant_type': 'authorization_code',
-#             }
-#             response = requests.post('https://oauth2.googleapis.com/token', data=data)
-#             data = response.json()
-#             if data and data.get('access_token'):
-#                 user = getUser(data.get('access_token'))
-#                 return JsonResponse({
-#                     'accessToken': data.get('access_token'),
-#                     'refreshToken': data.get('refresh_token'),
-#                 })
-#             return JsonResponse({'error': 'No token found'}, status=400)
-#         except requests.exceptions.RequestException as e:
-#             return JsonResponse({'error': str(e)}, status=400)
-
-#     elif request.method == 'POST':
-#         return Response({"message": "Game action processed"}, status=status.HTTP_200_OK)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    user = request.user
+    profile = Profile.objects.get(user=user)
+    data = request.data
+    if 'fullname' in data:
+        profile.nickname = data['fullname']
+    if 'username' in data:
+        user.username = data['username']
+    if 'email' in data:
+        user.email = data['email']
+    if 'password' in data:
+        user.set_password(data['password'])
+    user.save()
+    profile.save()
+    return Response({"success": "Profile updated successfully"}, status=200)
