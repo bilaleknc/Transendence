@@ -15,12 +15,10 @@ from user.third_party_api import connect_api_42, connect_api_google
 from rest_framework.exceptions import APIException
 import json
 from django.core.mail import send_mail
-
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import VerificationCode
-from .serializers import VerificationCodeSerializer
 
 
 @api_view(['POST'])
@@ -35,18 +33,18 @@ def otp(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def checkMail(request):
-    otp = generate_otp()["otp"]
     subject = 'welcome to Transendence'
     message = f'Hi {request.data["username"]}, thank you for registering in Transendence. Please enter this number on the registration screen. Otherwise, your registration will not be completed. {otp}'
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [request.data["email"], ]
-    serializer = RegisterSerializer(data=request.data)
     print("if dışarsıx")
+    serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         print("if içersi")
         serializer.save()
-    # send_mail( subject, message, email_from, recipient_list )
-    return Response({"otp": ""}, status=200)
+        # send_mail( subject, message, email_from, recipient_list )
+        return Response({"otp": ""}, status=200)
+    return Response(serializer.errors, status=400)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

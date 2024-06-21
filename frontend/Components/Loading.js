@@ -5,39 +5,39 @@ class Loading extends HTMLElement {
         this.innerHTML = `
         <style>
         .textBoxs {
-  display:flex;
-}
+            display:flex;
+        }
 
-input {
-  width: 64px;
-  height: 64px;
-  padding: 8px;
-  font-size: 24px;
-  font-weight: bold;
-  background: #37474f;
-  border: 8px solid #37474f;
-  border-radius: 4px;
-  margin: 4px;
-  color: white!important;
-  text-align: center;
-  caret-color: transparent;
-  outline: false;
-  line-height:32px;
-}
+        input {
+            width: 64px;
+            height: 64px;
+            padding: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            background: #37474f;
+            border: 8px solid #37474f;
+            border-radius: 4px;
+            margin: 4px;
+            color: white!important;
+            text-align: center;
+            caret-color: transparent;
+            outline: false;
+            line-height:32px;
+        }
 
-input:focus {
-  border-bottom: 8px solid #42a5f5;
-  outline: false;
-  animation-name: blinking;
-  animation-duration: 1s;
-  animation-iteration-count: 50;
-}
+        input:focus {
+            border-bottom: 8px solid #42a5f5;
+            outline: false;
+            animation-name: blinking;
+            animation-duration: 1s;
+            animation-iteration-count: 50;
+        }
 
-@keyframes blinking {
-  50% {
-    border-bottom: 8px solid #fff;
-  }
-}
+        @keyframes blinking {
+            50% {
+                border-bottom: 8px solid #fff;
+            }
+        }
 
         </style>
         <div class="d-flex flex-column justify-content-center align-items-center bg-gradient m-3" style="height: 100vh; gap: 20px;">

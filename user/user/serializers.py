@@ -6,14 +6,6 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from user.models import Profile, Stats, VerificationCode
 from user.utils import generate_otp
-
-class VerificationCodeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VerificationCode
-        fields = ['id', 'code', 'user', 'expired_date']
-    
-    def create(self, validated_data):
-        return VerificationCode.objects.create(**validated_data)
     
 
 class UserSerializer(serializers.ModelSerializer):
@@ -62,12 +54,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         print("begin:")
         verificationCode = VerificationCode.objects.create(
             user=user,
-            code=otp
+            code=generate_otp()['otp']
         )
         verificationCode.save()
-        print(verificationCode)
-
-        
         nickname = validated_data['username']
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", nickname)
         
@@ -82,9 +71,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         if not created:
             profile.nickname = nickname
             profile.save()
-
+   
         return user
-
  
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(

@@ -73,5 +73,3 @@ def send_email(user):
     recipient_list = [receiver]
     send_mail(subject, message, from_email, recipient_list)
 
-    VerificationCode.objects.create(code=otp_code['otp'], expired_date=otp_code['otp'], user=user.profile)
-
