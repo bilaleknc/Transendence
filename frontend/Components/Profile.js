@@ -6,21 +6,21 @@ class Profile extends HTMLElement {
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <div class="row">
-          <!-- Sol Sütun: Profil Bilgileri -->
+          <!-- Left Column: Profile Information -->
           <div class="col-md-6">
             <div class="card shadow-sm mb-4">
               <div class="card-body">
-                <h5 class="card-title mb-4">Profil</h5>
+                <h5 class="card-title mb-4">Profile</h5>
                 <form id="profile-form" class="form">
                   <div class="text-center mb-3">
                     <img id="profile-image" src="https://via.placeholder.com/150" class="rounded-circle border" alt="Profile Image" width="150" height="150">
                   </div>
                   <div class="mb-3">
-                    <label for="profile-fullname" class="form-label">Tam Adı</label>
+                    <label for="profile-fullname" class="form-label">Full Name</label>
                     <input type="text" id="profile-fullname" name="fullname" class="form-control">
                   </div>
                   <div class="mb-3">
-                    <label for="profile-username" class="form-label">Kullanıcı Adı</label>
+                    <label for="profile-username" class="form-label">Username</label>
                     <input type="text" id="profile-username" name="username" class="form-control" readonly>
                   </div>
                   <div class="mb-3">
@@ -28,88 +28,88 @@ class Profile extends HTMLElement {
                     <input type="email" id="profile-email" name="email" class="form-control" readonly>
                   </div>
                   <div class="mb-3">
-                    <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
+                    <label for="profile-instagram" class="form-label">Instagram Account</label>
                     <input type="text" id="profile-instagram" name="instagram" class="form-control">
                   </div>
                   <div class="mb-3">
-                    <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
+                    <label for="profile-linkedin" class="form-label">Linkedin Account</label>
                     <input type="text" id="profile-linkedin" name="linkedin" class="form-control">
                   </div>
                   <div class="mb-3">
-                    <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
+                    <label for="profile-registered" class="form-label">Registration Date</label>
                     <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
                   </div>
                   <div class="mb-3">
-                    <label for="profile-password" class="form-label">Şifre</label>
+                    <label for="profile-password" class="form-label">Password</label>
                     <input type="password" id="profile-password" name="password" class="form-control">
                   </div>
-                  <button type="submit" class="btn bg-dark w-100 text-white">Güncelle</button>
+                  <button type="submit" class="btn bg-dark w-100 text-white">Update</button>
                 </form>
               </div>
             </div>
           </div>
-          <!-- Sağ Sütun: Maç Geçmişi, İstatistikler ve Oyun Odaları -->
+          <!-- Right Column: Match History, Statistics, Game Rooms -->
           <div class="col-md-6">
             <div class="card shadow-sm mb-4">
               <div class="card-body">
-                <h5 class="card-title">Maç Geçmişi</h5>
+                <h5 class="card-title">Match History</h5>
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th scope="col">Tarih</th>
-                      <th scope="col">Rakip</th>
-                      <th scope="col">Skor</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Opponent</th>
+                      <th scope="col">Score</th>
                     </tr>
                   </thead>
                   <tbody id="match-history">
-                    <!-- Maç geçmişi burada görünecek -->
+                    <!-- Match history will be populated here -->
                   </tbody>
                 </table>
               </div>
             </div>
             <div class="card shadow-sm mb-4">
               <div class="card-body">
-                <h5 class="card-title">İstatistikler</h5>
+                <h5 class="card-title">Statistics</h5>
                 <table class="table table-striped">
                   <tbody id="statistics-list">
-                    <!-- İstatistikler burada görünecek -->
+                    <!-- Statistics will be populated here -->
                   </tbody>
                 </table>
               </div>
             </div>
             <div class="card shadow-sm mb-4">
               <div class="card-body">
-                <h5 class="card-title">Oyun Odaları</h5>
+                <h5 class="card-title">Game Rooms</h5>
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th scope="col">Oda Adı</th>
-                      <th scope="col">Katıl</th>
+                      <th scope="col">Room Name</th>
+                      <th scope="col">Join</th>
                     </tr>
                   </thead>
                   <tbody id="game-rooms">
-                    <!-- Oyun Odaları burada görünecek -->
+                    <!-- Game rooms will be populated here -->
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
-          <!-- Arkadaşlar Listesi -->
+          <!-- Friends List -->
           <div class="col-md-12">
             <div class="card shadow-sm">
               <div class="card-body">
-                <h5 class="card-title mb-4">Arkadaşlar</h5>
+                <h5 class="card-title mb-4">Friends</h5>
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th scope="col">Resim</th>
-                      <th scope="col">Kullanıcı Adı</th>
-                      <th scope="col">Profil</th>
-                      <th scope="col">Aktif</th>
+                      <th scope="col">Image</th>
+                      <th scope="col">Username</th>
+                      <th scope="col">Profile</th>
+                      <th scope="col">Active</th>
                     </tr>
                   </thead>
                   <tbody id="friends-list">
-                    <!-- Arkadaşlar burada görünecek -->
+                    <!-- Friends will be populated here -->
                   </tbody>
                 </table>
               </div>
@@ -121,35 +121,6 @@ class Profile extends HTMLElement {
   </div>  
     `;
   }
-
-
-//   @api_view(['GET'])
-// @permission_classes([IsAuthenticated])
-// def profile(request):
-//     user = request.user
-    
-//     profile = Profile.objects.get(user=user)
-
-//     friends = []
-//     for friend in profile.friends.all():
-//         friends.append({
-//             "username": friend.user.username,
-//             "fullname": friend.user.first_name + " " + friend.user.last_name,
-//             "image": friend.profile_picture
-//         })
-    
-//     data = {
-//         "image": profile.profile_picture,
-//         "fullname": user.first_name + " " + user.last_name,
-//         "username": user.username,
-//         "email": user.email,
-//         "registered": user.date_joined,
-//         "matchHistory": profile.match_history,
-//         "instagram": profile.instagram,
-//         "linkedin": profile.linkedin,
-//         "friends": friends
-//     }
-//     return Response(data, status=200)
 
   async fetchProfile() {
     try {
@@ -182,13 +153,13 @@ class Profile extends HTMLElement {
       this.calculateStatistics(data.matchHistory);
       this.populateFriends(data.friends);
       this.populateGameRooms(myGameRooms);
-  } catch (error) {
-    console.error('Error:', error);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
-}
 
   populateProfile(data) {
-    const date = data.registered ? new Date(data.registered).toLocaleDateString('tr-TR') : '';
+    const date = data.registered ? new Date(data.registered).toLocaleDateString('en-US') : '';
 
     this.querySelector('#profile-image').src = data.image ? data.image : 'https://via.placeholder.com/150';
     this.querySelector('#profile-fullname').value = data.fullname ? data.fullname : '';
@@ -233,23 +204,23 @@ class Profile extends HTMLElement {
     const statisticsList = this.querySelector('#statistics-list');
     statisticsList.innerHTML = `
       <tr>
-        <td>Toplam Maç</td>
+        <td>Total Matches</td>
         <td>${totalMatches}</td>
       </tr>
       <tr>
-        <td>Galibiyet</td>
+        <td>Wins</td>
         <td>${totalWins}</td>
       </tr>
       <tr>
-        <td>Mağlubiyet</td>
+        <td>Losses</td>
         <td>${totalLosses}</td>
       </tr>
       <tr>
-        <td>Atılan Gol</td>
+        <td>Goals Scored</td>
         <td>${totalScored}</td>
       </tr>
       <tr>
-        <td>Yenilen Gol</td>
+        <td>Goals Conceded</td>
         <td>${totalConceded}</td>
       </tr>
     `;
@@ -262,7 +233,7 @@ class Profile extends HTMLElement {
       row.innerHTML = `
         <td><img src="${friend.image}" alt="Profile Image" width="auto" height="50" max-width="100"></td>
         <td>${friend.username}</td>
-        <td><a href="/member?username=${friend.username}" class="btn bg-dark text-white">Profil</a></td>
+        <td><a href="/member?username=${friend.username}" class="btn bg-dark text-white">Profile</a></td>
       `;
       if (friend.active) {
         row.innerHTML += `<td><span class="badge bg-success text-white">Online</span></td>`;
@@ -280,7 +251,7 @@ class Profile extends HTMLElement {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${room.name}</td>
-        <td><a href="/game-room?name=${room.name}" class="btn bg-dark text-white">Katıl</a></td>
+        <td><a href="/game-room?name=${room.name}" class="btn bg-dark text-white">Join</a></td>
       `;
       gameRoomsList.appendChild(row);
     });
@@ -330,7 +301,7 @@ class Profile extends HTMLElement {
       if (resData.error) {
         alert(resData.error);
       } else {
-        alert('Profil güncellendi');
+        alert('Profile updated successfully');
       }
     } catch (error) {
       console.error('Error:', error);

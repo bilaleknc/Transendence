@@ -10,6 +10,7 @@ import "./Components/Profile.js"
 import "./Components/Error.js"
 import "./Components/Member.js"
 import triggerNavbar from "./ModulesJS/TriggerNavbar.js";
+import "./Components/SocialMedia.js"
 
 triggerNavbar();
 
