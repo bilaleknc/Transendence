@@ -1,5 +1,6 @@
 *__pycache
 .env
+./user/.env
 pingpong/game/__pycache__/__init__.cpython-39.pyc
 user/user/urls.py
 pingpong/game/__pycache__/admin.cpython-39.pyc

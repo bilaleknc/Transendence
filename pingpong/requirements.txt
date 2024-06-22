@@ -7,3 +7,4 @@ websockets
 requests
 psycopg2-binary
 djangorestframework
+django-sslserver

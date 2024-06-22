@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +27,14 @@ SECRET_KEY = 'django-insecure-x*dpb9@71h&!b!@oj-h5ps@gof)+y0+igo=c89m90kra(h1caa
 DEBUG = True
 
 
+# HTTPS Ayarları
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Sertifika ve anahtar dosyaları
+SSL_CERTIFICATE_PATH = "certs/certificate.crt"
+SSL_KEY_PATH = "certs/certificate.key"
+
 ALLOWED_HOSTS = ['185.249.202.33', '127.0.0.1', '172.17.0.2', '0.0.0.0', '*']
 
 
@@ -34,6 +43,7 @@ ALLOWED_HOSTS = ['185.249.202.33', '127.0.0.1', '172.17.0.2', '0.0.0.0', '*']
 INSTALLED_APPS = [
     'uvicorn',
     'daphne',
+    'sslserver',
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',

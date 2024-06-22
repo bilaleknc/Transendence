@@ -13,6 +13,18 @@ env = environ.Env()
 environ.Env.read_env()
 
 
+# HTTPS Ayarları
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Sertifika ve anahtar dosyaları
+SSL_CERTIFICATE_PATH = "certs/certificate.crt"
+SSL_KEY_PATH = "certs/certificate.key"
+
+ALLOWED_HOSTS = ['185.249.202.33', '127.0.0.1', '172.17.0.2', '0.0.0.0', '*']
+
+
+
 # Environment variables
 UID_42 = env('UID_42')
 SECRET_42 = env('SECRET_42')
@@ -124,6 +136,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://127.0.0.1:8082",
     "https://127.0.0.1:8080",
     "http://user_db:5432",
+    "http://127.0.0.1:8080"
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 SECURE_SSL_REDIRECT = True
@@ -145,27 +158,27 @@ CORS_ORIGIN_WHITELIST = (
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'user_db',
-#         'USER': 'biekinci', 
-#         'PASSWORD': 'secret',
-#         'HOST': 'user_db', 
-#         'PORT': '5432',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'QlRJKYBFSMDhtBLvdqPkufVWzrhLXbld',
-        'HOST': 'viaduct.proxy.rlwy.net',
-        'PORT': '55435',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'user_db',
+        'USER': 'biekinci', 
+        'PASSWORD': 'secret',
+        'HOST': 'user_db', 
+        'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'railway',
+#         'USER': 'postgres',
+#         'PASSWORD': 'QlRJKYBFSMDhtBLvdqPkufVWzrhLXbld',
+#         'HOST': 'viaduct.proxy.rlwy.net',
+#         'PORT': '55435',
+#     }
+# }
 
 
 # Password validation

@@ -24,11 +24,10 @@ COPY . .
 # RUN python3 manage.py makemigrations
 
 # environment variables file
-COPY .env .
+# COPY .env .
 
+# RUN python3 manage.py makemigrations
 
-
-# Uygulama için gerekli portu aç
 EXPOSE 8080
 
 # Django uygulamasını başlatma komutu
