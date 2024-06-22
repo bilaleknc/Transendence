@@ -6,14 +6,14 @@ class Profile extends HTMLElement {
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <div class="row">
-          <!-- Sol Sütun: Profil Bilgileri ve Arkadaşlar -->
+          <!-- Sol Sütun: Profil Bilgileri -->
           <div class="col-md-6">
             <div class="card shadow-sm mb-4">
               <div class="card-body">
                 <h5 class="card-title mb-4">Profil</h5>
                 <form id="profile-form" class="form">
                   <div class="text-center mb-3">
-                    <img id="profile-image" src="https://via.placeholder.com/150" class="border" alt="Profile Image" width="200" height="auto">
+                    <img id="profile-image" src="https://via.placeholder.com/150" class="rounded-circle border" alt="Profile Image" width="150" height="150">
                   </div>
                   <div class="mb-3">
                     <label for="profile-fullname" class="form-label">Tam Adı</label>
@@ -43,30 +43,14 @@ class Profile extends HTMLElement {
                     <label for="profile-password" class="form-label">Şifre</label>
                     <input type="password" id="profile-password" name="password" class="form-control">
                   </div>
-                  <button type="submit" class="btn bg-dark text-white w-100">Güncelle</button>
+                  <button type="submit" class="btn bg-dark w-100 text-white">Güncelle</button>
                 </form>
-              </div>
-            </div>
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title mb-4">Arkadaşlar</h5>
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">Kullanıcı Adı</th>
-                      <th scope="col">Profil</th>
-                    </tr>
-                  </thead>
-                  <tbody id="friends-list">
-                    <!-- Arkadaşlar burada görünecek -->
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>
           <!-- Sağ Sütun: Maç Geçmişi, İstatistikler ve Oyun Odaları -->
           <div class="col-md-6">
-            <div class="card mt-4 shadow-sm mb-4">
+            <div class="card shadow-sm mb-4">
               <div class="card-body">
                 <h5 class="card-title">Maç Geçmişi</h5>
                 <table class="table table-striped">
@@ -83,7 +67,7 @@ class Profile extends HTMLElement {
                 </table>
               </div>
             </div>
-            <div class="card mt-4 shadow-sm mb-4">
+            <div class="card shadow-sm mb-4">
               <div class="card-body">
                 <h5 class="card-title">İstatistikler</h5>
                 <table class="table table-striped">
@@ -93,7 +77,7 @@ class Profile extends HTMLElement {
                 </table>
               </div>
             </div>
-            <div class="card mt-4 shadow-sm">
+            <div class="card shadow-sm mb-4">
               <div class="card-body">
                 <h5 class="card-title">Oyun Odaları</h5>
                 <table class="table table-striped">
@@ -110,13 +94,62 @@ class Profile extends HTMLElement {
               </div>
             </div>
           </div>
+          <!-- Arkadaşlar Listesi -->
+          <div class="col-md-12">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title mb-4">Arkadaşlar</h5>
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Resim</th>
+                      <th scope="col">Kullanıcı Adı</th>
+                      <th scope="col">Profil</th>
+                      <th scope="col">Aktif</th>
+                    </tr>
+                  </thead>
+                  <tbody id="friends-list">
+                    <!-- Arkadaşlar burada görünecek -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-   
+  </div>  
     `;
   }
+
+
+//   @api_view(['GET'])
+// @permission_classes([IsAuthenticated])
+// def profile(request):
+//     user = request.user
+    
+//     profile = Profile.objects.get(user=user)
+
+//     friends = []
+//     for friend in profile.friends.all():
+//         friends.append({
+//             "username": friend.user.username,
+//             "fullname": friend.user.first_name + " " + friend.user.last_name,
+//             "image": friend.profile_picture
+//         })
+    
+//     data = {
+//         "image": profile.profile_picture,
+//         "fullname": user.first_name + " " + user.last_name,
+//         "username": user.username,
+//         "email": user.email,
+//         "registered": user.date_joined,
+//         "matchHistory": profile.match_history,
+//         "instagram": profile.instagram,
+//         "linkedin": profile.linkedin,
+//         "friends": friends
+//     }
+//     return Response(data, status=200)
 
   async fetchProfile() {
     try {
@@ -147,7 +180,7 @@ class Profile extends HTMLElement {
       this.populateProfile(data);
       this.populateMatchHistory(data.matchHistory);
       this.calculateStatistics(data.matchHistory);
-      this.populateFriends(data.allUsers, data.username);
+      this.populateFriends(data.friends);
       this.populateGameRooms(myGameRooms);
   } catch (error) {
     console.error('Error:', error);
@@ -221,18 +254,22 @@ class Profile extends HTMLElement {
       </tr>
     `;
   }
-  
-  populateFriends(friends, username) {
+
+  populateFriends(friends) {
     const friendsList = this.querySelector('#friends-list');
     friends.forEach(friend => {
-      if (friend === username) {
-        return;
-      }
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td>${friend}</td>
-        <td><a href="/member?username=${friend}" class="btn bg-dark text-white">Profil</a></td>
+        <td><img src="${friend.image}" alt="Profile Image" width="auto" height="50" max-width="100"></td>
+        <td>${friend.username}</td>
+        <td><a href="/member?username=${friend.username}" class="btn bg-dark text-white">Profil</a></td>
       `;
+      if (friend.active) {
+        row.innerHTML += `<td><span class="badge bg-success text-white">Online</span></td>`;
+      }
+      else {
+        row.innerHTML += `<td><span class="badge bg-danger text-white">Offline</span></td>`;
+      }
       friendsList.appendChild(row);
     });
   }
@@ -257,17 +294,15 @@ class Profile extends HTMLElement {
     const password = this.querySelector('#profile-password').value;
     const instagram = this.querySelector('#profile-instagram').value;
     const linkedin = this.querySelector('#profile-linkedin').value;
+    let first_name = '';
+    let last_name = '';
 
     try {
-      let first_name = '';
-      let last_name = '';
-      for (let i = 0; i < fullname.split(' ').length; i++) {
-        if(i === fullname.split(' ').length - 1)
-          first_name += fullname.split(' ')[i] + ' ';
-        else
-          last_name += fullname.split(' ')[i] + ' ';
+      for (let i = 0; i < fullname.split(' ').length - 1; i++) {
+        first_name += fullname.split(' ')[i] + ' ';
       }
-
+      last_name = fullname.split(' ')[fullname.split(' ').length - 1];
+      
       const response = await fetch('https://localhost:8080/update_profile', {
         method: 'PUT',
         headers: {
@@ -277,7 +312,8 @@ class Profile extends HTMLElement {
           'Authorization': `Token ${localStorage.getItem('access_token')}`
         },
         body: JSON.stringify({
-          first_name: fullname.split(' ')[0],
+          first_name: first_name.trim(),
+          last_name: last_name,
           username: username,
           email: email,
           instagram: instagram,

@@ -3,78 +3,96 @@ class Member extends HTMLElement {
     super();
     this.innerHTML = `
     <div id="profile-page" class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="row">
-          <!-- Profil Bilgileri -->
-          <div class="col-md-6">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <form id="profile-form" class="form">
-                  <div class="text-center mb-3">
-                    <img id="profile-image" src="https://via.placeholder.com/150" class="border" alt="Profile Image" width="200" height="auto">
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-fullname" class="form-label">Tam Adı</label>
-                    <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-username" class="form-label">Kullanıcı Adı</label>
-                    <input type="text" id="profile-username" name="username" class="form-control" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-email" class="form-label">Email</label>
-                    <input type="email" id="profile-email" name="email" class="form-control" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
-                    <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
-                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
-                    <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-          <!-- Maç Geçmişi ve İstatistikler -->
-          <div class="col-md-6">
-            <div class="row">
-              <!-- Maç Geçmişi -->
-              <div class="col-md-12">
-                <div class="card mt-4 shadow-sm">
-                  <div class="card-body">
-                    <h5 class="card-title">Maç Geçmişi</h5>
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th scope="col">Tarih</th>
-                          <th scope="col">Rakip</th>
-                          <th scope="col">Skor</th>
-                        </tr>
-                      </thead>
-                      <tbody id="match-history">
-                        <!-- Maç geçmişi burada görünecek -->
-                      </tbody>
-                    </table>
-                  </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="row">
+            <!-- Profil Bilgileri -->
+            <div class="col-md-6">
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <form id="profile-form" class="form">
+                    <div class="text-center mb-3">
+                      <img id="profile-image" src="https://via.placeholder.com/150" class="border" alt="Profile Image" width="200" height="auto">
+                    </div>
+                    <div class="mb-3">
+                      <label for="profile-fullname" class="form-label">Tam Adı</label>
+                      <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                      <label for="profile-username" class="form-label">Kullanıcı Adı</label>
+                      <input type="text" id="profile-username" name="username" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                      <label for="profile-email" class="form-label">Email</label>
+                      <input type="email" id="profile-email" name="email" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                      <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
+                      <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                      <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
+                      <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                      <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
+                      <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
+                    </div>
+                  </form>
                 </div>
               </div>
-              <!-- İstatistikler -->
-              <div class="col-md-12 mt-4">
-                <div class="card shadow-sm">
-                  <div class="card-body">
-                    <h5 class="card-title">İstatistikler</h5>
-                    <table class="table table-striped">
-                      <tbody id="statistics-list">
-                        <!-- İstatistikler burada görünecek -->
-                      </tbody>
-                    </table>
+            </div>
+            <!-- Aktiflik Durumu, Arkadaş Ekle, Maç Geçmişi ve İstatistikler -->
+            <div class="col-md-6">
+              <div class="row">
+                <!-- Aktiflik Durumu -->
+                <div class="col-md-12">
+                  <div class="card shadow-sm mb-4">
+                    <div class="card-body text-center">
+                      <span id="profile-active" class="badge"></span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Arkadaş Ekle -->
+                <div class="col-md-12">
+                  <div id="add-friend-container" class="card shadow-sm">
+                    <div class="card-body">
+                      <button id="add-friend" class="btn bg-dark text-white w-100">Arkadaş Ekle</button>
+                      <button id="remove-friend" class="btn bg-danger text-white w-100 d-none">Arkadaştan Çıkar</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Maç Geçmişi -->
+                <div class="col-md-12">
+                  <div class="card mt-4 shadow-sm">
+                    <div class="card-body">
+                      <h5 class="card-title">Maç Geçmişi</h5>
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th scope="col">Tarih</th>
+                            <th scope="col">Rakip</th>
+                            <th scope="col">Skor</th>
+                          </tr>
+                        </thead>
+                        <tbody id="match-history">
+                          <!-- Maç geçmişi burada görünecek -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <!-- İstatistikler -->
+                <div class="col-md-12 mt-4">
+                  <div class="card shadow-sm">
+                    <div class="card-body">
+                      <h5 class="card-title">İstatistikler</h5>
+                      <table class="table table-striped">
+                        <tbody id="statistics-list">
+                          <!-- İstatistikler burada görünecek -->
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -83,30 +101,102 @@ class Member extends HTMLElement {
         </div>
       </div>
     </div>
-  </div>
-  
     `;
+  }
+
+  async connectedCallback() {
+    this.fetchProfile();
+    this.querySelector('#profile-form').addEventListener('submit', (e) => this.updateProfile(e));
   }
 
   async fetchProfile() {
     try {
-      // https://localhost:8082/member?username=muerdoga
-      // urlden username alınacak
       const username = new URLSearchParams(window.location.search).get('username');
-      console.log(`https://localhost:8080/member?username=${username}`);
-      const response = await fetch(`https://localhost:8080/member?username=${username}`);
+      const response = await fetch(`https://localhost:8080/member?username=${username}`, {
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('access_token')}`
+        }
+      });
+      if (response.status !== 200) {
+        alert('Kullanıcı bulunamadı');
+        window.location.href = '/';
+      }
       const data = await response.json();
       console.log(data);
       this.populateProfile(data);
       this.populateMatchHistory(data.matchHistory);
       this.calculateStatistics(data.matchHistory);
-  } catch (error) {
-    console.error('Error:', error);
+      this.checkFriendStatus(data.is_friend);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
-}
+
+  async addFriend() {
+    try {
+      const username = new URLSearchParams(window.location.search).get('username');
+      const response = await fetch('https://localhost:8080/add_friend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify({ username })
+      });
+      const data = await response.json();
+      if (response.status === 200) {
+        this.checkFriendStatus(true);
+        alert("Arkadaş eklendi");
+      } else {
+        alert(data.error || "Bir hata oluştu");
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async removeFriend() {
+    try {
+      const username = new URLSearchParams(window.location.search).get('username');
+      const response = await fetch('https://localhost:8080/remove_friend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify({ username })
+      });
+      const data = await response.json();
+      if (response.status === 200) {
+        this.checkFriendStatus(false);
+        alert("Arkadaşlıktan çıkarıldı");
+      } else {
+        alert(data.error || "Bir hata oluştu");
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  checkFriendStatus(isFriend) {
+    const addFriendBtn = this.querySelector('#add-friend');
+    const removeFriendBtn = this.querySelector('#remove-friend');
+    
+    if (isFriend) {
+      addFriendBtn.classList.add('d-none');
+      removeFriendBtn.classList.remove('d-none');
+    } else {
+      addFriendBtn.classList.remove('d-none');
+      removeFriendBtn.classList.add('d-none');
+    }
+  }
 
   populateProfile(data) {
     const date = data.registered ? new Date(data.registered).toLocaleDateString('tr-TR') : '';
+
+    const activeBadge = this.querySelector('#profile-active');
+    activeBadge.textContent = data.active ? 'Online' : 'Offline';
+    activeBadge.className = data.active ? 'badge bg-success text-white w-100' : 'badge bg-danger text-white w-100';
 
     this.querySelector('#profile-image').src = data.image ? data.image : 'https://via.placeholder.com/150';
     this.querySelector('#profile-fullname').value = data.fullname ? data.fullname : '';
@@ -115,6 +205,17 @@ class Member extends HTMLElement {
     this.querySelector('#profile-registered').value = date ? date : '';
     this.querySelector('#profile-instagram').value = data.instagram ? data.instagram : '';
     this.querySelector('#profile-linkedin').value = data.linkedin ? data.linkedin : '';
+  }
+
+  populateMatchHistory(matchHistory) {
+    const matchHistoryElement = this.querySelector('#match-history');
+    matchHistoryElement.innerHTML = matchHistory.map(match => `
+      <tr>
+        <td>${new Date(match.date).toLocaleDateString('tr-TR')}</td>
+        <td>${match.opponent}</td>
+        <td>${match.score}</td>
+      </tr>
+    `).join('');
   }
 
   populateMatchHistory(matchHistory) {
@@ -176,6 +277,8 @@ class Member extends HTMLElement {
 
   connectedCallback() {
     this.fetchProfile();
+    this.querySelector('#add-friend').addEventListener('click', () => this.addFriend());
+    this.querySelector('#remove-friend').addEventListener('click', () => this.removeFriend());
     this.querySelector('#profile-form').addEventListener('submit', (e) => this.updateProfile(e));
   }
 }

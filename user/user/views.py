@@ -183,9 +183,17 @@ def login_with_google(request):
 @permission_classes([IsAuthenticated])
 def profile(request):
     user = request.user
-    allUsers = User.objects.all()
     
     profile = Profile.objects.get(user=user)
+
+    friends = []
+    for friend in profile.friends.all():
+        friends.append({
+            "username": friend.user.username,
+            "fullname": friend.user.first_name + " " + friend.user.last_name,
+            "image": friend.profile_picture,
+            "active": friend.user.is_active,
+        })
     
     data = {
         "image": profile.profile_picture,
@@ -196,7 +204,7 @@ def profile(request):
         "matchHistory": profile.match_history,
         "instagram": profile.instagram,
         "linkedin": profile.linkedin,
-        "allUsers": [user.username for user in allUsers]
+        "friends": friends,
     }
     return Response(data, status=200)
 
@@ -225,20 +233,68 @@ def update_profile(request):
     return Response({"success": "Profile updated successfully"}, status=200)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def member(request):
-    username = request.GET.get('username')
-    print(username)
-    user = User.objects.get(username=username)
+    user = request.user
     profile = Profile.objects.get(user=user)
+
+    member_username = request.GET.get('username')
+    member = User.objects.get(username=member_username)
+    member_profile = Profile.objects.get(user=member)
+
+    is_friend = False
+
+    if member_profile in profile.friends.all():
+        is_friend = True
     data = {
-        "image": profile.profile_picture,
-        "fullname": user.first_name + " " + user.last_name,
-        "username": user.username,
-        "email": user.email,
-        "registered": user.date_joined,
-        "matchHistory": profile.match_history,
+        "image": member_profile.profile_picture,
+        "fullname": member.first_name + " " + member.last_name,
+        "username": member.username,
+        "email": member.email,
+        "registered": member.date_joined,
+        "matchHistory": member_profile.match_history,
         "instagram": profile.instagram,
         "linkedin": profile.linkedin,
+        "active": member.is_active,
+        "is_friend": is_friend
     }
+    return Response(data, status=200)
+ 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_friend(request):
+    user = request.user
+    friend_username = request.data.get('username')
+    friend = User.objects.get(username=friend_username)
+    profile = Profile.objects.get(user=user)
+    friend_profile = Profile.objects.get(user=friend)
+    profile.friends.add(friend_profile)
+    return Response({"success": "Friend added successfully"}, status=200)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def remove_friend(request):
+    user = request.user
+    friend_username = request.data.get('username')
+    friend = User.objects.get(username=friend_username)
+    profile = Profile.objects.get(user=user)
+    friend_profile = Profile.objects.get(user=friend)
+    profile.friends.remove(friend_profile)
+    return Response({"success": "Friend removed successfully"}, status=200)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_users(request):
+    users = User.objects.all()
+    data = []
+    for user in users:
+        profile = Profile.objects.get(user=user)
+        data.append({
+            "username": user.username,
+            "fullname": user.first_name + " " + user.last_name,
+            "email": user.email,
+            "image": profile.profile_picture,
+            "registered": user.date_joined,
+            "is_active": user.is_active
+        })
     return Response(data, status=200)
