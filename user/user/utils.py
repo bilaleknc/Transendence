@@ -94,7 +94,7 @@ def twoFactor(user):
     Regards,
     Transcendence Team
     '''
-    from_email = OS.getenv("EMAIL")
+    from_email = os.getenv("EMAIL")
     recipient_list = [receiver]
     print(receiver)
     print("sent emailden önce")
