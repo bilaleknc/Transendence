@@ -1,0 +1,28 @@
+body{
+	margin: 0; padding: 0;
+	align-items: center;
+	font-family: 'Roboto', sans-serif;
+}
+canvas {
+	background: #000;
+	margin: 0; padding: 0;
+	width: 100%;
+}
+
+.social-links{
+	bottom: 0;
+	left: 0;
+	padding: 5px;
+	background: rgba(0,0,0,0.5);
+}
+
+.bi
+{
+	color: white;
+	font-size: 20px;
+}
+
+.bi:hover
+{
+	color: #007bff;
+}
