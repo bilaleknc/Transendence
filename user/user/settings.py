@@ -7,10 +7,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-^aak9*pyy=3t=+zj%73u1_+q(p+oj*5pz!h)yl9wpx%q$-)9@+'
 env = environ.Env()
 environ.Env.read_env()
+
+#Mail Config
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env('EMAIL')
+EMAIL_HOST_PASSWORD = env('EMAIL_PASS')
 
 
 # HTTPS Ayarları
@@ -158,27 +167,27 @@ CORS_ORIGIN_WHITELIST = (
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'user_db',
-        'USER': 'biekinci', 
-        'PASSWORD': 'secret',
-        'HOST': 'user_db', 
-        'PORT': '5432',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'railway',
-#         'USER': 'postgres',
-#         'PASSWORD': 'QlRJKYBFSMDhtBLvdqPkufVWzrhLXbld',
-#         'HOST': 'viaduct.proxy.rlwy.net',
-#         'PORT': '55435',
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'user_db',
+#         'USER': 'biekinci', 
+#         'PASSWORD': 'secret',
+#         'HOST': 'user_db', 
+#         'PORT': '5432',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'QlRJKYBFSMDhtBLvdqPkufVWzrhLXbld',
+        'HOST': 'viaduct.proxy.rlwy.net',
+        'PORT': '55435',
+    }
+}
 
 
 # Password validation

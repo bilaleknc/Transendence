@@ -80,12 +80,16 @@ def login(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
+        print(username, password)
         try:
             user = Authenticator.authenticate(username=username, password=password)
         except AuthenticationFailed as e:
             return Response({"detail": str(e)}, status=401)
+        print("authenticator'den sonra")
         twoFactor(user)
+        print("twoFactor'den sonra")
         return Response({"success": "logging on..."}, status=200)    
+    return Response({"error": "Method not allowed"}, status=405)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])

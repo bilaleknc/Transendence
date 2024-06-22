@@ -1,8 +1,11 @@
+import error from "../ModulesJS/ErrorUtils.js";
+import triggerNavbar from "../ModulesJS/TriggerNavbar.js";
+
 class Signup extends HTMLElement {
 	constructor() {
 	  super();
 	  this.innerHTML = `
-<div id="sign-page">
+		<div id="sign-page">
     <div class="container">
         <div class="toggle-buttons">
             <button id="login-toggle" class="toggle-btn active">Giriş Yap</button>
@@ -19,10 +22,13 @@ class Signup extends HTMLElement {
                     <label for="login-password">Şifre</label>
                     <input type="password" id="login-password" required>
                 </div>
-                <button type="submit" class="btn ">Giriş Yap</button>
+                <div id="error-content">
+                    <my-error name="" content=""><my-error>
+                </div>
+                <button type="submit" class="btn">Giriş Yap</button>
                 <div class="social-login">
-                    <button id= "login-42" type="button" class="btn bg-dark text-white">42 ile Giriş Yap</button>
-                    <button id= "login-google" type="button" class="btn bg-dark text-white" >Google ile Giriş Yap</button>
+                    <button id= "login-42" type="button" class="btn social-btn bg-dark">42 API ile Giriş Yap</button>
+                    <button id= "login-google" type="button" class="btn social-btn bg-dark" >Google ile Giriş Yap</button>
                     <div class="g-signin2" data-onsuccess="onSignIn"></div>
                 </div>
             </form>
@@ -44,13 +50,16 @@ class Signup extends HTMLElement {
 				<label for="register-password2">Şifre Tekrar</label>
 				<input type="password" id="register-password2" name="password2" required>
 			</div>
+            <div id="error-content">
+                <my-error name="" content=""><my-error>
+            </div>
 			<button type="submit" class="btn">Üye Ol</button>
 		</form>
 
             </div>
         </form>
     </div>
-    </div>
+</div>
 </div>
 	  `;
 
@@ -113,7 +122,9 @@ class Signup extends HTMLElement {
 		});
 		const data = await response.json();
 		if (data.url) {			
-			window.location.href = data.url
+            console.log(data.url)
+            var newWindow = window.open(data.url, '_blank');
+            triggerNavbar();
 		}
 	}
 
@@ -146,15 +157,12 @@ class Signup extends HTMLElement {
 				})
 		}).then(response => response.json())
 		.then(data => {
-            console.log(data);
-			if (data.token) {
-				const { token } = data;
-                localStorage.setItem('access_token', token);
-				alert('Logged in success');
-				window.route({ target: { href: '/' } });
+			if (data.success) {
+                error.call(this, data, 0);
+                this.innerHTML = `<my-loading page="login" username="${username}""></my-loading>`
 			}else {
-                alert('Invalid username or password');
-			}
+                error.call(this, data, 0);
+            }
 		}).catch((error) => {
             console.error('Error:', error);
         });
@@ -184,23 +192,22 @@ class Signup extends HTMLElement {
                     password2: password2,
                 })
             });
-    
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-    
+            
             const resData = await response.json();
-            if (resData.error) {
-                alert(resData.error, 3, 'error');
-            } else {
-                alert('Registered', 3, 'success');
-                // window.route({ target: { href: '/' } });
-				window.location.href = '/sign-up';
+            
+            if (!response.ok) {
+                error.call(this, resData, 1);
+                return;
             }
+            console.log(resData);
+            error.call(this, resData, 1);
+            this.innerHTML = `<my-loading page="register" username="${username}" password="${password}"></my-loading>`
         } catch (error) {
-            console.error('Error:', error);
+            console.log('Error:', error);
         }
     }
+
+    
 }
 
 

@@ -68,7 +68,7 @@ class Loading extends HTMLElement {
         `
         this.time = null;
         this.render();
-        this.todosArr = this.attributes.page.value;
+        this.todosArr = this.attributes.page?.value;
         this.username = this.attributes.username?.value;
         const code = document.querySelector('#sendCode')
         code?.addEventListener('submit', (e) => {

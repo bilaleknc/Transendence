@@ -6,6 +6,10 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from user.models import VerificationCode
 
+
+
+
+
 def getUserbyPlatform(token, platform):
     if platform == '42':
         base_url = 'https://api.intra.42.fr'
@@ -69,7 +73,7 @@ def send_email(user):
     Regards,
     Transcendence Team
     '''
-    from_email = os.getenv("EMAIL_HOST_USER")
+    from_email = os.getenv("EMAIL")
     recipient_list = [receiver]
     send_mail(subject, message, from_email, recipient_list)
     VerificationCode.objects.create(code=otp_code['otp'], expired_date=otp_code['otp_expired_date'], user=user.profile)
@@ -90,9 +94,13 @@ def twoFactor(user):
     Regards,
     Transcendence Team
     '''
-    from_email = os.getenv("EMAIL_HOST_USER")
+    from_email = OS.getenv("EMAIL")
     recipient_list = [receiver]
+    print(receiver)
+    print("sent emailden önce")
+    print(receiver, subject, message, from_email, recipient_list)
     send_mail(subject, message, from_email, recipient_list)
+    print("sent emailden sonra")
     verificationCode = VerificationCode.objects.get(user=user.profile)
     verificationCode.code = otp_code['otp']
     verificationCode.expired_date = otp_code['otp_expired_date']
