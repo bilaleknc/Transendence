@@ -1,0 +1,124 @@
+version: '3'
+
+networks:
+  nw:
+    driver: bridge
+  nw2:
+    driver: bridge
+
+services:
+
+  user:
+    container_name: user
+    build:
+      context: ./user
+      dockerfile: DockerfileUser
+    volumes:
+      - ./user:/app
+    ports:
+      - "8080:8080"
+    networks:
+      - nw
+    # depends_on:
+    #   user_db:
+    #     condition: service_healthy
+    env_file:
+      - ./user/.env
+
+  user_db:
+    container_name: user_db
+    build:
+      context: ./user
+      dockerfile: DockerfileDb
+    volumes:
+      - ./user/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - user_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - nw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+
+
+
+  # pinpong:
+  #   container_name: pingpong
+  #   build:
+  #     context: ./pingpong
+  #     dockerfile: DockerfilePingPong
+  #   command: python3 manage.py runserver 0.0.0.0:8081
+  #   volumes:
+  #     - ./pingpong:/app
+  #   ports:
+  #     - "8081:8081"
+  #   networks:
+  #     - nw2
+  #   depends_on:
+  #     pingpong_db:
+  #       condition: service_healthy
+
+  # pingpong_db:
+  #   container_name: pingpong_db
+  #   build:
+  #     context: ./pingpong
+  #     dockerfile: DockerfileDb
+  #   volumes:
+  #     - ./pingpong/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+  #     - pingpong_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - nw2
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 3s
+  #     timeout: 5s
+  #     retries: 3
+
+  nginx:
+    container_name: frontendbi
+    build: ./frontend
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend:/usr/share/nginx/html/
+    depends_on:
+      - user
+    networks:
+      - nw
+    
+  # prometheus:
+  #   container_name: prometheus
+  #   image: prom/prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./devops/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   networks:
+  #     - nw
+  
+  # grafana:
+  #   container_name: grafana
+  #   image: grafana/grafana
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=eren
+  #     - GF_SECURITY_ADMIN_PASSWORD=12345
+  #   volumes:
+  #     - ./devops:/var/lib/grafana
+  #   networks:
+  #     - nw
+  #   depends_on:
+  #     - prometheus
+
+volumes:
+  user_data:
+  pingpong_data:
+
+  

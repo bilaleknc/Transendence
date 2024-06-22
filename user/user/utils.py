@@ -72,6 +72,30 @@ def send_email(user):
     from_email = os.getenv("EMAIL_HOST_USER")
     recipient_list = [receiver]
     send_mail(subject, message, from_email, recipient_list)
+    VerificationCode.objects.create(code=otp_code['otp'], expired_date=otp_code['otp_expired_date'], user=user.profile)
 
-    VerificationCode.objects.create(code=otp_code['otp'], expired_date=otp_code['otp'], user=user.profile)
+def twoFactor(user):
+    otp_code = generate_otp()
+    receiver = user.email
+    subject = 'Transcendence Email Verification'
+    message = f'''
+    Hello {user.username},
+
+    You can use the one-time code below to log in to your Transcendence account:
+
+    Verification Code: {otp_code['otp']}
+
+    This code will help you log in to your account securely.
+
+    Regards,
+    Transcendence Team
+    '''
+    from_email = os.getenv("EMAIL_HOST_USER")
+    recipient_list = [receiver]
+    send_mail(subject, message, from_email, recipient_list)
+    verificationCode = VerificationCode.objects.get(user=user.profile)
+    verificationCode.code = otp_code['otp']
+    verificationCode.expired_date = otp_code['otp_expired_date']
+    verificationCode.save()
+    
 

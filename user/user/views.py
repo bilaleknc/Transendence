@@ -19,6 +19,49 @@ from user.models import Profile
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+def verify_token(request):
+    token_key = request.data.get('token', None)
+    print(token_key)
+    if not token_key:
+        return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        token = Token.objects.get(key=token_key)
+        return Response({"message": "Token is valid", "user": token.user.username}, status=status.HTTP_200_OK)
+    except Token.DoesNotExist:
+        return Response({"error": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def notActive(request):
+    if request.method == 'POST':
+        print(request.data["username"])
+        user = User.objects.get(username=request.data["username"])
+        verificationCode = VerificationCode.objects.get(user=user.profile)
+        if user.is_active == False:
+            user.delete()
+            verificationCode.delete()
+        return Response({"success": "User delete"}, status=204)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def otp(request):
+    if request.method == 'POST':
+        user = User.objects.get(username=request.GET.get('username'))
+        code = request.GET.get('number')
+        verificationCode = VerificationCode.objects.get(user=user.profile)
+        print(verificationCode.code)
+        print(code)
+        if int(verificationCode.code) == int(code):
+            token = TokenGenerator.generate_token(user)
+            user.is_active = True
+            user.save()
+            return Response({"success": "User registered successfully", "token": token,}, status=200)
+        else:
+            return Response({"wrong": "Please check your mailbox for incoming mail"}, status=401)
+    return Response({"success": "User registered successfully"}, status=204)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     if request.method == 'POST':
         serializer = RegisterSerializer(data=request.data)
@@ -26,6 +69,7 @@ def register(request):
         if serializer.is_valid():
             print("serializer valid")
             user = serializer.save()
+            send_email(user);
             print("save'den sonra")
             return Response({"success": "User registered successfully"}, status=201)
         return Response(serializer.errors, status=400)
@@ -40,10 +84,8 @@ def login(request):
             user = Authenticator.authenticate(username=username, password=password)
         except AuthenticationFailed as e:
             return Response({"detail": str(e)}, status=401)
-        token = TokenGenerator.generate_token(user)
-        print(token)
-        
-        return Response({"token": token}, status=200)    
+        twoFactor(user)
+        return Response({"success": "logging on..."}, status=200)    
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -69,8 +111,7 @@ def verify_email_and_login(request):
     user, error_response = Authenticator.authenticate_user(verification_code)
     if error_response:
         return error_response
-
-    response_data = TokenGenerator.generate_tokens(user)
+    twoFactor(user)
     return Response(data=response_data, status=200)
 
 
