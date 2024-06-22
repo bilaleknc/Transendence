@@ -206,8 +206,10 @@ def update_profile(request):
     user = request.user
     profile = Profile.objects.get(user=user)
     data = request.data
-    if 'fullname' in data:
-        profile.nickname = data['fullname']
+    if 'first_name' in data:
+        user.first_name = data['first_name']
+    if 'last_name' in data:
+        user.last_name = data['last_name']
     if 'username' in data:
         user.username = data['username']
     if 'email' in data:

@@ -19,31 +19,29 @@ services:
       - "8080:8080"
     networks:
       - nw
-    depends_on:
-      user_db:
-        condition: service_healthy
+    # depends_on:
+    #   user_db:
+    #     condition: service_healthy
     env_file:
       - ./user/.env
 
-  user_db:
-    container_name: user_db
-    build:
-      context: ./user
-      dockerfile: DockerfileDb
-    volumes:
-      - ./user/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
-      - user_data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    networks:
-      - nw
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 3s
-      timeout: 3s
-      retries: 3
-
-
+  # user_db:
+  #   container_name: user_db
+  #   build:
+  #     context: ./user
+  #     dockerfile: DockerfileDb
+  #   volumes:
+  #     - ./user/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+  #     - user_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5433:5432"
+  #   networks:
+  #     - nw
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 3s
+  #     timeout: 3s
+  #     retries: 3
 
   # pinpong:
   #   container_name: pingpong
@@ -116,6 +114,6 @@ services:
 
 volumes:
   user_data:
-  pingpong_data:
+  # pingpong_data:
 
   

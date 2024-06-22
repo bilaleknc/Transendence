@@ -133,12 +133,6 @@ class Profile extends HTMLElement {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
-      // match history data example
-      // match_history = [
-      //   {"date": "2021-06-01", "opponent": "xyz", "score": "3-1"},
-      //   {"date": "2021-06-02", "opponent": "abc", "score": "1-2"},
-      // ];
       
       const myGameRooms = [
           { name: 'Room 1' },
@@ -265,6 +259,15 @@ class Profile extends HTMLElement {
     const linkedin = this.querySelector('#profile-linkedin').value;
 
     try {
+      let first_name = '';
+      let last_name = '';
+      for (let i = 0; i < fullname.split(' ').length; i++) {
+        if(i === fullname.split(' ').length - 1)
+          first_name += fullname.split(' ')[i] + ' ';
+        else
+          last_name += fullname.split(' ')[i] + ' ';
+      }
+
       const response = await fetch('https://localhost:8080/update_profile', {
         method: 'PUT',
         headers: {
@@ -274,7 +277,7 @@ class Profile extends HTMLElement {
           'Authorization': `Token ${localStorage.getItem('access_token')}`
         },
         body: JSON.stringify({
-          fullname: fullname,
+          first_name: fullname.split(' ')[0],
           username: username,
           email: email,
           instagram: instagram,
