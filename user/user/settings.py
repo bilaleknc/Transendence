@@ -183,12 +183,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': 'QlRJKYBFSMDhtBLvdqPkufVWzrhLXbld',
-        'HOST': 'viaduct.proxy.rlwy.net',
-        'PORT': '55435',
+        'PASSWORD': 'xzWjIvvkskJJejSLJkRNpQpoyKuhplPh',
+        'HOST': 'monorail.proxy.rlwy.net',
+        'PORT': '41848',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
