@@ -2,7 +2,7 @@ class Signup extends HTMLElement {
 	constructor() {
 	  super();
 	  this.innerHTML = `
-		<div id="sign-page">
+<div id="sign-page">
     <div class="container">
         <div class="toggle-buttons">
             <button id="login-toggle" class="toggle-btn active">Giriş Yap</button>
@@ -10,7 +10,7 @@ class Signup extends HTMLElement {
         </div>
         <div class="form-container">
             <form id="login-form" class="form active">
-                <h2>Giriş Yap</h2>
+                <h2 class="text-center">Giriş Yap</h2>
                 <div class="input-group">
                     <label for="login-username">Kullanıcı Adı</label>
                     <input type="text" id="login-username" required>
@@ -19,15 +19,15 @@ class Signup extends HTMLElement {
                     <label for="login-password">Şifre</label>
                     <input type="password" id="login-password" required>
                 </div>
-                <button type="submit" class="btn">Giriş Yap</button>
+                <button type="submit" class="btn ">Giriş Yap</button>
                 <div class="social-login">
-                    <button id= "login-42" type="button" class="btn social-btn">42 API ile Giriş Yap</button>
-                    <button id= "login-google" type="button" class="btn social-btn" >Google ile Giriş Yap</button>
+                    <button id= "login-42" type="button" class="btn bg-dark text-white">42 ile Giriş Yap</button>
+                    <button id= "login-google" type="button" class="btn bg-dark text-white" >Google ile Giriş Yap</button>
                     <div class="g-signin2" data-onsuccess="onSignIn"></div>
                 </div>
             </form>
 		<form id="register-form" class="form">
-			<h2>Üye Ol</h2>
+			<h2 class="text-center">Üye Ol</h2>
 			<div class="input-group">
 				<label for="register-username">Kullanıcı Adı</label>
 				<input type="text" id="register-username" name="username" required>
@@ -50,7 +50,7 @@ class Signup extends HTMLElement {
             </div>
         </form>
     </div>
-</div>
+    </div>
 </div>
 	  `;
 

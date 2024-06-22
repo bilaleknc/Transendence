@@ -1,29 +1,26 @@
 class UsAbout extends HTMLElement {
 	constructor() {
-	  super();
-	  this.classList.add('col')
-	  this.innerHTML = `
-		<div class="d-flex flex-column p-2 align-items-start">
-			<img 
-			class="rounded-circle m-4 img-fluid"
-			style="width: 100px;"
-			src="../Public/${this.getAttribute("imgName")}"
-			alt="${this.getAttribute("name")}"
-			>
-  
-			<p>
-			  ${this.getAttribute("about") 
-			  ? this.getAttribute("about") 
-			  : this.getAttribute('name').toLocaleUpperCase() 
-			  + "<br> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged."}
-			</p>
-		  <div class="d-flex align-items-start">
-			<a href="${this.getAttribute("linkedin")}" class="bi bi-linkedin p-2"></a>
-			<a style="color: black;" href="${this.getAttribute("github")}" class="bi bi-github p-2"></a>
-		  </div>
-		</div>
-	  `;
+			super();
+			this.classList.add('col-lg-4', 'col-md-6', 'mb-4');
+			this.innerHTML = `
+					<div class="card">
+							<img 
+									class="card-img-top rounded-circle mx-auto d-block mt-4 shadow"
+									style="width: 150px;"
+									src="../Public/${this.getAttribute("imgName")}"
+									alt="${this.getAttribute("name")}"
+							>
+							<div class="card-body text-center">
+									<h5 class="card-title">${this.getAttribute("name")}</h5>
+									<p class="card-text">${this.getAttribute("role")}</p>
+									<div class="social-links shadow">
+											<a href="${this.getAttribute("linkedin")}" class="bi bi-linkedin m-2" target="_blank"></a>
+											<a href="${this.getAttribute("github")}" class="bi bi-github m-2" target="_blank"></a>
+									</div>
+							</div>
+					</div>
+			`;
 	}
-  }
-  
-  customElements.define("us-about", UsAbout);
+}
+
+customElements.define("us-about", UsAbout);

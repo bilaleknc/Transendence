@@ -138,8 +138,10 @@ def login_with_google(request):
 @permission_classes([IsAuthenticated])
 def profile(request):
     user = request.user
+    allUsers = User.objects.all()
     
     profile = Profile.objects.get(user=user)
+    
     data = {
         "image": profile.profile_picture,
         "fullname": user.first_name + " " + user.last_name,
@@ -149,6 +151,7 @@ def profile(request):
         "matchHistory": profile.match_history,
         "instagram": profile.instagram,
         "linkedin": profile.linkedin,
+        "allUsers": [user.username for user in allUsers]
     }
     return Response(data, status=200)
 

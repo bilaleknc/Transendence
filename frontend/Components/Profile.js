@@ -17,7 +17,7 @@ class Profile extends HTMLElement {
                   </div>
                   <div class="mb-3">
                     <label for="profile-fullname" class="form-label">Tam Adı</label>
-                    <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
+                    <input type="text" id="profile-fullname" name="fullname" class="form-control">
                   </div>
                   <div class="mb-3">
                     <label for="profile-username" class="form-label">Kullanıcı Adı</label>
@@ -29,16 +29,21 @@ class Profile extends HTMLElement {
                   </div>
                   <div class="mb-3">
                     <label for="profile-instagram" class="form-label">Instagram Hesabı</label>
-                    <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
+                    <input type="text" id="profile-instagram" name="instagram" class="form-control">
                   </div>
                   <div class="mb-3">
                     <label for="profile-linkedin" class="form-label">Linkedin Hesabı</label>
-                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
+                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control">
                   </div>
                   <div class="mb-3">
                     <label for="profile-registered" class="form-label">Kayıt Tarihi</label>
                     <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
                   </div>
+                  <div class="mb-3">
+                    <label for="profile-password" class="form-label">Şifre</label>
+                    <input type="password" id="profile-password" name="password" class="form-control">
+                  </div>
+                  <button type="submit" class="btn bg-dark text-white w-100">Güncelle</button>
                 </form>
               </div>
             </div>
@@ -114,19 +119,6 @@ class Profile extends HTMLElement {
   }
 
   async fetchProfile() {
-    // const data = {
-    //   image: 'https://cdn.intra.42.fr/users/53ddddb821c330abf341a0a3ccb5fc6f/muerdoga.jpg',
-    //   fullname: 'Mustafa Eren Erdoğan',
-    //   username: 'muerdoga',
-    //   email: 'erenerdoga037@gmail.com',
-    //   registered: '2021-01-01',
-    //   matchHistory: [
-    //     { date: '2021-01-01', opponent: 'Jane Doe', score: '2-0' },
-    //     { date: '2021-01-02', opponent: 'Jane Doe', score: '2-1' },
-    //     { date: '2021-01-03', opponent: 'Jane Doe', score: '1-2' }
-    //   ]
-    // };
-
     try {
       const response = await fetch('https://localhost:8080/profile', {
         method: 'GET',
@@ -142,19 +134,11 @@ class Profile extends HTMLElement {
         throw new Error('Network response was not ok');
       }
 
-      const myMathHistory = [
-          { date: '2021-01-01', opponent: 'Jane Doe', score: '2-0' },
-          { date: '2021-01-02', opponent: 'Jane Doe', score: '2-1' },
-          { date: '2021-01-03', opponent: 'Jane Doe', score: '1-2' }
-      ];
-
-      const myFriends = [
-          { username: 'sakkus' },
-          { username: 'janedoe' },
-          { username: 'jackdo'  },
-          { username: 'jilldoe' },
-          { username: 'junedoe' }
-        ];
+      // match history data example
+      // match_history = [
+      //   {"date": "2021-06-01", "opponent": "xyz", "score": "3-1"},
+      //   {"date": "2021-06-02", "opponent": "abc", "score": "1-2"},
+      // ];
       
       const myGameRooms = [
           { name: 'Room 1' },
@@ -167,9 +151,9 @@ class Profile extends HTMLElement {
       const data = await response.json();
       console.log(data);
       this.populateProfile(data);
-      this.populateMatchHistory(myMathHistory);
-      this.calculateStatistics(myMathHistory);
-      this.populateFriends(myFriends);
+      this.populateMatchHistory(data.matchHistory);
+      this.calculateStatistics(data.matchHistory);
+      this.populateFriends(data.allUsers, data.username);
       this.populateGameRooms(myGameRooms);
   } catch (error) {
     console.error('Error:', error);
@@ -244,26 +228,28 @@ class Profile extends HTMLElement {
     `;
   }
   
-  populateFriends(friends) {
+  populateFriends(friends, username) {
     const friendsList = this.querySelector('#friends-list');
     friends.forEach(friend => {
+      if (friend === username) {
+        return;
+      }
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td>${friend.username}</td>
-        <td><a href="/member?username=${friend.username}" class="btn btn-primary">Profil</a></td>
+        <td>${friend}</td>
+        <td><a href="/member?username=${friend}" class="btn bg-dark text-white">Profil</a></td>
       `;
       friendsList.appendChild(row);
     });
   }
 
   populateGameRooms(gameRooms) {
-    console.log(gameRooms);
     const gameRoomsList = this.querySelector('#game-rooms');
     gameRooms.forEach(room => {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${room.name}</td>
-        <td><a href="/game-room?name=${room.name}" class="btn btn-primary">Katıl</a></td>
+        <td><a href="/game-room?name=${room.name}" class="btn bg-dark text-white">Katıl</a></td>
       `;
       gameRoomsList.appendChild(row);
     });
