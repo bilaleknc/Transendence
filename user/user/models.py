@@ -47,6 +47,7 @@ class Profile(models.Model):
     #     { date: '2021-01-03', opponent: 'Jane Doe', score: '1-2' }
     # ]
     match_history = models.JSONField(default=list)
+    friends = models.ManyToManyField('Profile', blank=True, related_name='profile_friends') 
 
     def __str__(self):
         return self.nickname

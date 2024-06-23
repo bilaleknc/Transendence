@@ -40,6 +40,8 @@ urlpatterns = [
 	path('login', login, name='login'),
     path('profile', profile, name='profile'),
     path('update_profile', update_profile, name='update_profile'),
+    path('add_friend', add_friend, name='add_friend'),
+    path('remove_friend', remove_friend, name='remove_friend'),
 	# path('verify_email_and_login', verify_email_and_login, name='verify_email_and_login'),
 	# path('send_verification_email', send_verification_email, name='send_verification_email'),
  	re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
