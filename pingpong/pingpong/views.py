@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import *
 from django.http import JsonResponse
-from game.models import Rooms
+from rest_framework.permissions import *
+from rest_framework.decorators import api_view, permission_classes
+from pingpong.models import Rooms
 
 # Create your views here.
 def index(request):

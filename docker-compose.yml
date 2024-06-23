@@ -56,9 +56,9 @@ services:
       - "8081:8081"
     networks:
       - nw2
-    depends_on:
-      pingpong_db:
-        condition: service_healthy
+    # depends_on:
+    #   pingpong_db:
+    #     condition: service_healthy
 
   # pingpong_db:
   #   container_name: pingpong_db
