@@ -9,6 +9,7 @@ import "./Components/Loading.js"
 import "./Components/Profile.js"
 import "./Components/Error.js"
 import "./Components/Member.js"
+import "./Components/GameRooms.js"
 import triggerNavbar from "./ModulesJS/TriggerNavbar.js";
 
 triggerNavbar();

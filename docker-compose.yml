@@ -43,8 +43,6 @@ services:
       timeout: 3s
       retries: 3
 
-
-
   pinpong:
     container_name: pingpong
     build:

@@ -167,27 +167,27 @@ CORS_ORIGIN_WHITELIST = (
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'user_db',
-#         'USER': 'biekinci', 
-#         'PASSWORD': 'secret',
-#         'HOST': 'user_db', 
-#         'PORT': '5432',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'QlRJKYBFSMDhtBLvdqPkufVWzrhLXbld',
-        'HOST': 'viaduct.proxy.rlwy.net',
-        'PORT': '55435',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'user_db',
+        'USER': 'biekinci', 
+        'PASSWORD': 'secret',
+        'HOST': 'user_db', 
+        'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'railway',
+#         'USER': 'postgres',
+#         'PASSWORD': 'QlRJKYBFSMDhtBLvdqPkufVWzrhLXbld',
+#         'HOST': 'viaduct.proxy.rlwy.net',
+#         'PORT': '55435',
+#     }
+# }
 
 
 # Password validation

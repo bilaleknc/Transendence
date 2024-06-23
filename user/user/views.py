@@ -34,6 +34,7 @@ def verify_token(request):
 @permission_classes([AllowAny])
 def notActive(request):
     if request.method == 'POST':
+        print("Ben buraya girdim notActive !!!!!!!!!!")
         print(request.data["username"])
         user = User.objects.get(username=request.data["username"])
         verificationCode = VerificationCode.objects.get(user=user.profile)
@@ -64,12 +65,18 @@ def otp(request):
 @permission_classes([AllowAny])
 def register(request):
     if request.method == 'POST':
+        # eğerki request.data'nin içindeki email ile birsi varsa ama o kişi aktif değilse o kişiyi sil
+        if User.objects.filter(email=request.data['email']).exists():
+            user = User.objects.get(email=request.data['email'])
+            if user.is_active == False:
+                user.delete()
+
         serializer = RegisterSerializer(data=request.data)
         print(request.data)
         if serializer.is_valid():
             print("serializer valid")
             user = serializer.save()
-            send_email(user);
+            generate_email(user)
             print("save'den sonra")
             return Response({"success": "User registered successfully"}, status=201)
         return Response(serializer.errors, status=400)
