@@ -39,6 +39,11 @@ class SPA {
       title: "member",
       description: "Member",
     },
+    "/social-media": {
+      template: "/templates/social-media.html",
+      title: "social-media",
+      description: "Social Media",
+    },
 	"/game-rooms": {
 	  template: "/templates/game-rooms.html",
 	  title: "game-rooms",

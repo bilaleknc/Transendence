@@ -11,6 +11,7 @@ import "./Components/Error.js"
 import "./Components/Member.js"
 import "./Components/GameRooms.js"
 import triggerNavbar from "./ModulesJS/TriggerNavbar.js";
+import "./Components/SocialMedia.js"
 
 triggerNavbar();
 
