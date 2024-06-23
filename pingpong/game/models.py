@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 class Game(models.Model):
     leftPaddle = models.ForeignKey('Paddle', on_delete=models.CASCADE, related_name='left_games', default=1.0)
@@ -45,3 +46,10 @@ class Screen(models.Model):
 
     def getHghtOfPdlIncLoc(self):
         return (self._height / 2) - (self.paddleHeight() / 2) 
+    
+class Rooms(models.Model):
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+	room_name = models.CharField(max_length=100)
+	class Meta:
+		db_table = "rooms"
+	

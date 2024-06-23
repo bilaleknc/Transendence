@@ -4,6 +4,8 @@ FROM python:3.9-slim
 # Ortam değişkenlerini ayarla
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
+ENV DJANGO_SETTINGS_MODULE=pingpong.settings
+
 
 # Çalışma dizinini oluştur
 WORKDIR /app
@@ -31,4 +33,5 @@ COPY . .
 EXPOSE 8081
 
 # Django uygulamasını başlatma komutu
-CMD python3 manage.py runsslserver 0.0.0.0:8081
+# CMD python3 manage.py runsslserver 0.0.0.0:8081
+CMD daphne -e ssl:8081:privateKey=/etc/ssl/private/certificate.key:certKey=/etc/ssl/certs/certificate.crt pingpong.asgi:application

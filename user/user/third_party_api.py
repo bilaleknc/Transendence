@@ -5,7 +5,7 @@ import requests
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from user.serializers import RegisterWith42Serializer, UserSerializer
-from user.utils import send_email
+from user.utils import generate_email
 from user.auth_tools import Authenticator, TokenGenerator
 from rest_framework import status
 from user.models import Profile

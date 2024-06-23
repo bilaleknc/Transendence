@@ -6,7 +6,7 @@ import { Screen } from './screen.js';
 
 const room_name = 'room1';
 // const room_name = "{{ room.slug }}";  // Use the room name from the context
-const gameSocket = new WebSocket('ws://127.0.0.1:8081/ws/socket-server/' + room_name + '/');
+const gameSocket = new WebSocket('wss://127.0.0.1:8081/wss/socket-server/' + room_name + '/');
 
 
 let screen = new Screen();

@@ -44,9 +44,14 @@ class SPA {
       title: "social-media",
       description: "Social Media",
     },
+	"/game-rooms": {
+	  template: "/templates/game-rooms.html",
+	  title: "game-rooms",
+	  description: "Game Rooms",
+	},
   };
 
-  authLocation = ["/game", "/profile"];
+  authLocation = ["/game", "/profile", "/game-rooms"];
 
   dom_main = document.querySelector("main");
 

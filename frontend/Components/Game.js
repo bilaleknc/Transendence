@@ -12,31 +12,38 @@ class Game extends HTMLElement {
                     <button id="tournament" class="btn btn-dark w-25 p-3 mt-2">Tournament</button>
                 </div>
             </main>
-            <div id="game-area">
+            <div id="game-area" style="display: none !important;"></div>
+            <div id="remote-container" style="display: none !important;" class="d-flex flex-column align-items-center w-100">
+                <h2>Available Rooms</h2>
+                <ul id="roomList" class="list-group w-50 mb-4"></ul>
+                <h2>Create New Room</h2>
+                <input type="text" id="newRoomName" class="form-control w-50" placeholder="Room Name">
+                <button id="createRoomBtn" class="btn btn-dark w-25 p-3 mt-2">Create Room</button>
             </div>	
         `;
-        console.log("contr")
+        console.log("constructor")
         window.gameEnd = false;
-		this.querySelector('#two-player').addEventListener('click', () => this.twoPlayer());
+        this.querySelector('#two-player').addEventListener('click', () => this.twoPlayer());
         this.querySelector('#remote').addEventListener('click', () => this.remotePlayer());
+        this.querySelector('#createRoomBtn').addEventListener('click', () => this.createRoom());
     }
 
     disconnectedCallback() {
         const style = document.getElementById('pingpong-style');
-		if (style) {
-			style.remove();
-		}
+        if (style) {
+            style.remove();
+        }
         window.gameEnd = true;
-	}
+    }
 
-    dsplNone(){
+    dsplNone() {
         const style = document.createElement('style');
         style.id = "pingpong-style";
         style.innerHTML = `
-			#main-content { display: none !important; }
-            my-navbar {	display: none !important; }
-		`;
-		document.head.appendChild(style);
+            #main-content { display: none !important; }
+            my-navbar { display: none !important; }
+        `;
+        document.head.appendChild(style);
     }
 
     twoPlayer() {
@@ -64,38 +71,52 @@ class Game extends HTMLElement {
         play.loop();
     }
 
-    remotePlayer() {
-        this.dsplNone();
-        const canvasElement = document.createElement('canvas');
-            canvasElement.id = 'game-canvas';
-            canvasElement.width = "100%";
-            canvasElement.height = "100%";
+    async fetchRooms() {
+        try {
+            const response = await fetch('https://127.0.0.1:8081/get_rooms');
+            const data = await response.json();
+            const roomList = this.querySelector('#roomList');
+            roomList.innerHTML = '';
+            data.rooms.forEach(room => {
+                const li = document.createElement('li');
+                li.textContent = room;
+                li.classList.add('list-group-item');
+                roomList.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
+        }
+    }
 
-            // Append the canvas to the game-area div
-            this.querySelector('#game-area').appendChild(canvasElement);
-
-            // Create a style element
-            const styleElement = document.createElement('style');
-            styleElement.textContent = `
-                #game-canvas {
-                    background: #000;
-                    margin: 0 auto;
-                    padding: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 1000;
+    async createRoom() {
+        const roomName = this.querySelector('#newRoomName').value;
+        if (roomName) {
+            try {
+                const response = await fetch('https://127.0.0.1:8081/create_room', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `room_name=${roomName}`
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    this.fetchRooms();
+                    this.querySelector('#newRoomName').value = '';
+                } else {
+                    alert(data.message);
                 }
-            `;
+            } catch (error) {
+                console.error('Error creating room:', error);
+            }
+        }
+    }
 
-            // Append the style element to the shadow root
-            this.appendChild(styleElement);
-
-            // Load the pingpong.js script
-            const scriptElement = document.createElement('script');
-            scriptElement.id = "remotePlayer-script";
-            scriptElement.src = "../static/remote_pingpong.js";
-            scriptElement.type = "module";
-            this.appendChild(scriptElement);
+    async remotePlayer() {
+        this.dsplNone();
+        this.querySelector('#game-area').style.display = 'none';
+        this.querySelector('#remote-container').style.display = 'flex';
+        await this.fetchRooms();
     }
 }
 
