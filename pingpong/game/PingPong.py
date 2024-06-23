@@ -180,6 +180,11 @@ class PingPong:
 			paddle.Rradius = message[side]['Rradius']
 			paddle.Rend = message[side]['Rend']
  
+ 
+ 
+ 
+ 
+ 
 	# def paddlefunc(self, message):
 		# self.paddle_l._x = message['paddle_l']['_x']
 		# self.paddle_l._y = message['paddle_l']['_y']

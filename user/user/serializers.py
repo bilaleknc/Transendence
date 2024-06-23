@@ -4,7 +4,7 @@ import string
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
-from user.models import Profile, Stats
+from user.models import Profile
 
 
 
@@ -125,7 +125,7 @@ class RegisterWith42Serializer(serializers.Serializer):
         profile = Profile.objects.create(
             user=user,
             nickname=validated_data['username'],
-            stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
+            # stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
         )
         nickname = validated_data['username']
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ", nickname)
@@ -136,7 +136,7 @@ class RegisterWith42Serializer(serializers.Serializer):
         profile, created = Profile.objects.get_or_create(
 			user=user,
             nickname=validated_data['username'],
-            stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
+            # stats=Stats.objects.create(total_games=0, total_wins=0, total_losses=0, points=0)
 		)
         if not created:
             profile.nickname = nickname

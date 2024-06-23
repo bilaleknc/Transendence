@@ -6,16 +6,15 @@ from tempfile import NamedTemporaryFile
 from django.core.files import File
 import urllib
 
-class Stats(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    total_games = models.IntegerField(default=0)
-    total_wins = models.IntegerField(default=0)
-    total_losses = models.IntegerField(default=0)
-    points = models.IntegerField(default=0)
-    new_field = models.IntegerField(default=0)  # Geçici olarak ekleyin
+# class Stats(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     total_games = models.IntegerField(default=0)
+#     total_wins = models.IntegerField(default=0)
+#     total_losses = models.IntegerField(default=0)
+#     points = models.IntegerField(default=0)
     
-    class Meta:
-        db_table = 'stats'
+#     class Meta:
+#         db_table = 'stats'
 
 class Profile(models.Model):
     ColorChoices = [
@@ -27,7 +26,7 @@ class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     nickname = models.CharField(max_length=100, unique=False, blank=False, null=True)
-    stats = models.OneToOneField(Stats, on_delete=models.CASCADE, null=True)
+    # stats = models.OneToOneField(Stats, on_delete=models.CASCADE, null=True)
     profile_picture = models.URLField(
         default='https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg',
         blank=True,
@@ -52,23 +51,23 @@ class Profile(models.Model):
     def __str__(self):
         return self.nickname
 
-    def win_games(self, opponent_mmr):
-        k_factor = 32
-        expected_score = 1 / (1 + 10 ** ((opponent_mmr - self.mmr) / 400))
-        self.mmr += k_factor * (1 - expected_score)
-        self.stats.total_games += 1
-        self.stats.total_wins += 1
-        self.stats.save()
-        self.save()
+    # def win_games(self, opponent_mmr):
+    #     k_factor = 32
+    #     expected_score = 1 / (1 + 10 ** ((opponent_mmr - self.mmr) / 400))
+    #     self.mmr += k_factor * (1 - expected_score)
+    #     # self.stats.total_games += 1
+    #     # self.stats.total_wins += 1
+    #     # self.stats.save()
+    #     # self.save()
 
-    def lose_games(self, opponent_mmr):
-        k_factor = 32
-        expected_score = 1 / (1 + 10 ** ((opponent_mmr - self.mmr) / 400))
-        self.mmr += k_factor * (0 - expected_score)
-        self.stats.total_games += 1
-        self.stats.total_losses += 1
-        self.stats.save()
-        self.save()
+    # def lose_games(self, opponent_mmr):
+    #     k_factor = 32
+    #     expected_score = 1 / (1 + 10 ** ((opponent_mmr - self.mmr) / 400))
+    #     self.mmr += k_factor * (0 - expected_score)
+    #     self.stats.total_games += 1
+    #     self.stats.total_losses += 1
+    #     self.stats.save()
+    #     self.save()
 
     def save_image_from_url(self, url):
         img_temp = NamedTemporaryFile()
