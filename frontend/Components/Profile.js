@@ -1,3 +1,4 @@
+import errorPrint from "../ModulesJS/ErrorUtils.js"
 class Profile extends HTMLElement {
   constructor() {
     super();
@@ -42,6 +43,9 @@ class Profile extends HTMLElement {
                   <div class="mb-3">
                     <label for="profile-password" class="form-label">Password</label>
                     <input type="password" id="profile-password" name="password" class="form-control">
+                  </div>
+                  <div id="error-content">
+                    <my-error name="" content=""><my-error>
                   </div>
                   <button type="submit" class="btn bg-dark w-100 text-white">Update</button>
                 </form>
@@ -299,12 +303,12 @@ class Profile extends HTMLElement {
 
       const resData = await response.json();
       if (resData.error) {
-        alert(resData.error);
+        errorPrint.call(this, resData.error, 0);
       } else {
-        alert('Profile updated successfully');
+        errorPrint.call(this, {'success':  'Profile updated successfully'}, 0);
       }
     } catch (error) {
-      console.error('Error:', error);
+      errorPrint.call(this, {'error': error.message }, 0);
     }
   }
 

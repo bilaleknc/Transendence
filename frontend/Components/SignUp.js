@@ -1,4 +1,4 @@
-import error from "../ModulesJS/ErrorUtils.js";
+import errorPrint from "../ModulesJS/ErrorUtils.js";
 import triggerNavbar from "../ModulesJS/TriggerNavbar.js";
 
 class Signup extends HTMLElement {
@@ -158,13 +158,13 @@ class Signup extends HTMLElement {
 		}).then(response => response.json())
 		.then(data => {
 			if (data.success) {
-                error.call(this, data, 0);
+                errorPrint.call(this, data, 0);
                 this.innerHTML = `<my-loading page="login" username="${username}""></my-loading>`
 			}else {
-                error.call(this, data, 0);
+                errorPrint.call(this, data, 0);
             }
 		}).catch((error) => {
-            console.error('Error:', error);
+            errorPrint.call(this, {content: error.message}, 0);
         });
 	}
 
@@ -196,14 +196,14 @@ class Signup extends HTMLElement {
             const resData = await response.json();
             
             if (!response.ok) {
-                error.call(this, resData, 1);
+                errorPrint.call(this, resData, 1);
                 return;
             }
             console.log(resData);
-            error.call(this, resData, 1);
+            errorPrint.call(this, resData, 1);
             this.innerHTML = `<my-loading page="register" username="${username}" password="${password}"></my-loading>`
         } catch (error) {
-            console.log('Error:', error);
+            errorPrint.call(this, {content: error.message}, 1);
         }
     }
 

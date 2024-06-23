@@ -19,9 +19,9 @@ services:
       - "8080:8080"
     networks:
       - nw
-    # depends_on:
-    #   user_db:
-    #     condition: service_healthy
+    depends_on:
+      user_db:
+        condition: service_healthy
     env_file:
       - ./user/.env
 
@@ -116,6 +116,6 @@ services:
 
 volumes:
   user_data:
-  # pingpong_data:
+  pingpong_data:
 
   

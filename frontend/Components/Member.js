@@ -1,3 +1,5 @@
+import errorPrint from "../ModulesJS/ErrorUtils.js";
+
 class Member extends HTMLElement {
   constructor() {
     super();
@@ -60,6 +62,9 @@ class Member extends HTMLElement {
                       <button id="add-friend" class="btn bg-dark text-white w-100">Add Friend</button>
                       <button id="remove-friend" class="btn bg-danger text-white w-100 d-none">Remove Friend</button>
                     </div>
+                  </div>
+                  <div id="error-content">
+                    <my-error name="" content=""><my-error>
                   </div>
                 </div>
                 <!-- Match History -->
@@ -148,7 +153,7 @@ class Member extends HTMLElement {
       const data = await response.json();
       if (response.status === 200) {
         this.checkFriendStatus(true);
-        alert("Friend added");
+        errorPrint.call(this, {"success": "Friend added"}, 0);
       } else {
         alert(data.error || "An error occurred");
       }
@@ -171,7 +176,7 @@ class Member extends HTMLElement {
       const data = await response.json();
       if (response.status === 200) {
         this.checkFriendStatus(false);
-        alert("Friend removed");
+        errorPrint.call(this, {"success": "Friend removed"}, 0);
       } else {
         alert(data.error || "An error occurred");
       }
@@ -306,7 +311,8 @@ async addFriend() {
     const data = await response.json();
     if (response.status === 200) {
       this.checkFriendStatus(true);
-      alert("Friend added");
+      errorPrint.call(this, {"success": "Friend added"}, 0);
+
     } else {
       alert(data.error || "An error occurred");
     }
@@ -329,7 +335,7 @@ async removeFriend() {
     const data = await response.json();
     if (response.status === 200) {
       this.checkFriendStatus(false);
-      alert("Friend removed");
+      errorPrint.call(this, {"success": "Friend removed"}, 0);
     } else {
       alert(data.error || "An error occurred");
     }

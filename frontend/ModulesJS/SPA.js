@@ -1,4 +1,4 @@
-import error from "./ErrorUtils.js";
+import errorPrint from "./ErrorUtils.js";
 import HTMLTemplate from "./HTMLTemplate.js";
 import tokenCntrl from "./Token.js";
 
@@ -95,7 +95,7 @@ class SPA {
         window.route({ target: { href: '/' } });
       }, 4000);
       setTimeout(() => {
-        error.call(document, {"Error": "Please login"}, 0)
+        errorPrint.call(document, {"Error": "Please login"}, 0)
       }, 600);
       return;
     }

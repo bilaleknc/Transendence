@@ -1,4 +1,4 @@
-import error from "../ModulesJS/ErrorUtils.js";
+import errorPrint from "../ModulesJS/ErrorUtils.js";
 import triggerNavbar from "../ModulesJS/TriggerNavbar.js";
 
 class Loading extends HTMLElement {
@@ -133,15 +133,17 @@ class Loading extends HTMLElement {
             
             const resData = await response.json();
             if (!response.ok) {
-                error.call(this, resData, 0)
+                errorPrint.call(this, resData, 0)
                 return;
             }
-            error.call(this, resData, 0);
+            errorPrint.call(this, resData, 0);
             localStorage.setItem('access_token', resData.token);
             triggerNavbar();
             window.route({ target: { href: '/' } });
             
-        } catch (error) { console.error(error) } 
+        } catch (error) { 
+            errorPrint.call(this, {content: error.message}, 0);
+         } 
     }
 
     async login(username, password) {
@@ -164,10 +166,10 @@ class Loading extends HTMLElement {
                 triggerNavbar();
 				window.route({ target: { href: '/' } });
 			}else {
-                alert('Invalid username or password');
+                errorPrint.call(this, {"error": 'Invalid username or password'}, 0);
 			}
 		}).catch((error) => {
-            console.error('Error:', error);
+            errorPrint.call(this, {content: error.message}, 0);
         });
     }
 
