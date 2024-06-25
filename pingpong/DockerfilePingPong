@@ -10,6 +10,9 @@ ENV DJANGO_SETTINGS_MODULE=pingpong.settings
 # Çalışma dizinini oluştur
 WORKDIR /app
 
+COPY . /app
+
+
 # Bağımlılıkları kur
 COPY certs/certificate.crt /etc/ssl/certs/certificate.crt
 COPY certs/certificate.key /etc/ssl/private/certificate.key
@@ -20,7 +23,6 @@ RUN pip install --upgrade pip && \
     pip install -r requirements.txt 
 # --no-cache-dir
 
-COPY . .
 
 # Veritabanı migrasyonlarını yap
 # RUN python3 manage.py makemigrations

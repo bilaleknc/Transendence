@@ -4,6 +4,10 @@ from django.http import JsonResponse
 from rest_framework.permissions import *
 from rest_framework.decorators import api_view, permission_classes
 from pingpong.models import Rooms
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+from .models import Rooms
+from .consumers import GameConsumer
 
 # Create your views here.
 def index(request):
@@ -12,6 +16,7 @@ def index(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+@csrf_exempt
 def get_rooms(request):
 	if request.method == "GET":
 		rooms = Rooms.objects.all()
@@ -21,11 +26,15 @@ def get_rooms(request):
 		return JsonResponse({"rooms": room_list})
 	return JsonResponse({"status": "error", "message": "Invalid request"})
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create_room(request):
     if request.method == "POST":
-        room_name = request.POST.get("room_name")
+        # get room name from request
+        print("!!!!!!", request.data)
+        
+        room_name = request.data.get("room_name")
         if room_name:
             if Rooms.objects.filter(room_name=room_name).exists():
                 return JsonResponse({"status": "error", "message": "Room name already exists"})
@@ -34,3 +43,49 @@ def create_room(request):
             return JsonResponse({"status": "success", "room_name": room_name})
         return JsonResponse({"status": "error", "message": "Room name is required"})
     return JsonResponse({"status": "error", "message": "Invalid request"})
+
+
+            # const response = await fetch(`https://127.0.0.1:8081/join_room/${room}`, {
+            #     method: 'POST',
+            #     headers: {
+            #         'Content-Type': 'application/x-www-form-urlencoded'
+            #     }
+            # });
+            
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def join_room(request, room_name):
+    if request.method == 'POST':
+        room = get_object_or_404(Rooms, room_name=room_name)
+        if room.players < 2:
+            room.players += 1
+            room.save()
+            if room.players == 2:
+                return JsonResponse({'status': 'start'})
+            else:
+                return JsonResponse({'status': 'waiting'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Room is full'})
+        
+@api_view(['GET'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def leave_room(request, room_name):
+	if request.method == 'GET':
+		room = get_object_or_404(Rooms, room_name=room_name)
+		if room.players > 0:
+			room.players -= 1
+			room.save()
+			return JsonResponse({'status': 'success'})
+		else:
+			return JsonResponse({'status': 'error', 'message': 'Room is empty'})
+
+@csrf_exempt
+def check_room_status(request, room_name):
+    if request.method == 'GET':
+        room = get_object_or_404(Rooms, room_name=room_name)
+        if room.players == 2:
+            return JsonResponse({'status': 'start'})
+        else:
+            return JsonResponse({'status': 'waiting'})

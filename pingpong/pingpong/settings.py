@@ -18,15 +18,19 @@ DEBUG = True
 # HTTPS Ayarları
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+# SECURE_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 
 # Sertifika ve anahtar dosyaları
 SSL_CERTIFICATE_PATH = "certs/certificate.crt"
 SSL_KEY_PATH = "certs/certificate.key"
 
 ALLOWED_HOSTS = ['185.249.202.33', '127.0.0.1', '172.17.0.2', '0.0.0.0', '*']
+CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOWED_ORIGINS = [
+    "https://127.0.0.1:8082",
+]
 
 # Application definition
 
@@ -36,20 +40,22 @@ INSTALLED_APPS = [
     'uvicorn',
     'sslserver',
     'channels',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'game',
 ]
 
 ASGI_APPLICATION = "pingpong.asgi.application"
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -81,27 +87,27 @@ WSGI_APPLICATION = 'pingpong.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'pingpong_db',
-#         'USER': 'sakkus', 
-#         'PASSWORD': 'secret',
-#         'HOST': 'pingpong_db', 
-#         'PORT': '5432',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'jlyRAvfYxRBKQiFAaihAizVsxyXRNjVs',
-        'HOST': 'viaduct.proxy.rlwy.net',
-        'PORT': '22759',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'pingpong_db',
+        'USER': 'sakkus', 
+        'PASSWORD': 'secret',
+        'HOST': 'pingpong_db', 
+        'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'railway',
+#         'USER': 'postgres',
+#         'PASSWORD': 'jlyRAvfYxRBKQiFAaihAizVsxyXRNjVs',
+#         'HOST': 'viaduct.proxy.rlwy.net',
+#         'PORT': '22759',
+#     }
+# }
 
 
 # Password validation

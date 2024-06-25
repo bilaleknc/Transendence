@@ -1,11 +1,14 @@
 export class Screen {
 	constructor() {
+		this._ratio = 6;
+	}
+
+	start() {
 		let shadowRoot = document.querySelector('my-game');
 		this._canvas = document.querySelector("canvas");
 		this._ctx = this._canvas.getContext("2d");
 		this._canvas.width = window.innerWidth;
 		this._canvas.height = window.innerHeight;
-		this._ratio = 6;
 		this._width = window.innerWidth;
 		this._height = window.innerHeight;
 	}

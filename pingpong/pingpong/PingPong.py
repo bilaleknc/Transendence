@@ -1,8 +1,59 @@
 import math
 
+
+class Game:
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.leftPaddle = 1.0
+		self.rightPaddle = 1.0
+		self.ball = 1.0
+		self.screen = 1.0
+		self.leftPlyrScore = 0
+		self.rightPlyrScore = 0
+		self.maxScore = 5
+		self.dirX = 2.0
+		self.dirY = 0.0
+		self.speedBall = 10.0
+		self.speedPlayer = 30.0
+		self.beginPos = True
+		self.animationFlag = False
+		self.game_over = False
+  
+class Paddle:
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._x = 0.0
+		self._y = 0.0
+		self._radius = 0.0
+		self.end = 0.0
+		self.Rx = 0.0
+		self.Ry = 0.0
+		self.Rradius = 0.0
+		self.Rend = 0.0
+
+class Ball:
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._x = 0.0
+		self._y = 0.0
+		self._radius = 0.0
+		self.Rx = 0.0
+		self.Ry = 0.0
+
+class Screen:
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self._width = 0.0
+		self._height = 0.0
+		self._ratio = 0.0
+		
+	def paddleHeight(self):
+		return self._height / self._ratio
+	def getHghtOfPdlIncLoc(self):
+		return (self._height / 2) - (self.paddleHeight() / 2)
+
 class PingPong:
 	def __init__(self, *args, **kwargs):
-		from game.models import Ball, Paddle, Screen, Game
 		super().__init__(*args, **kwargs)
 
 		self.paddle_r = Paddle()

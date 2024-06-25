@@ -7,4 +7,5 @@ websockets
 requests
 psycopg2-binary
 djangorestframework
+django-cors-headers
 django-sslserver
