@@ -15,6 +15,8 @@ from user.third_party_api import connect_api_42, connect_api_google
 from rest_framework.exceptions import APIException
 import json
 from user.models import Profile
+from django.utils import timezone
+
 
 
 @api_view(['POST'])
@@ -26,6 +28,12 @@ def verify_token(request):
         return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
     try:
         token = Token.objects.get(key=token_key)
+        print(timezone.now())
+        print(token.user.profile.last_login)
+        print(token.user.profile.last_login - timezone.now())
+        if timezone.now() - token.user.profile.last_login > timedelta(hours=24):
+            token.delete()
+            return Response({"error": "Token expired"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"message": "Token is valid", "user": token.user.username}, status=status.HTTP_200_OK)
     except Token.DoesNotExist:
         return Response({"error": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)

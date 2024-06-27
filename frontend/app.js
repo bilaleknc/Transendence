@@ -13,5 +13,6 @@ import "./Components/GameRooms.js"
 import triggerNavbar from "./ModulesJS/TriggerNavbar.js";
 import "./Components/SocialMedia.js"
 
-triggerNavbar();
+if (localStorage.getItem('access-token'))
+    triggerNavbar();
 

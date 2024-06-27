@@ -44,19 +44,19 @@ class Navbar extends HTMLElement {
 
   render() {
 	const active = this.attributes.active.value;
+	const authLink = this.querySelector("#authLink");
 	if (active == "true") {
-		const authLink = this.querySelector("#authLink");
 		authLink.textContent = "Logout";
 		authLink.onclick = async function () {
 			if (authLink.textContent === "Logout") {
-				localStorage.removeItem("access_token");
-				authLink.textContent = "Sign In/Sign Up";
+				localStorage.removeItem('access_token');
 				triggerNavbar();
 			}
 		};
 		this.querySelector('#profile').style.display = "block";
 		this.querySelector('#game').style.display = "block";
 	}else {
+		authLink.textContent = "Sign In/Sign Up";
 		this.querySelector('#profile').style.display = "none";
 		this.querySelector('#game').style.display = "none";
 	}
