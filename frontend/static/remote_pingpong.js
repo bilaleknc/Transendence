@@ -110,23 +110,26 @@ class RemoteGame {
 	}
 
 	handleSocketMessage(data) {
-		if (data['game_state'] === 'waiting_for_players') {
+		if (data['action'] === 'waiting_for_players') {
 			this.text = "Waiting for players";
 			this.game.ready = false;
 		}
-		if (data['game_state'] === 'game_started') {
+		if (data['action'] === 'game_started') {
 			this.game.animationFlag = true;
 			this.game.ready = true;
+			this.sendMessage(this.createStartMessage());
+			console.log("game_started");
 		}
-		if (data['type'] === 'update') {
+		if (data['action'] === 'game_status') {
 			this.text = "";
-			this.game.updateGameInterface(data);
+			this.game.updateGameInterface(data['data']);
+			console.log("update");
 		}
-		if (data['type'] === 'game_over') {
-			this.text = data['message'];
+		if (data['action'] === 'game_over') {
+			this.text = data['data'];
 		}
-		if (data['type'] === 'countdown') {
-			this.text = data['state'];
+		if (data['action'] === 'countdown') {
+			this.text = data['data'];
 		}
 	}
 
@@ -151,8 +154,8 @@ class RemoteGame {
 			}
 		});
 		// // Sayfa kapatıldığında veya yenilendiğinde WebSocket'i kapat
-		// window.addEventListener('beforeunload', this.close.bind(this));
-		// window.addEventListener('unload', this.close.bind(this));
+		window.addEventListener('beforeunload', this.close.bind(this));
+		window.addEventListener('unload', this.close.bind(this));
 	}
 
 	movePlayer(direction) {
@@ -178,6 +181,7 @@ class RemoteGame {
 			this.game.animationFlag = false;
 		}
 		if (this.game.isOpen()) {
+			console.log("game is open");
 			if (this.game.rightPlyrScore == this.game.maxScore || this.game.leftPlyrScore == this.game.maxScore) {
 				this.reset();
 				this.text = this.game.rightPlyrScore < this.game.leftPlyrScore ? "Left player won!" : "Right player won!";
@@ -185,11 +189,11 @@ class RemoteGame {
 				this.game.beginPos = true;
 			}
 		}
-		this.screen.putScore(this.game.leftPlyrScore, this.game.rightPlyrScore);
+		this.game.screen.putScore(this.game.leftPlyrScore, this.game.rightPlyrScore);
 		this.screen.putText(this.text, this.screen.width / 2, this.screen.height / 2 - 200);
-		this.lpaddle.drawRect();
-		this.rpaddle.drawRect();
-		this.ball.drawArc();
+		this.game.lpaddle.drawRect();
+		this.game.rpaddle.drawRect();
+		this.game.ball.drawArc();
 		requestAnimationFrame(this.loop.bind(this));
 	}
 
@@ -218,9 +222,20 @@ class RemoteGame {
 		}
 	}
 
-	close() {
+	async close() {
 		if (this.gameSocket) {
 			this.gameSocket.close();
+			try {
+				const response = await fetch(`https://127.0.0.1:8081/leave_room/${roomName}/`, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				});
+
+			} catch (error) {
+				console.error('Error fetching room leave:', error);
+			}
 		}
 	}
 }

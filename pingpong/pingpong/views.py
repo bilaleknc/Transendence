@@ -44,13 +44,6 @@ def create_room(request):
         return JsonResponse({"status": "error", "message": "Room name is required"})
     return JsonResponse({"status": "error", "message": "Invalid request"})
 
-
-            # const response = await fetch(`https://127.0.0.1:8081/join_room/${room}`, {
-            #     method: 'POST',
-            #     headers: {
-            #         'Content-Type': 'application/x-www-form-urlencoded'
-            #     }
-            # });
             
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -77,6 +70,7 @@ def leave_room(request, room_name):
 		if room.players > 0:
 			room.players -= 1
 			room.save()
+			print("Odadan biri ayrıldı")
 			return JsonResponse({'status': 'success'})
 		else:
 			return JsonResponse({'status': 'error', 'message': 'Room is empty'})

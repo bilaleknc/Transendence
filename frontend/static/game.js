@@ -21,10 +21,13 @@ export class Game {
 	}
 
 	updateGameInterface(gameState) {
+		console.log("gameState: " + gameState.ball_x);
 		if (gameState.score !== undefined)
-   			screen.putScore(gameState.score);
-		if (gameState['paddle_l'] !== undefined)
+			screen.putScore(gameState.score);
+		if (gameState['paddle_l'] !== undefined){
+			console.log("Updating left paddle");
 			this.lpaddle.y = gameState['paddle_l'] / 1000 * window.innerHeight;
+		}
 		if (gameState['paddle_r'] !== undefined)
 			this.rpaddle.y = gameState['paddle_r'] / 1000 * window.innerHeight;
 		if (gameState['ball_x'] !== undefined)
@@ -35,6 +38,10 @@ export class Game {
 			this.rightPlyrScore = gameState['rightPlyrScore'];
 		if (gameState['leftPlyrScore'] !== undefined)
 			this.leftPlyrScore = gameState['leftPlyrScore'];
+		console.log("this.rightPlyrScore: " + this.rightPlyrScore);
+		console.log("this.leftPlyrScore: " + this.leftPlyrScore);
+		console.log("this.ball.x: " + this.ball.x);
+		console.log("this.ball.y: " + this.ball.y);
 	}
 
 
