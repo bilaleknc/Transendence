@@ -122,8 +122,9 @@ class Signup extends HTMLElement {
 		});
 		const data = await response.json();
 		if (data.url) {			
+            console.log(data.url)
             var newWindow = window.open(data.url, '_blank');
-            this.innerHTML = "<my-loading page='42'></my-loading>"
+            triggerNavbar();
 		}
 	}
 

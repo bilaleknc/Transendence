@@ -45,38 +45,38 @@ services:
 
 
 
-  # pinpong:
-  #   container_name: pingpong
-  #   build:
-  #     context: ./pingpong
-  #     dockerfile: DockerfilePingPong
-  #   volumes:
-  #     - ./pingpong:/app
-  #   ports:
-  #     - "8081:8081"
-  #   networks:
-  #     - nw2
-  #   depends_on:
-  #     pingpong_db:
-  #       condition: service_healthy
+  pinpong:
+    container_name: pingpong
+    build:
+      context: ./pingpong
+      dockerfile: DockerfilePingPong
+    volumes:
+      - ./pingpong:/app
+    ports:
+      - "8081:8081"
+    networks:
+      - nw2
+    depends_on:
+      pingpong_db:
+        condition: service_healthy
 
-  # pingpong_db:
-  #   container_name: pingpong_db
-  #   build:
-  #     context: ./pingpong
-  #     dockerfile: DockerfileDb
-  #   volumes:
-  #     - ./pingpong/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
-  #     - pingpong_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-  #   networks:
-  #     - nw2
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
-  #     interval: 3s
-  #     timeout: 5s
-  #     retries: 3
+  pingpong_db:
+    container_name: pingpong_db
+    build:
+      context: ./pingpong
+      dockerfile: DockerfileDb
+    volumes:
+      - ./pingpong/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - pingpong_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - nw2
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 5s
+      retries: 3
 
   nginx:
     container_name: frontendbi

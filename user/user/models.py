@@ -5,8 +5,6 @@ import uuid
 from tempfile import NamedTemporaryFile
 from django.core.files import File
 import urllib
-from datetime import timedelta
-
 
 # class Stats(models.Model):
 #     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -28,7 +26,6 @@ class Profile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     nickname = models.CharField(max_length=100, unique=False, blank=False, null=True)
-    last_login = models.DateTimeField(null=True, blank=True)
     # stats = models.OneToOneField(Stats, on_delete=models.CASCADE, null=True)
     profile_picture = models.URLField(
         default='https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg',

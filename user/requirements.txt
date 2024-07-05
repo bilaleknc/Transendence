@@ -7,7 +7,6 @@ requests_oauthlib
 pyotp
 django-rest-swagger
 djangorestframework
-djangorestframework-timed-auth-token
 drf-yasg
 djangorestframework_simplejwt
 Pillow
