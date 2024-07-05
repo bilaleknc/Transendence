@@ -16,6 +16,13 @@ from rest_framework.exceptions import APIException
 import json
 from user.models import Profile
 from django.utils import timezone
+from django.shortcuts import redirect
+
+@api_view(['POST', 'GET'])
+@permission_classes([AllowAny])
+def api42(request):
+    code = request.GET.get('code')
+    return redirect(f"https://localhost:8082/api42?code={code}")
 
 
 
@@ -171,6 +178,7 @@ def direct_google_login_page(request):
 @api_view(['POST', 'GET'])
 @permission_classes([AllowAny])
 def login_with_42(request):
+    
     try:
         code = request.data.get('code') if request.method == 'POST' else request.GET.get('code')
         if not code:

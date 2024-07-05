@@ -84,25 +84,25 @@ document.addEventListener('DOMContentLoaded', async function () {
       authLink.textContent = "Sign In/Sign Up";
       authLink.href = "/sign-up";
     }
-	const code = new URLSearchParams(window.location.search).get('code');
-	let response = "";
-	if (code) {
-		try {
-			if (window.location.href.includes("google"))
-				response =await fetch("https://127.0.0.1:8080/login_with_google?code=" + encodeURIComponent(code));
-			else
-				response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
-			const data = await response.json();
-			if (data.token) {
-				localStorage.setItem('access_token', data.token);
-			}
-			// redirect to home page
-			window.location.href = '/';
-			document.querySelector("my-navbar", (e) => e.setAttribute('active', 'true'))
-		} catch (error) {
-			console.error('Error:', error);
-		}
-	}
+	// const code = new URLSearchParams(window.location.search).get('code');
+	// let response = "";
+	// if (code) {
+	// 	try {
+	// 		if (window.location.href.includes("google"))
+	// 			response =await fetch("https://127.0.0.1:8080/login_with_google?code=" + encodeURIComponent(code));
+	// 		else
+	// 			response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
+	// 		const data = await response.json();
+	// 		if (data.token) {
+	// 			localStorage.setItem('access_token', data.token);
+	// 		}
+	// 		// redirect to home page
+	// 		window.route({ target: { href: '/' } });
+	// 		document.querySelector("my-navbar", (e) => e.setAttribute('active', 'true'))
+	// 	} catch (error) {
+	// 		console.error('Error:', error);
+	// 	}
+	// }
 });
 
 customElements.define("my-navbar", Navbar);

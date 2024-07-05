@@ -34,6 +34,11 @@ class SPA {
       title: "loading",
       description: "Load",
     },
+    "/api42": {
+      template: "/templates/api42.html",
+      title: "api42",
+      description: "Api Connnect",
+    },
     "/member": {
       template: "/templates/member.html",
       title: "member",
@@ -102,7 +107,7 @@ class SPA {
     if (location.length == 0) location = "/";
     const route = this.urlRoutes[location] || this.urlRoutes["404"];
     const temp_href = new HTMLTemplate(route.title);
-
+    console.log(route);
     const load = new HTMLTemplate(this.urlRoutes["/loading"].title);
     load.bindingToElement(this.dom_main);
     let self = this;
