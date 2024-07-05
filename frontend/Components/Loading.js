@@ -104,11 +104,42 @@ class Loading extends HTMLElement {
         let div = document.querySelector("#time");
         this.clearTimer();
         if (this.todosArr == "register" || this.todosArr == "login") {
+            div.style.display = "block";
             this.querySelector('#message').textContent = "Enter the OTP code received in your mail";
             this.querySelector('.textBoxs').style.display = "flex";
             this.querySelector('#sendCode').style.display = "block"; 
             this.startTime = Date.now();
             this.time = window.setInterval(this.timeChutdown.bind(this), 1000);
+        } else if (this.todosArr == "42") {
+            div.style.display = "none";
+            this.startTime = Date.now();
+            this.time = window.setInterval(this.timeChutdown.bind(this), 1000);
+            this.querySelector('#message').textContent = "42 is Logged in with API...";
+            const timeId = setInterval(() => {
+                console.log(localStorage.getItem('code'))
+                if (localStorage.getItem('code') != null) {
+                    console.log(localStorage.getItem('code'))
+                    this.login42(localStorage.getItem('code'))
+                    clearInterval(timeId);
+                }
+            }, 500);
+        }
+    }
+
+    async login42(code) {
+        let response = "";
+        if (code) {
+            try {
+                response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + code);
+                const data = await response.json();
+                if (data.token) {
+                    localStorage.setItem('access_token', data.token);
+                    triggerNavbar();
+                    window.route({ target: { href: '/' } });
+                }
+            } catch (error) {
+                error.call(this, {"errror": error}, 0)
+            }
         }
     }
 

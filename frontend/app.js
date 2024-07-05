@@ -10,8 +10,11 @@ import "./Components/Profile.js"
 import "./Components/Error.js"
 import "./Components/Member.js"
 import "./Components/GameRooms.js"
-import triggerNavbar from "./ModulesJS/TriggerNavbar.js";
 import "./Components/SocialMedia.js"
+import "./Components/Api42.js"
+import triggerNavbar from "./ModulesJS/TriggerNavbar.js";
 
-triggerNavbar();
+console.log(localStorage.getItem('access_token'))
+if (localStorage.getItem('access_token'))
+    triggerNavbar();
 

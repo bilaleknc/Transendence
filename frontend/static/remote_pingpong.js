@@ -16,7 +16,7 @@ class RemoteGame {
 	}
 
 	start(roomName) {
-		this.gameSocket = new WebSocket(`wss://127.0.0.1:8081/wss/socket-server/${roomName}/`);
+		this.gameSocket = new WebSocket(`wss:4//127.0.0.1:8081/wss/socket-server/${roomName}/`);
 		this.screen = new Screen();
 		this.screen.start();
 
