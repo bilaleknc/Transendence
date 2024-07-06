@@ -14,7 +14,7 @@ from user.utils import *
 from user.third_party_api import connect_api_42, connect_api_google
 from rest_framework.exceptions import APIException
 import json
-from user.models import Profile
+from user.models import Profile, Post
 from django.utils import timezone
 from django.shortcuts import redirect
 
@@ -22,7 +22,7 @@ from django.shortcuts import redirect
 @permission_classes([AllowAny])
 def api42(request):
     code = request.GET.get('code')
-    return redirect(f"https://localhost:8082/api42?code={code}")
+    return redirect(f"https://45.157.16.17:8082/api42?code={code}")
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -204,17 +204,25 @@ def login_with_google(request):
 @permission_classes([IsAuthenticated])
 def profile(request):
     user = request.user
+    
     profiles = Profile.objects.all()
     profile = Profile.objects.get(user=user)
     match_history = profile.match_history
 
     friends = []
     for friend in profile.friends.all():
+        friend_is_active = False
+
+        if timezone.now() - friend.last_activity > timedelta(minutes=1):
+            friend_is_active = False
+        else:
+            friend_is_active = True
+
         friends.append({
             "username": friend.user.username,
             "fullname": friend.user.first_name + " " + friend.user.last_name,
             "image": friend.profile_picture,
-            "active": friend.user.is_active,
+            "active": friend_is_active
         })
     
     data = {
@@ -236,6 +244,8 @@ def update_profile(request):
     user = request.user
     profile = Profile.objects.get(user=user)
     data = request.data
+    if 'image' in data:
+        profile.profile_picture = data['image']
     if 'first_name' in data:
         user.first_name = data['first_name']
     if 'last_name' in data:
@@ -264,6 +274,13 @@ def member(request):
     member = User.objects.get(username=member_username)
     member_profile = Profile.objects.get(user=member)
 
+    member_is_active = False
+
+    if timezone.now() - member_profile.last_activity > timedelta(minutes=1):
+        member_is_active = False
+    else:
+        member_is_active = True
+
     is_friend = False
 
     if member_profile in profile.friends.all():
@@ -277,7 +294,7 @@ def member(request):
         "matchHistory": member_profile.match_history,
         "instagram": profile.instagram,
         "linkedin": profile.linkedin,
-        "active": member.is_active,
+        "active": member_is_active,
         "is_friend": is_friend
     }
     return Response(data, status=200)
@@ -308,17 +325,25 @@ def remove_friend(request):
 @permission_classes([IsAuthenticated])
 def getUser(request):
     users = User.objects.all()
+
     data = []
     for user in users:
         profile = Profile.objects.get(user=user)
+
+        if timezone.now() - profile.last_activity > timedelta(minutes=1):
+            is_active = False
+        else:
+            is_active = True
+            
         data.append({
             "username": user.username,
             "fullname": user.first_name + " " + user.last_name,
             "email": user.email,
             "image": profile.profile_picture,
             "registered": user.date_joined,
-            "is_active": user.is_active
+            "is_active": is_active
         })
+    data = sorted(data, key=lambda x: x['registered'], reverse=True)
     return Response(data, status=200)
 
 @api_view(['GET'])
@@ -328,9 +353,9 @@ def getMatchHistory(request):
     data = []
     for profile in profiles:
         for match in profile.match_history:
-            if match not in data:
-                if profile.user.username == match['winner']:
-                    data.append(match)
+            if match['winner'] == profile.user.username:
+                data.append(match)
+    data = sorted(data, key=lambda x: x['date'], reverse=True)
     return Response(data, status=200)
 
 @api_view(['POST'])
@@ -341,7 +366,7 @@ def addMatchHistory(request):
     player2 = request.data.get('player2')
     score = request.data.get('score')
     winner = request.data.get('winner')
-    
+
     if User.objects.filter(username=player1).exists():
         player1_user = User.objects.get(username=player1)
         player1_profile = Profile.objects.get(user=player1_user)
@@ -366,3 +391,30 @@ def addMatchHistory(request):
         })
         player2_profile.save()
     return Response({"success": "Match history added successfully"}, status=200)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_post(request):
+    posts = Post.objects.all()
+    posts = sorted(posts, key=lambda x: x.date, reverse=True)
+
+    data = []
+    for post in posts:
+        data.append({
+            "id": post.id,
+            "username": post.username,
+            "date": post.date,
+            "message": post.message
+        })
+    return Response(data, status=200)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_post(request):
+    user = request.user
+    username = user.username
+
+    content = request.data.get('content')
+    post = Post.objects.create(username=username, date=timezone.now(), message=content)
+    post.save()
+    return Response({"success": "Post created successfully"}, status=200)

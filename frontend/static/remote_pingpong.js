@@ -99,7 +99,7 @@ class RemoteGame {
 			this.gameSocket.send(JSON.stringify({'message': {
                 type: 'JOIN',
                 playerNumber: playerNumber,
-				accessToken: localStorage.getItem("access_token")
+				username: localStorage.getItem("username")
             }}));
 		};
 
@@ -144,6 +144,9 @@ class RemoteGame {
 
 	addKeyListeners() {
 		document.addEventListener("keydown", (e) => {
+			if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+            }
 			if (e.key == "Enter" && !this.game.beginPos) {
 				this.movePlayer('ENTER');
 				this.game.beginPos = false;
@@ -212,13 +215,14 @@ class RemoteGame {
 				}
 			});
 			const data = await response.json();
-
-			if (data['status'] === 'waiting') {
+			console.log(data)
+			if (data['message'] === 'waiting') {
 				this.text = "Waiting for players";
 				// 1 saniye sonra tekrar kontrol et
 				setTimeout(() => this.waitingForPlayers(roomName, playerNumber), 2000);
-			} else if (data['status'] === 'start')
-				this.start(roomName, playerNumber);
+			} else if (data['message'] === 'start'){
+				console.log("remote pinpong waiting for players start")
+				this.start(roomName, playerNumber);}
 		} catch (error) {
 			console.error('Error fetching room status:', error);
 			// 1 saniye sonra tekrar kontrol et

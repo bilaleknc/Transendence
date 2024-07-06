@@ -3,98 +3,98 @@ class Member extends HTMLElement {
     super();
     this.innerHTML = `
     <div id="profile-page" class="container mt-5">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="row">
-            <!-- Profile Information -->
-            <div class="col-md-6">
-              <div class="card shadow-sm">
-                <div class="card-body">
-                  <form id="profile-form" class="form">
-                    <div class="text-center mb-3">
-                      <img id="profile-image" src="https://via.placeholder.com/150" class="border" alt="Profile Image" width="200" height="auto">
-                    </div>
-                    <div class="mb-3">
-                      <label for="profile-fullname" class="form-label">Full Name</label>
-                      <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                      <label for="profile-username" class="form-label">Username</label>
-                      <input type="text" id="profile-username" name="username" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                      <label for="profile-email" class="form-label">Email</label>
-                      <input type="email" id="profile-email" name="email" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                      <label for="profile-instagram" class="form-label">Instagram Account</label>
-                      <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                      <label for="profile-linkedin" class="form-label">Linkedin Account</label>
-                      <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                      <label for="profile-registered" class="form-label">Registration Date</label>
-                      <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <!-- Activity Status, Add Friend, Match History, and Statistics -->
-            <div class="col-md-6">
-              <div class="row">
-                <!-- Activity Status -->
-                <div class="col-md-12">
-                  <div class="card shadow-sm mb-4">
-                    <div class="card-body text-center">
-                      <span id="profile-active" class="badge"></span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Add Friend -->
-                <div class="col-md-12">
-                  <div id="add-friend-container" class="card shadow-sm">
-                    <div class="card-body">
-                      <button id="add-friend" class="btn bg-dark text-white w-100">Add Friend</button>
-                      <button id="remove-friend" class="btn bg-danger text-white w-100 d-none">Remove Friend</button>
-                    </div>
-                  </div>
-                </div>
-                <!-- Match History -->
-                <div class="card shadow-sm mb-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-12">
+        <div class="row">
+          <!-- Profile Information -->
+          <div class="col-md-6">
+            <div class="card shadow-sm">
               <div class="card-body">
-                <h5 class="card-title">Match History</h5>
-                <div class="table-responsive">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Player 1</th>
-                        <th scope="col">Player 2</th>
-                        <th scope="col">Score</th>
-                        <th scope="col">Winner</th>
-                      </tr>
-                    </thead>
-                    <tbody id="match-history">
-                      <!-- Match history will be populated here -->
-                    </tbody>
-                  </table>
-                </div>
+                <form id="profile-form" class="form">
+                  <div class="text-center mb-3">
+                    <img id="profile-image" src="https://via.placeholder.com/150" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;">
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-fullname" class="form-label">Full Name</label>
+                    <input type="text" id="profile-fullname" name="fullname" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-username" class="form-label">Username</label>
+                    <input type="text" id="profile-username" name="username" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-email" class="form-label">Email</label>
+                    <input type="email" id="profile-email" name="email" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-instagram" class="form-label">Instagram Account</label>
+                    <input type="text" id="profile-instagram" name="instagram" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-linkedin" class="form-label">Linkedin Account</label>
+                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-registered" class="form-label">Registration Date</label>
+                    <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
+                  </div>
+                </form>
               </div>
             </div>
-                <!-- Statistics -->
-                <div class="col-md-12 mt-4">
-                  <div class="card shadow-sm">
-                    <div class="card-body">
-                      <h5 class="card-title">Statistics</h5>
+          </div>
+          <!-- Activity Status, Add Friend, Match History, and Statistics -->
+          <div class="col-md-6">
+            <div class="row">
+              <!-- Activity Status -->
+              <div class="col-md-12">
+                <div class="card shadow-sm mb-4">
+                  <div class="card-body text-center">
+                    <span id="profile-active" class="badge"></span>
+                  </div>
+                </div>
+              </div>
+              <!-- Add Friend -->
+              <div class="col-md-12">
+                <div id="add-friend-container" class="card shadow-sm">
+                  <div class="card-body">
+                    <button id="add-friend" class="btn bg-dark text-white w-100">Add Friend</button>
+                    <button id="remove-friend" class="btn bg-danger text-white w-100 d-none">Remove Friend</button>
+                  </div>
+                </div>
+              </div>
+              <!-- Match History and Statistics -->
+              <div class="col-md-12 mt-4">
+                <div class="card shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title">Match History</h5>
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                       <table class="table table-striped">
-                        <tbody id="statistics-list">
-                          <!-- Statistics will be displayed here -->
+                        <thead>
+                          <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Player 1</th>
+                            <th scope="col">Player 2</th>
+                            <th scope="col">Score</th>
+                            <th scope="col">Winner</th>
+                          </tr>
+                        </thead>
+                        <tbody id="match-history">
+                          <!-- Match history will be populated here -->
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-4">
+                <div class="card shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title">Statistics</h5>
+                    <table class="table table-striped">
+                      <tbody id="statistics-list">
+                        <!-- Statistics will be displayed here -->
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -103,6 +103,8 @@ class Member extends HTMLElement {
         </div>
       </div>
     </div>
+  </div>
+  
     `;
   }
 
@@ -127,7 +129,6 @@ class Member extends HTMLElement {
       }
       const data = await response.json();
       this.populateProfile(data);
-      console.log("EREN");
       this.populateMatchHistory(data.matchHistory);
       this.calculateStatistics(data.matchHistory);
       this.checkFriendStatus(data.is_friend);
@@ -213,7 +214,6 @@ class Member extends HTMLElement {
 
   populateMatchHistory(matchHistory) {
     const matchHistoryElement = this.querySelector('#match-history');
-    console.log("EREN");
     matchHistory.forEach(match => {
       const row = document.createElement('tr');
       const date = new Date(match.date).toLocaleString('tr-TR');

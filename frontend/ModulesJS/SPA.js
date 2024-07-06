@@ -56,7 +56,7 @@ class SPA {
 	},
   };
 
-  authLocation = ["/game", "/profile", "/game-rooms"];
+  authLocation = ["/game", "/profile", "/game-rooms", "/member", "/social-media" ];
 
   dom_main = document.querySelector("main");
 

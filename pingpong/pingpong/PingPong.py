@@ -2,7 +2,6 @@ import math
 
 import base64
 import json
-from pingpong.utils import extract_username_from_access_token
 
 class Game:
 	def __init__(self, *args, **kwargs):
@@ -16,8 +15,8 @@ class Game:
 		self.maxScore = 5
 		self.dirX = 2.0
 		self.dirY = 0.0
-		self.speedBall = 5.0
-		self.speedPlayer = 30.0
+		self.speedBall = 4.0
+		self.speedPlayer = 20.0
 		self.beginPos = True
 		self.animationFlag = False
 		self.game_over = False
@@ -59,9 +58,9 @@ class Screen:
 		return (self._height / 2) - (self.paddleHeight() / 2)
 
 class Player:
-    def __init__(self, playerNumber, accessToken):
+    def __init__(self, playerNumber):
         self.playerNumber = playerNumber
-        self.username = extract_username_from_access_token(accessToken)
+        self.username = None
   
   
 class PingPong:
@@ -106,9 +105,10 @@ class PingPong:
 			self.game.rightPlyrScore = 0
 			self.dir_x = 3
 			self.dir_y = 1
-		if direction in ['UP', 'DOWN'] and self.player1 == message['player']:
+
+		if direction in ['UP', 'DOWN']:
 			self._move_paddle(self.paddle_l, direction, net_height)
-		elif direction in ['AUP', 'ADOWN'] and self.player2 == message['player']:
+		elif direction in ['AUP', 'ADOWN']:
 			self._move_paddle(self.paddle_r, direction, net_height)
 
 	def _move_paddle(self, paddle, direction: str, net_height: int) -> None:

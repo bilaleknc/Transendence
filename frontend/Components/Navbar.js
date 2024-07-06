@@ -21,6 +21,9 @@ class Navbar extends HTMLElement {
 				  <a class="nav-link" id="profile" href="/profile" style="display: none;">Profile</a>
 			  </li>
 			  <li class="nav-item">
+					<a class="nav-link" id="social-media" href="/social-media" style="display: none;">Social Media</a>
+			  </li>
+			  <li class="nav-item">
 				  <a class="nav-link" id="game" href="/game" style="display: none;">Game</a>
 			  </li>
 			  <li class="nav-item">
@@ -53,10 +56,12 @@ class Navbar extends HTMLElement {
 				triggerNavbar();
 			}
 		};
+		this.querySelector('#social-media').style.display = "block";
 		this.querySelector('#profile').style.display = "block";
 		this.querySelector('#game').style.display = "block";
 	}else {
 		authLink.textContent = "Sign In/Sign Up";
+		this.querySelector('#social-media').style.display = "none";
 		this.querySelector('#profile').style.display = "none";
 		this.querySelector('#game').style.display = "none";
 	}
@@ -90,9 +95,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 	// if (code) {
 	// 	try {
 	// 		if (window.location.href.includes("google"))
-	// 			response =await fetch("https://127.0.0.1:8080/login_with_google?code=" + encodeURIComponent(code));
+	// 			response =await fetch("https://45.157.16.17:8080/login_with_google?code=" + encodeURIComponent(code));
 	// 		else
-	// 			response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
+	// 			response = await fetch("https://45.157.16.17:8080/login_with_42?code=" + encodeURIComponent(code));
 	// 		const data = await response.json();
 	// 		if (data.token) {
 	// 			localStorage.setItem('access_token', data.token);

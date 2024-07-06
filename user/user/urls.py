@@ -52,6 +52,8 @@ urlpatterns = [
 	path('getuser', getUser, name='getuser'),
     path('get_match_history', getMatchHistory, name='get_match_history'),
     path('add_match_history', addMatchHistory, name='add_match_history'),
+    path('create_post', create_post, name='create_post'),
+    path('get_post', get_post, name='get_post'),
 ]
 
 

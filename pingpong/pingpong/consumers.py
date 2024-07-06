@@ -1,12 +1,11 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .PingPong import PingPong, Player
+from .PingPong import PingPong, Player 
 import json
 import asyncio
 import json
 import time
 from django.shortcuts import get_object_or_404
 from channels.db import database_sync_to_async
-from pingpong.utils import extract_username_from_access_token
 
 class GameConsumer(AsyncWebsocketConsumer):
 	game_instances = {}
@@ -72,17 +71,17 @@ class GameConsumer(AsyncWebsocketConsumer):
 		)
 
 	async def receive(self, text_data):
+		
 		data = json.loads(text_data)
 		message = data.get('message')
 		if message['type'] == 'START':
 			self.pong.start_with_initial_values(message)
-		elif message['type'] == 'JOIN':
-			print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", message)     
-			self.pong.player = Player(message['playerNumber'], message['accessToken'])
+		elif message['type'] == 'JOIN':     
+			self.pong.player = Player(message['playerNumber'])
 			if message['playerNumber'] == 1:
-				self.player1 = extract_username_from_access_token(message['accessToken'])
+				self.player1 = message['username']
 			else:
-				self.player2 = extract_username_from_access_token(message['accessToken'])
+				self.player2 = message['username']
 		elif message['type'] == 'MOVE':
 				self.pong.update_paddle_position(message)
 

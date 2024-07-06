@@ -38,14 +38,14 @@ def create_room(request):
         room_name = request.data.get("room_name")
         if room_name:
             if Rooms.objects.filter(room_name=room_name).exists():
-                return JsonResponse({"status": "error", "message": "Room name already exists"})
+                return JsonResponse({"status": "success", "message": "Room name already exists"})
             # save room name to database
             Rooms.objects.create(room_name=room_name).save()
             return JsonResponse({"status": "success", "room_name": room_name})
         return JsonResponse({"status": "error", "message": "Room name is required"})
     return JsonResponse({"status": "error", "message": "Invalid request"})
 
-            
+  
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
@@ -55,21 +55,26 @@ def join_room(request):
         room_name = data.get('room')
         username = data.get('username')
         
-        room = Rooms.objects.filter(room_name=room_name)
-        if room.exists():
-            if username in [room[0].player1, room[0].player2]:
+        room = Rooms.objects.filter(room_name=room_name).first()
+        if room:
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!", room.players, "!!")
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!", type(room.players), "!!")
+            if username in [room.player1, room.player2]:
                 return JsonResponse({'status': 'success', 'message': 'Username already exists'})
-            elif room[0].players < 2:
-                room[0].players += 1
-                room[0].save()
-                if room[0].players == 2:
-                    return JsonResponse({'status': 'start'})
+            elif room.players < 2:
+                print("!!!!!!!!!!!!!!!!!!!!!!!!!", room.players, "!!")
+                room.player1 = username if room.players == 0 else room.player1
+                room.player2 = username if room.players == 1 else room.player2
+                room.players += 1
+                room.save()
+                if room.players == 2:
+                    return JsonResponse({'status': 'success', 'message': 'start'})
                 else:
-                    return JsonResponse({'status': 'waiting'})
+                    return JsonResponse({'status': 'success', 'message': 'waiting'})
             else:
                 return JsonResponse({'status': 'error', 'message': 'Room is full'})
-     
-
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Room does not exist'})
         
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -90,6 +95,6 @@ def check_room_status(request, room_name):
     if request.method == 'GET':
         room = get_object_or_404(Rooms, room_name=room_name)
         if room.players == 2:
-            return JsonResponse({'status': 'start'})
+            return JsonResponse({'status': 'success', 'message': 'start'})
         else:
-            return JsonResponse({'status': 'waiting'})
+            return JsonResponse({'status': 'success', 'message': 'waiting'})

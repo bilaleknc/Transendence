@@ -14,9 +14,14 @@ class Game extends HTMLElement {
                     <button id="tournament" class="btn btn-dark w-25  p-3 mt-2">Tournament</button>
                 </div>
             </main>
-            <div id="game-area" class="d-none"></div>
+			<div class="d-flex justify-content-center align-items-center" style="height=800px;">
+            	<div id="game-area" class="d-none"></div>
+			</div>
             <div id="room-list" class="container mt-5 d-none">
-                <h2>Available Rooms</h2>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Available Rooms</h2>
+                    <button id="refresh-rooms" class="btn btn-warning">Refresh</button>
+                </div>
                 <ul id="rooms" class="list-group"></ul>
                 <div class="input-group mt-3">
                     <input type="text" id="room-name" class="form-control" placeholder="Enter room name">
@@ -29,6 +34,7 @@ class Game extends HTMLElement {
         this.querySelector('#remote').addEventListener('click', () => this.remotePlayer());
 		this.querySelector('#tournament').addEventListener('click', () => this.twoPlayer());
         this.querySelector('#create-room').addEventListener('click', () => this.createRoom());
+        this.querySelector('#refresh-rooms').addEventListener('click', () => this.fetchRooms());
     }
 
     disconnectedCallback() {
@@ -39,25 +45,31 @@ class Game extends HTMLElement {
         window.gameEnd = true;
     }
 
-	dsplNone() {
+	dsplNone(flag) {
         const style = document.createElement('style');
         style.id = "pingpong-style";
-        style.innerHTML = `
-            #main-content { display: none !important; }
-            my-navbar { display: none !important; }
-        `;
+		if (1) {
+			style.innerHTML = `
+				#main-content { display: none !important; }
+			`;
+		} else {
+			style.innerHTML = `
+				#main-content { display: none !important; }
+				#room-list {display: none !important;}
+			`;
+		}
         document.head.appendChild(style);
     }
 
     twoPlayer() {
-        this.dsplNone();
+        this.dsplNone(0);
 		this.initializeGameArea();
         const play = new Play();
         play.loop();
     }
 
     async remotePlayer() {
-        this.dsplNone();
+        this.dsplNone(1);
         // document.getElementById('room-list').style.display = 'block';
 		document.getElementById('room-list').classList.remove('d-none');
         await this.fetchRooms();
@@ -77,7 +89,10 @@ class Game extends HTMLElement {
             const joinButton = document.createElement('button');
             joinButton.classList.add('btn', 'btn-primary');
             joinButton.textContent = 'Join';
-            joinButton.addEventListener('click', () => this.joinRoom(room));
+            joinButton.addEventListener('click', (e) => {
+				
+				this.joinRoom(room)
+			});
             roomItem.appendChild(joinButton);
             roomList.appendChild(roomItem);
         });
@@ -127,10 +142,11 @@ class Game extends HTMLElement {
             });
             const data = await response.json();
 			alert(data.message);
-			if (data.status === 'waiting') {
+			if (data.message === 'waiting') {
+				console.log("game de join room waiting")
                 this.startGame(room, 1); // Player 1
                 alert('Waiting for another player to join...');
-            } else if (data.status === 'start')
+            } else if (data.message === 'start')
                 this.startGame(room, 2); // Player 2
         } catch (error) {
             console.error('Error joining room:', error);
@@ -153,8 +169,8 @@ class Game extends HTMLElement {
 		}
 	}
 
-
     startGame(roomName, playerNumber) {
+		console.log("game de start game")
 		this.dsplNone();
 		this.initializeGameArea();
 		remoteGame.waitingForPlayers(roomName, playerNumber);
@@ -163,8 +179,8 @@ class Game extends HTMLElement {
 	initializeGameArea(){
 		const canvasElement = document.createElement('canvas');
 		canvasElement.id = 'game-canvas';
-		canvasElement.width = '100%';
-		canvasElement.height = '100%';
+		canvasElement.width = '100';
+		canvasElement.height = '100';
 		this.querySelector('#game-area').appendChild(canvasElement);
 
 		const styleElement = document.createElement('style');
@@ -173,7 +189,7 @@ class Game extends HTMLElement {
 			background: #000;
 			margin: 0 auto;
 			padding: 0;
-			width: 100%;
+		width: 100%;
 			height: 100%;
 			z-index: 1000;
 		}

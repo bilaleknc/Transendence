@@ -83,6 +83,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
+    'user.middleware.UpdateLastActivityMiddleware',
 ]
 
 PROMETHEUS_METRICS_ENABLED = True

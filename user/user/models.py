@@ -44,32 +44,15 @@ class Profile(models.Model):
     instagram = models.URLField(blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
     #  matchHistory: [
-        # { "no": 1, "date": "2021-01-01", "player1": "sakkus", "player2": "biekinci", "score": "2-0", "winner": "sakkus" },
-        # { "no": 2, "date": "2021-01-02", "player1": "sakkus", "player2": "biekinci", "score": "2-1", "winner": "sakkus" },
+        # { "date": "2021-01-01", "player1": "sakkus", "player2": "biekinci", "score": "2-0", "winner": "sakkus" },
+        # { "date": "2021-01-02", "player1": "sakkus", "player2": "biekinci", "score": "2-1", "winner": "sakkus" },
     # ]
     match_history = models.JSONField(default=list)
-    friends = models.ManyToManyField('Profile', blank=True, related_name='profile_friends') 
+    friends = models.ManyToManyField('Profile', blank=True, related_name='profile_friends')
+    last_activity = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.nickname
-
-    # def win_games(self, opponent_mmr):
-    #     k_factor = 32
-    #     expected_score = 1 / (1 + 10 ** ((opponent_mmr - self.mmr) / 400))
-    #     self.mmr += k_factor * (1 - expected_score)
-    #     # self.stats.total_games += 1
-    #     # self.stats.total_wins += 1
-    #     # self.stats.save()
-    #     # self.save()
-
-    # def lose_games(self, opponent_mmr):
-    #     k_factor = 32
-    #     expected_score = 1 / (1 + 10 ** ((opponent_mmr - self.mmr) / 400))
-    #     self.mmr += k_factor * (0 - expected_score)
-    #     self.stats.total_games += 1
-    #     self.stats.total_losses += 1
-    #     self.stats.save()
-    #     self.save()
 
     def save_image_from_url(self, url):
         img_temp = NamedTemporaryFile()
@@ -97,6 +80,15 @@ class VerificationCode(models.Model):
     
     class Meta:
         db_table = 'verification_code'
+
+class Post(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(max_length=100, unique=False, blank=False, null=True)
+    date = models.DateTimeField(auto_now_add=True)
+    message = models.TextField()
+
+    class Meta:
+        db_table = 'post'
     
     
     

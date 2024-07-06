@@ -4,7 +4,7 @@ class Profile extends HTMLElement {
     this.innerHTML = `
     <div id="profile-page" class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-lg-8">
+      <div class="col-lg-12">
         <div class="row">
           <!-- Left Column: Profile Information -->
           <div class="col-md-6">
@@ -13,7 +13,11 @@ class Profile extends HTMLElement {
                 <h5 class="card-title mb-4">Profile</h5>
                 <form id="profile-form" class="form">
                   <div class="text-center mb-3">
-                    <img id="profile-image" src="https://via.placeholder.com/150" class="rounded-circle border" alt="Profile Image" width="150" height="150">
+                    <img id="profile-image" src="https://via.placeholder.com/150" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;">
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile-image-url" class="form-label">Profile Image URL</label>
+                    <input type="text" id="profile-image-url" name="image" class="form-control">
                   </div>
                   <div class="mb-3">
                     <label for="profile-fullname" class="form-label">Full Name</label>
@@ -53,7 +57,7 @@ class Profile extends HTMLElement {
             <div class="card shadow-sm mb-4">
               <div class="card-body">
                 <h5 class="card-title">Match History</h5>
-                <div class="table-responsive">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                   <table class="table table-striped">
                     <thead>
                       <tr>
@@ -133,8 +137,8 @@ class Profile extends HTMLElement {
       const data = await response.json();
       console.log(data);
       this.populateProfile(data);
-      this.populateMatchHistory(data.matchHistory);
-      this.calculateStatistics(data.matchHistory);
+      this.populateMatchHistory(data.matchHistory, data.username);
+      this.calculateStatistics(data.matchHistory, data.username);
       this.populateFriends(data.friends);
     } catch (error) {
       console.error('Error:', error);
@@ -144,6 +148,7 @@ class Profile extends HTMLElement {
   populateProfile(data) {
     const date = data.registered ? new Date(data.registered).toLocaleDateString('en-US') : '';
 
+    this.querySelector('#profile-image-url').value = data.image ? data.image : '';
     this.querySelector('#profile-image').src = data.image ? data.image : 'https://via.placeholder.com/150';
     this.querySelector('#profile-fullname').value = data.fullname ? data.fullname : '';
     this.querySelector('#profile-username').value = data.username ? data.username : '';
@@ -153,23 +158,24 @@ class Profile extends HTMLElement {
     this.querySelector('#profile-linkedin').value = data.linkedin ? data.linkedin : '';
   }
 
-  populateMatchHistory(matchHistory) {
+  populateMatchHistory(matchHistory, username) {
     const matchHistoryElement = this.querySelector('#match-history');
     matchHistory.forEach(match => {
       const row = document.createElement('tr');
       const date = new Date(match.date).toLocaleString('tr-TR');
+      const isWinner = match.winner === username;
       row.innerHTML = `
         <td>${date}</td>
         <td>${match.player1}</td>
         <td>${match.player2}</td>
         <td>${match.score}</td>
-        <td>${match.winner}</td>
+        <td ${isWinner ? 'class="text-success"' : 'class="text-danger"'}>${match.winner}</td>
       `;
       matchHistoryElement.appendChild(row);
     });
   }
 
-  calculateStatistics(matchHistory) {
+  calculateStatistics(matchHistory, username) {
     const totalMatches = matchHistory.length;
     let totalWins = 0;
     let totalLosses = 0;
@@ -177,14 +183,23 @@ class Profile extends HTMLElement {
     let totalConceded = 0;
 
     matchHistory.forEach(match => {
-      const [myScore, opponentScore] = match.score.split('-').map(Number);
-      if (myScore > opponentScore) {
-        totalWins++;
-      } else if (myScore < opponentScore) {
-        totalLosses++;
+      if (match.player1 === username) {
+        totalScored += parseInt(match.score.split('-')[0]);
+        totalConceded += parseInt(match.score.split('-')[1]);
+        if (match.winner === username) {
+          totalWins++;
+        } else {
+          totalLosses++;
+        }
+      } else if (match.player2 === username) {
+        totalScored += parseInt(match.score.split('-')[1]);
+        totalConceded += parseInt(match.score.split('-')[0]);
+        if (match.winner === username) {
+          totalWins++;
+        } else {
+          totalLosses++;
+        }
       }
-      totalScored += myScore;
-      totalConceded += opponentScore;
     });
 
     const statisticsList = this.querySelector('#statistics-list');
@@ -217,7 +232,7 @@ class Profile extends HTMLElement {
     friends.forEach(friend => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td><img src="${friend.image}" alt="Profile Image" width="auto" height="50" max-width="100"></td>
+        <td><img src="${friend.image}" alt="${friend.username}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;"></td>
         <td>${friend.username}</td>
         <td><a href="/member?username=${friend.username}" class="btn bg-dark text-white">Profile</a></td>
       `;
@@ -233,6 +248,7 @@ class Profile extends HTMLElement {
 
   async updateProfile(e) {
     e.preventDefault();
+    const image = this.querySelector('#profile-image-url').value;
     const fullname = this.querySelector('#profile-fullname').value;
     const username = this.querySelector('#profile-username').value;
     const email = this.querySelector('#profile-email').value;
@@ -263,7 +279,8 @@ class Profile extends HTMLElement {
           email: email,
           instagram: instagram,
           linkedin: linkedin,
-          ...(password && { password: password })
+          ...(password && { password: password }),
+          ...(image && { image: image })
         })
       });
 

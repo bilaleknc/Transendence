@@ -130,7 +130,7 @@ class Loading extends HTMLElement {
         let response = "";
         if (code) {
             try {
-                response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + code);
+                response = await fetch("https://45.157.16.17:8080/login_with_42?code=" + code);
                 const data = await response.json();
                 
                 if (data.token) {

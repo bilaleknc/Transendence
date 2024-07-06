@@ -24,14 +24,14 @@ export class Game {
 		if (gameState.score !== undefined)
 			screen.putScore(gameState.score);
 		if (gameState['paddle_l'] !== undefined){
-			this.lpaddle.y = gameState['paddle_l'] / 1000 * window.innerHeight;
+			this.lpaddle.y = gameState['paddle_l'] / 1000 * this.screen.height;
 		}
 		if (gameState['paddle_r'] !== undefined)
-			this.rpaddle.y = gameState['paddle_r'] / 1000 * window.innerHeight;
+			this.rpaddle.y = gameState['paddle_r'] / 1000 * this.screen.height;
 		if (gameState['ball_x'] !== undefined)
-			this.ball.x = gameState['ball_x'] / 1000 * window.innerWidth;
+			this.ball.x = gameState['ball_x'] / 1000 * this.screen.width;
 		if (gameState['ball_y'] !== undefined)
-			this.ball.y = gameState['ball_y'] / 1000 * window.innerHeight;
+			this.ball.y = gameState['ball_y'] / 1000 * this.screen.height;
 		if (gameState['rightPlyrScore'] !== undefined)
 			this.rightPlyrScore = gameState['rightPlyrScore'];
 		if (gameState['leftPlyrScore'] !== undefined)

@@ -58,12 +58,12 @@ class Screen {
     constructor() {
         let shadowRoot = document.querySelector('my-game');
 		this._canvas = document.querySelector("canvas");
-        this._ctx = this._canvas.getContext("2d");
-        this._canvas.width = window.innerWidth;
-        this._canvas.height = window.innerHeight;
+        this._canvas.width = 1200;
+        this._canvas.height = 800;
         this._ratio = 6;
-        this._width =  window.innerWidth;
-        this._height = window.innerHeight;
+        this._width =  this._canvas.width;
+        this._height = this._canvas.height;
+        this._ctx = this._canvas.getContext("2d");
     }
 
     get width()         { return this._width };
@@ -121,8 +121,8 @@ class Game {
         this.screen = screen;
         this.i = 0;
 
-        this.speedPlayer = 15;
-        this.speedBall = 6;
+        this.speedPlayer = 8;
+        this.speedBall = 7;
         this.animationFlag = false;
         this.beginPos = true;
         this.key = {
@@ -286,6 +286,9 @@ class Game {
 
     keyDown() {
         document.addEventListener("keydown", (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+            }
             if (e.key == "Enter" && this.beginPos){
                 this.beginPos = false;
                 this.animationFlag = true;

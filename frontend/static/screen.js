@@ -7,10 +7,10 @@ export class Screen {
 		let shadowRoot = document.querySelector('my-game');
 		this._canvas = document.querySelector("canvas");
 		this._ctx = this._canvas.getContext("2d");
-		this._canvas.width = window.innerWidth;
-		this._canvas.height = window.innerHeight;
-		this._width = window.innerWidth;
-		this._height = window.innerHeight;
+		this._canvas.width = 1200;
+		this._canvas.height = 800;
+		this._width = this._canvas.width;
+		this._height = this._canvas.height;	
 	}
 
 	get width() { return this._width };
@@ -19,10 +19,6 @@ export class Screen {
 
 	set ratio(number) { this._ratio = number };
 
-	resize() {
-		this._canvas.height = window.innerHeight;
-		this._canvas.width = window.innerWidth;
-	}
 	/** 
 	 * paddellarımızın başlangıç konumlarını hesaplamak için bu fonksiyon lazım 
 	 * h / 2 = 150, paddleH = 50 ise başlangıç konumu 125 olması lazım. */
