@@ -24,19 +24,6 @@ def api42(request):
     code = request.GET.get('code')
     return redirect(f"https://localhost:8082/api42?code={code}")
 
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def getUser(request):
-    token_key = request.GET.get('token', None)
-    if not token_key:
-        return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
-    try:
-        token = Token.objects.get(key=token_key)
-        return Response({"message": "Token is valid", "user": token.user.username}, status=status.HTTP_200_OK)
-    except Token.DoesNotExist:
-        return Response({"error": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def verify_token(request):

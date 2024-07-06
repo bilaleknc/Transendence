@@ -3,6 +3,7 @@ import triggerNavbar from "./TriggerNavbar.js";
 export default async function tokenCntrl() {
     const token = localStorage.getItem('access_token');
     const json = JSON.stringify( { token: token } );
+    if (!token) return false;
     try {
         const response = await fetch(`https://45.157.16.17:8080/verify-token`, {
             method: 'POST',
@@ -21,5 +22,5 @@ export default async function tokenCntrl() {
             return true;
         }
 
-    }catch(error) {console.error(error)}
+    }catch(error) {console.error(error); return false;}
 }
