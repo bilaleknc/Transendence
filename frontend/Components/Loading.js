@@ -132,10 +132,16 @@ class Loading extends HTMLElement {
             try {
                 response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + code);
                 const data = await response.json();
+                
                 if (data.token) {
                     localStorage.setItem('access_token', data.token);
-                    triggerNavbar();
+                    localStorage.setItem('username', data.username);
+                    console.log(data);
+                    localStorage.removeItem('code');
                     window.route({ target: { href: '/' } });
+                    triggerNavbar();
+                } else {
+                    error.call(this, data, 0);
                 }
             } catch (error) {
                 error.call(this, {"errror": error}, 0)

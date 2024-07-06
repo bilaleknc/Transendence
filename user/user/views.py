@@ -24,8 +24,6 @@ def api42(request):
     code = request.GET.get('code')
     return redirect(f"https://localhost:8082/api42?code={code}")
 
-
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def verify_token(request):
