@@ -1,6 +1,10 @@
 from django.apps import AppConfig
 
-
-class GameConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+class PingpongConfig(AppConfig):
     name = 'pingpong'
+
+    def ready(self):
+        # Place your startup code here
+        from pingpong.models import Rooms
+        Rooms.objects.all().delete()
+        print("All rooms have been deleted.")

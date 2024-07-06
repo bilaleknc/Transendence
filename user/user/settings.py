@@ -30,7 +30,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SSL_CERTIFICATE_PATH = "certs/certificate.crt"
 SSL_KEY_PATH = "certs/certificate.key"
 
-ALLOWED_HOSTS = ['185.249.202.33', '127.0.0.1', '172.17.0.2', '0.0.0.0', '*']
+ALLOWED_HOSTS = ['45.157.16.17', '45.157.16.17', '172.17.0.2', '0.0.0.0', '*']
 
 
 
@@ -140,12 +140,12 @@ CORS_ALLOW_HEADERS = [
     'content-type',
 ]
 CORS_ALLOWED_ORIGINS = [
-    "https://localhost",  # Example: React development server
-    "http://localhost:5500",
-    "https://127.0.0.1:8082",
-    "https://127.0.0.1:8080",
+    "https://45.157.16.17",  # Example: React development server
+    "http://45.157.16.17:5500",
+    "https://45.157.16.17:8082",
+    "https://45.157.16.17:8080",
     "http://user_db:5432",
-    "http://127.0.0.1:8080"
+    "http://45.157.16.17:8080"
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 SECURE_SSL_REDIRECT = True
@@ -160,8 +160,8 @@ ALLOWED_HOSTS = ['*']  # for development, you might want to restrict this in pro
 
 CORS_ORIGIN_WHITELIST = (
     'https://0.0.0.0',
-	'https://127.0.0.1:8082',
-	'https://127.0.0.1:8080',
+	'https://45.157.16.17:8082',
+	'https://45.157.16.17:8080',
     )
 
 # Database

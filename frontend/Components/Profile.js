@@ -124,7 +124,7 @@ class Profile extends HTMLElement {
 
   async fetchProfile() {
     try {
-      const response = await fetch('https://localhost:8080/profile', {
+      const response = await fetch('https://45.157.16.17:8080/profile', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -274,7 +274,7 @@ class Profile extends HTMLElement {
       }
       last_name = fullname.split(' ')[fullname.split(' ').length - 1];
       
-      const response = await fetch('https://localhost:8080/update_profile', {
+      const response = await fetch('https://45.157.16.17:8080/update_profile', {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',

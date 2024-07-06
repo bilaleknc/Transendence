@@ -16,6 +16,17 @@ from rest_framework.exceptions import APIException
 import json
 from user.models import Profile
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getUser(request):
+    token_key = request.GET.get('token', None)
+    if not token_key:
+        return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        token = Token.objects.get(key=token_key)
+        return Response({"message": "Token is valid", "user": token.user.username}, status=status.HTTP_200_OK)
+    except Token.DoesNotExist:
+        return Response({"error": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -95,7 +106,7 @@ def login(request):
         print("authenticator'den sonra")
         twoFactor(user)
         print("twoFactor'den sonra")
-        return Response({"success": "logging on..."}, status=200)    
+        return Response({"success": "logging on...", "username": username}, status=200)    
     return Response({"error": "Method not allowed"}, status=405)
 
 @api_view(['POST'])

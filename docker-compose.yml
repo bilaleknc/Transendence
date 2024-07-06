@@ -69,7 +69,7 @@ services:
       - ./pingpong/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
       - pingpong_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5434:5432"
     networks:
       - nw2
     healthcheck:

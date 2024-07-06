@@ -6,9 +6,9 @@ from requests_oauthlib import OAuth2Session
 base_url = 'https://api.intra.42.fr'
 
 # Uygulama kimlik bilgileri
-client_id = 'u-s4t2ud-0e9b5b9ed0f2110a0b29d40e22bf8249ca7f4c31681ac4a2c1582d7a5b0c790a'
-client_secret = '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'
-redirect_uri = 'https://127.0.0.1:8082'
+client_id = 'u-s4t2ud-8a568d1e373646e7c049724f8c1e0104003bbeace881ab7594d5efa5c584b251'
+client_secret = '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'
+redirect_uri = 'https://45.157.16.17:8082'
 
 # İstek yapılacak URL'ler
 authorization_base_url = f'{base_url}/oauth/authorize'

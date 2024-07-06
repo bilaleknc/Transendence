@@ -114,7 +114,7 @@ class Member extends HTMLElement {
   async fetchProfile() {
     try {
       const username = new URLSearchParams(window.location.search).get('username');
-      const response = await fetch(`https://localhost:8080/member?username=${username}`, {
+      const response = await fetch(`https://45.157.16.17:8080/member?username=${username}`, {
         headers: {
           'Authorization': `Token ${localStorage.getItem('access_token')}`
         }
@@ -137,7 +137,7 @@ class Member extends HTMLElement {
   async addFriend() {
     try {
       const username = new URLSearchParams(window.location.search).get('username');
-      const response = await fetch('https://localhost:8080/add_friend', {
+      const response = await fetch('https://45.157.16.17:8080/add_friend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ class Member extends HTMLElement {
   async removeFriend() {
     try {
       const username = new URLSearchParams(window.location.search).get('username');
-      const response = await fetch('https://localhost:8080/remove_friend', {
+      const response = await fetch('https://45.157.16.17:8080/remove_friend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -272,7 +272,7 @@ connectedCallback() {
 async fetchProfile() {
   try {
     const username = new URLSearchParams(window.location.search).get('username');
-    const response = await fetch(`https://localhost:8080/member?username=${username}`, {
+    const response = await fetch(`https://45.157.16.17:8080/member?username=${username}`, {
       headers: {
         'Authorization': `Token ${localStorage.getItem('access_token')}`
       }
@@ -295,7 +295,7 @@ async fetchProfile() {
 async addFriend() {
   try {
     const username = new URLSearchParams(window.location.search).get('username');
-    const response = await fetch('https://localhost:8080/add_friend', {
+    const response = await fetch('https://45.157.16.17:8080/add_friend', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -318,7 +318,7 @@ async addFriend() {
 async removeFriend() {
   try {
     const username = new URLSearchParams(window.location.search).get('username');
-    const response = await fetch('https://localhost:8080/remove_friend', {
+    const response = await fetch('https://45.157.16.17:8080/remove_friend', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

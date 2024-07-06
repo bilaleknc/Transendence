@@ -261,7 +261,6 @@ class Game {
             this.#reset();
             this.leftPlyrScore++;
         } else if (this.#checkPaddleCollision(this.leftPaddle, 1)) {
-            console.log("as");
             this.#calculateCollision(this.leftPaddle, 1);
         } else if (this.#checkPaddleCollision(this.rightPaddle, 0)) {
             this.#calculateCollision(this.rightPaddle, 0);

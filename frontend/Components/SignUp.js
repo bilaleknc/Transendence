@@ -110,9 +110,9 @@ class Signup extends HTMLElement {
 	async ApiRemoteSign(provider) {
 		let url = ''
 		if (provider === '42')
-			url = 'https://localhost:8080/direct_42_login_page';
+			url = 'https://45.157.16.17:8080/direct_42_login_page';
 		else
-            url = 'https://localhost:8080/direct_google_login_page';
+            url = 'https://45.157.16.17:8080/direct_google_login_page';
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: {
@@ -131,7 +131,7 @@ class Signup extends HTMLElement {
     // Google OAuth 2.0 ile giriş işlemi
     async  googleSign() {
         const googleClientId = '204922017437-i21jnhaels3usdqpacphkc8r093f4lq6.apps.googleusercontent.com';
-        const redirectUri = 'https://127.0.0.1:8082';
+        const redirectUri = 'https://45.157.16.17:8082';
         const scope = 'profile email';
         const responseType = 'token';
     
@@ -144,7 +144,7 @@ class Signup extends HTMLElement {
 		const username = this.querySelector('#login-username').value;
 		const password = this.querySelector('#login-password').value;
 
-		fetch('https://localhost:8080/login', {
+		fetch('https://45.157.16.17:8080/login', {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -178,7 +178,7 @@ class Signup extends HTMLElement {
         const password2 = this.querySelector('#register-password2').value;
     
         try {
-            const response = await fetch('https://localhost:8080/register', {
+            const response = await fetch('https://45.157.16.17:8080/register', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

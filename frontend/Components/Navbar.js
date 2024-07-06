@@ -89,9 +89,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 	if (code) {
 		try {
 			if (window.location.href.includes("google"))
-				response =await fetch("https://127.0.0.1:8080/login_with_google?code=" + encodeURIComponent(code));
+				response =await fetch("https://45.157.16.17:8080/login_with_google?code=" + encodeURIComponent(code));
 			else
-				response = await fetch("https://127.0.0.1:8080/login_with_42?code=" + encodeURIComponent(code));
+				response = await fetch("https://45.157.16.17:8080/login_with_42?code=" + encodeURIComponent(code));
 			const data = await response.json();
 			if (data.token) {
 				localStorage.setItem('access_token', data.token);

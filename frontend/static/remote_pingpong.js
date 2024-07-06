@@ -13,10 +13,11 @@ class RemoteGame {
 		this.game = null;
 		this.text = "Welcome";
 		this.message = "";
+		this.playerUserName = localStorage.getItem("access_token");
 	}
 
-	start(roomName) {
-		this.gameSocket = new WebSocket(`wss://127.0.0.1:8081/wss/socket-server/${roomName}/`);
+	start(roomName, playerNumber) {
+		this.gameSocket = new WebSocket(`wss://45.157.16.17:8081/wss/socket-server/${this.roomName}/`);
 		this.screen = new Screen();
 		this.screen.start();
 
@@ -31,7 +32,8 @@ class RemoteGame {
 		this.game.ready = false;
 		this.game.maxScore = 3;
 
-		this.initializeSocket();
+		console.log(playerNumber);
+		this.initializeSocket(playerNumber);
 		this.addKeyListeners();
 		this.loop();
 	}
@@ -45,7 +47,7 @@ class RemoteGame {
 
 	createStartMessage() {
 		return {
-			action: 'START',
+			type: 'START',
 			'player_name': 'PlayerName',
 			paddle_l: this.getPaddleData(this.lpaddle),
 			paddle_r: this.getPaddleData(this.rpaddle),
@@ -90,11 +92,15 @@ class RemoteGame {
 		};
 	}
 
-	initializeSocket() {
+	initializeSocket(playerNumber) {
 		this.gameSocket.onopen = (e) => {
 			console.log('Chat socket connected');
 			console.log("message", this.message);
-			this.sendMessage(this.message);
+			this.gameSocket.send(JSON.stringify({'message': {
+                type: 'JOIN',
+                playerNumber: playerNumber,
+				accessToken: localStorage.getItem("access_token")
+            }}));
 		};
 
 		this.gameSocket.onmessage = (e) => {
@@ -123,7 +129,6 @@ class RemoteGame {
 		if (data['action'] === 'game_status') {
 			this.text = "";
 			this.game.updateGameInterface(data['data']);
-			console.log("update");
 		}
 		if (data['action'] === 'game_over') {
 			this.text = data['data'];
@@ -145,7 +150,7 @@ class RemoteGame {
 				this.game.animationFlag = true;
 			}
 			if (this.game.beginPos) {
-				if (e.key == "Escape") this.reset();
+				// if (e.key == "Escape") this.reset();
 				if (e.key == "Enter") this.movePlayer('ENTER');
 				if (e.key == "w" || e.key == "W") this.movePlayer('UP');
 				if (e.key == "s" || e.key == "S") this.movePlayer('DOWN');
@@ -160,9 +165,9 @@ class RemoteGame {
 
 	movePlayer(direction) {
 		const message = {
-			action: 'MOVE',
+			type: 'MOVE',
 			direction: direction,
-			player_name: 'PlayerName'
+			player: this.playerUserName
 		};
 		this.sendMessage(message);
 	}
@@ -197,10 +202,10 @@ class RemoteGame {
 		requestAnimationFrame(this.loop.bind(this));
 	}
 
-	async waitingForPlayers(roomName) {
+	async waitingForPlayers(roomName, playerNumber) {
 		this.text = "Waiting for players";
 		try {
-			const response = await fetch(`https://127.0.0.1:8081/check_room_status/${roomName}/`, {
+			const response = await fetch(`https://45.157.16.17:8081/check_room_status/${roomName}/`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
@@ -211,10 +216,9 @@ class RemoteGame {
 			if (data['status'] === 'waiting') {
 				this.text = "Waiting for players";
 				// 1 saniye sonra tekrar kontrol et
-				setTimeout(() => this.waitingForPlayers(roomName), 2000);
-			} else if (data['status'] === 'start') {
-				this.start(roomName);
-			}
+				setTimeout(() => this.waitingForPlayers(roomName, playerNumber), 2000);
+			} else if (data['status'] === 'start')
+				this.start(roomName, playerNumber);
 		} catch (error) {
 			console.error('Error fetching room status:', error);
 			// 1 saniye sonra tekrar kontrol et
@@ -226,7 +230,7 @@ class RemoteGame {
 		if (this.gameSocket) {
 			this.gameSocket.close();
 			try {
-				const response = await fetch(`https://127.0.0.1:8081/leave_room/${roomName}/`, {
+				const response = await fetch(`https://45.157.16.17:8081/leave_room/${roomName}/`, {
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'

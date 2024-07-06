@@ -1,11 +1,13 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .PingPong import PingPong
+from .PingPong import PingPong, Player
 import json
 import asyncio
 import json
 import time
 from django.shortcuts import get_object_or_404
 from channels.db import database_sync_to_async
+from pingpong.utils import extract_username_from_access_token
+
 class GameConsumer(AsyncWebsocketConsumer):
 	game_instances = {}
 
@@ -51,9 +53,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 			while connected_players == 2:
 				if self.pong.game_over == False and self.pong.ready == True:
 					game_state = self.pong.get_game_state()
-					# print("game_state", game_state)
 					await self.send_group_message('game_status' , game_state)
-					print("game_state", game_state)
 					if self.pong.game_over:
 						self.send_group_message('game_over', '')
 				await asyncio.sleep(0.05)
@@ -74,11 +74,18 @@ class GameConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		data = json.loads(text_data)
 		message = data.get('message')
-		if message:
-			if message['action'] == 'START':
-				self.pong.start_with_initial_values(message)
-			elif message['direction']:
+		if message['type'] == 'START':
+			self.pong.start_with_initial_values(message)
+		elif message['type'] == 'JOIN':
+			print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", message)     
+			self.pong.player = Player(message['playerNumber'], message['accessToken'])
+			if message['playerNumber'] == 1:
+				self.player1 = extract_username_from_access_token(message['accessToken'])
+			else:
+				self.player2 = extract_username_from_access_token(message['accessToken'])
+		elif message['type'] == 'MOVE':
 				self.pong.update_paddle_position(message)
+
 
 	def create_game_instance(self):
 		if self.room_name not in self.game_instances:

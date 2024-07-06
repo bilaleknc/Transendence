@@ -120,7 +120,7 @@ class Loading extends HTMLElement {
         let password = document.querySelector("my-loading").getAttribute('password');
 
         try {
-            const response = await fetch(`https://localhost:8080/otp?username=${username}&number=${value}`, {
+            const response = await fetch(`https://45.157.16.17:8080/otp?username=${username}&number=${value}`, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -145,7 +145,7 @@ class Loading extends HTMLElement {
     }
 
     async login(username, password) {
-        fetch('https://localhost:8080/login', {
+        fetch('https://45.157.16.17:8080/login', {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -159,8 +159,9 @@ class Loading extends HTMLElement {
 		}).then(response => response.json())
 		.then(data => {
 			if (data.token) {
-				const { token } = data;
+				const { token, username } = data;
                 localStorage.setItem('access_token', token);
+                localStorage.setItem('username', username);
                 triggerNavbar();
 				window.route({ target: { href: '/' } });
 			}else {
@@ -175,7 +176,7 @@ class Loading extends HTMLElement {
         const token = localStorage.getItem('access_token');
         if (token) return;
         const json = JSON.stringify( { username: this.username } );
-        const response = await fetch(`https://localhost:8080/notactive`, {
+        const response = await fetch(`https://45.157.16.17:8080/notactive`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

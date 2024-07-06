@@ -1,5 +1,8 @@
 import math
 
+import base64
+import json
+from pingpong.utils import extract_username_from_access_token
 
 class Game:
 	def __init__(self, *args, **kwargs):
@@ -18,6 +21,7 @@ class Game:
 		self.beginPos = True
 		self.animationFlag = False
 		self.game_over = False
+
   
 class Paddle:
 	def __init__(self, *args, **kwargs):
@@ -54,6 +58,12 @@ class Screen:
 	def getHghtOfPdlIncLoc(self):
 		return (self._height / 2) - (self.paddleHeight() / 2)
 
+class Player:
+    def __init__(self, playerNumber, accessToken):
+        self.playerNumber = playerNumber
+        self.username = extract_username_from_access_token(accessToken)
+  
+  
 class PingPong:
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -63,6 +73,8 @@ class PingPong:
 		self.screen = Screen()
 		self.ball = Ball()
 		self.game = Game()
+		self.player1 = None
+		self.player2 = None
   
 		self.speedPlayer = 100
 		self.ready = False
@@ -72,6 +84,8 @@ class PingPong:
 		self.dir_y = 1
   
 		self.text = ""
+		self.player1 = ""
+		self.player2 =  ""
   
 
 	def start_with_initial_values(self, message: dict) -> None:
@@ -92,9 +106,9 @@ class PingPong:
 			self.game.rightPlyrScore = 0
 			self.dir_x = 3
 			self.dir_y = 1
-		if direction in ['UP', 'DOWN']:
+		if direction in ['UP', 'DOWN'] and self.player1 == message['player']:
 			self._move_paddle(self.paddle_l, direction, net_height)
-		elif direction in ['AUP', 'ADOWN']:
+		elif direction in ['AUP', 'ADOWN'] and self.player2 == message['player']:
 			self._move_paddle(self.paddle_r, direction, net_height)
 
 	def _move_paddle(self, paddle, direction: str, net_height: int) -> None:
@@ -189,7 +203,6 @@ class PingPong:
 		self.move_the_ball()
 		self.ball._x += self.game.speedBall * self.dir_x
 		self.ball._y += self.game.speedBall * self.dir_y
-		print(self.game.speedBall, self.dir_x, self.ball._x)
 		return {
 			'type': 'update',
 			'ball_x': self.ball._x,
