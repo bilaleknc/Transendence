@@ -63,25 +63,27 @@ class Member extends HTMLElement {
                   </div>
                 </div>
                 <!-- Match History -->
-                <div class="col-md-12">
-                  <div class="card mt-4 shadow-sm">
-                    <div class="card-body">
-                      <h5 class="card-title">Match History</h5>
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th scope="col">Date</th>
-                            <th scope="col">Opponent</th>
-                            <th scope="col">Score</th>
-                          </tr>
-                        </thead>
-                        <tbody id="match-history">
-                          <!-- Match history will be displayed here -->
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                <div class="card shadow-sm mb-4">
+              <div class="card-body">
+                <h5 class="card-title">Match History</h5>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Player 1</th>
+                        <th scope="col">Player 2</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Winner</th>
+                      </tr>
+                    </thead>
+                    <tbody id="match-history">
+                      <!-- Match history will be populated here -->
+                    </tbody>
+                  </table>
                 </div>
+              </div>
+            </div>
                 <!-- Statistics -->
                 <div class="col-md-12 mt-4">
                   <div class="card shadow-sm">
@@ -114,7 +116,7 @@ class Member extends HTMLElement {
   async fetchProfile() {
     try {
       const username = new URLSearchParams(window.location.search).get('username');
-      const response = await fetch(`https://localhost:8080/member?username=${username}`, {
+      const response = await fetch(`https://45.157.16.17:8080/member?username=${username}`, {
         headers: {
           'Authorization': `Token ${localStorage.getItem('access_token')}`
         }
@@ -124,8 +126,8 @@ class Member extends HTMLElement {
         window.location.href = '/';
       }
       const data = await response.json();
-      console.log(data);
       this.populateProfile(data);
+      console.log("EREN");
       this.populateMatchHistory(data.matchHistory);
       this.calculateStatistics(data.matchHistory);
       this.checkFriendStatus(data.is_friend);
@@ -137,7 +139,7 @@ class Member extends HTMLElement {
   async addFriend() {
     try {
       const username = new URLSearchParams(window.location.search).get('username');
-      const response = await fetch('https://localhost:8080/add_friend', {
+      const response = await fetch('https://45.157.16.17:8080/add_friend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +162,7 @@ class Member extends HTMLElement {
   async removeFriend() {
     try {
       const username = new URLSearchParams(window.location.search).get('username');
-      const response = await fetch('https://localhost:8080/remove_friend', {
+      const response = await fetch('https://45.157.16.17:8080/remove_friend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -211,13 +213,19 @@ class Member extends HTMLElement {
 
   populateMatchHistory(matchHistory) {
     const matchHistoryElement = this.querySelector('#match-history');
-    matchHistoryElement.innerHTML = matchHistory.map(match => `
-      <tr>
-        <td>${new Date(match.date).toLocaleDateString('en-US')}</td>
-        <td>${match.opponent}</td>
+    console.log("EREN");
+    matchHistory.forEach(match => {
+      const row = document.createElement('tr');
+      const date = new Date(match.date).toLocaleString('tr-TR');
+      row.innerHTML = `
+        <td>${date}</td>
+        <td>${match.player1}</td>
+        <td>${match.player2}</td>
         <td>${match.score}</td>
-      </tr>
-    `).join('');
+        <td class="${match.winner === match.player1 ? 'text-success' : 'text-danger'}">${match.winner}</td>
+      `;
+      matchHistoryElement.appendChild(row);
+    });
   }
 
   calculateStatistics(matchHistory) {
@@ -272,7 +280,7 @@ connectedCallback() {
 async fetchProfile() {
   try {
     const username = new URLSearchParams(window.location.search).get('username');
-    const response = await fetch(`https://localhost:8080/member?username=${username}`, {
+    const response = await fetch(`https://45.157.16.17:8080/member?username=${username}`, {
       headers: {
         'Authorization': `Token ${localStorage.getItem('access_token')}`
       }
@@ -282,7 +290,6 @@ async fetchProfile() {
       window.location.href = '/';
     }
     const data = await response.json();
-    console.log(data);
     this.populateProfile(data);
     this.populateMatchHistory(data.matchHistory);
     this.calculateStatistics(data.matchHistory);
@@ -295,7 +302,7 @@ async fetchProfile() {
 async addFriend() {
   try {
     const username = new URLSearchParams(window.location.search).get('username');
-    const response = await fetch('https://localhost:8080/add_friend', {
+    const response = await fetch('https://45.157.16.17:8080/add_friend', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -318,7 +325,7 @@ async addFriend() {
 async removeFriend() {
   try {
     const username = new URLSearchParams(window.location.search).get('username');
-    const response = await fetch('https://localhost:8080/remove_friend', {
+    const response = await fetch('https://45.157.16.17:8080/remove_friend', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -372,8 +379,10 @@ populateMatchHistory(matchHistory) {
   matchHistoryElement.innerHTML = matchHistory.map(match => `
     <tr>
       <td>${new Date(match.date).toLocaleDateString('en-US')}</td>
-      <td>${match.opponent}</td>
+      <td>${match.player1}</td>
+      <td>${match.player2}</td>
       <td>${match.score}</td>
+      <td class="${match.winner === match.player1 ? 'text-success' : 'text-danger'}">${match.winner}</td>
     </tr>
   `).join('');
 }

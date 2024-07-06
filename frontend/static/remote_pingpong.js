@@ -13,10 +13,11 @@ class RemoteGame {
 		this.game = null;
 		this.text = "Welcome";
 		this.message = "";
+		this.playerUserName = localStorage.getItem("username");
 	}
 
-	start(roomName) {
-		this.gameSocket = new WebSocket(`wss:4//127.0.0.1:8081/wss/socket-server/${roomName}/`);
+	start(roomName, playerNumber) {
+		this.gameSocket = new WebSocket(`wss://45.157.16.17:8081/wss/socket-server/${this.roomName}/`);
 		this.screen = new Screen();
 		this.screen.start();
 
@@ -31,7 +32,8 @@ class RemoteGame {
 		this.game.ready = false;
 		this.game.maxScore = 3;
 
-		this.initializeSocket();
+		console.log(playerNumber);
+		this.initializeSocket(playerNumber);
 		this.addKeyListeners();
 		this.loop();
 	}
@@ -45,7 +47,7 @@ class RemoteGame {
 
 	createStartMessage() {
 		return {
-			action: 'START',
+			type: 'START',
 			'player_name': 'PlayerName',
 			paddle_l: this.getPaddleData(this.lpaddle),
 			paddle_r: this.getPaddleData(this.rpaddle),
@@ -90,11 +92,15 @@ class RemoteGame {
 		};
 	}
 
-	initializeSocket() {
+	initializeSocket(playerNumber) {
 		this.gameSocket.onopen = (e) => {
 			console.log('Chat socket connected');
 			console.log("message", this.message);
-			this.sendMessage(this.message);
+			this.gameSocket.send(JSON.stringify({'message': {
+                type: 'JOIN',
+                playerNumber: playerNumber,
+				accessToken: localStorage.getItem("access_token")
+            }}));
 		};
 
 		this.gameSocket.onmessage = (e) => {
@@ -110,23 +116,25 @@ class RemoteGame {
 	}
 
 	handleSocketMessage(data) {
-		if (data['game_state'] === 'waiting_for_players') {
+		if (data['action'] === 'waiting_for_players') {
 			this.text = "Waiting for players";
 			this.game.ready = false;
 		}
-		if (data['game_state'] === 'game_started') {
+		if (data['action'] === 'game_started') {
 			this.game.animationFlag = true;
 			this.game.ready = true;
+			this.sendMessage(this.createStartMessage());
+			console.log("game_started");
 		}
-		if (data['type'] === 'update') {
+		if (data['action'] === 'game_status') {
 			this.text = "";
-			this.game.updateGameInterface(data);
+			this.game.updateGameInterface(data['data']);
 		}
-		if (data['type'] === 'game_over') {
-			this.text = data['message'];
+		if (data['action'] === 'game_over') {
+			this.text = data['data'];
 		}
-		if (data['type'] === 'countdown') {
-			this.text = data['state'];
+		if (data['action'] === 'countdown') {
+			this.text = data['data'];
 		}
 	}
 
@@ -142,7 +150,7 @@ class RemoteGame {
 				this.game.animationFlag = true;
 			}
 			if (this.game.beginPos) {
-				if (e.key == "Escape") this.reset();
+				// if (e.key == "Escape") this.reset();
 				if (e.key == "Enter") this.movePlayer('ENTER');
 				if (e.key == "w" || e.key == "W") this.movePlayer('UP');
 				if (e.key == "s" || e.key == "S") this.movePlayer('DOWN');
@@ -151,15 +159,15 @@ class RemoteGame {
 			}
 		});
 		// // Sayfa kapatıldığında veya yenilendiğinde WebSocket'i kapat
-		// window.addEventListener('beforeunload', this.close.bind(this));
-		// window.addEventListener('unload', this.close.bind(this));
+		window.addEventListener('beforeunload', this.close.bind(this));
+		window.addEventListener('unload', this.close.bind(this));
 	}
 
 	movePlayer(direction) {
 		const message = {
-			action: 'MOVE',
+			type: 'MOVE',
 			direction: direction,
-			player_name: 'PlayerName'
+			player: this.playerUserName
 		};
 		this.sendMessage(message);
 	}
@@ -178,6 +186,7 @@ class RemoteGame {
 			this.game.animationFlag = false;
 		}
 		if (this.game.isOpen()) {
+			console.log("game is open");
 			if (this.game.rightPlyrScore == this.game.maxScore || this.game.leftPlyrScore == this.game.maxScore) {
 				this.reset();
 				this.text = this.game.rightPlyrScore < this.game.leftPlyrScore ? "Left player won!" : "Right player won!";
@@ -185,18 +194,18 @@ class RemoteGame {
 				this.game.beginPos = true;
 			}
 		}
-		this.screen.putScore(this.game.leftPlyrScore, this.game.rightPlyrScore);
+		this.game.screen.putScore(this.game.leftPlyrScore, this.game.rightPlyrScore);
 		this.screen.putText(this.text, this.screen.width / 2, this.screen.height / 2 - 200);
-		this.lpaddle.drawRect();
-		this.rpaddle.drawRect();
-		this.ball.drawArc();
+		this.game.lpaddle.drawRect();
+		this.game.rpaddle.drawRect();
+		this.game.ball.drawArc();
 		requestAnimationFrame(this.loop.bind(this));
 	}
 
-	async waitingForPlayers(roomName) {
+	async waitingForPlayers(roomName, playerNumber) {
 		this.text = "Waiting for players";
 		try {
-			const response = await fetch(`https://127.0.0.1:8081/check_room_status/${roomName}/`, {
+			const response = await fetch(`https://45.157.16.17:8081/check_room_status/${roomName}/`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
@@ -207,10 +216,9 @@ class RemoteGame {
 			if (data['status'] === 'waiting') {
 				this.text = "Waiting for players";
 				// 1 saniye sonra tekrar kontrol et
-				setTimeout(() => this.waitingForPlayers(roomName), 2000);
-			} else if (data['status'] === 'start') {
-				this.start(roomName);
-			}
+				setTimeout(() => this.waitingForPlayers(roomName, playerNumber), 2000);
+			} else if (data['status'] === 'start')
+				this.start(roomName, playerNumber);
 		} catch (error) {
 			console.error('Error fetching room status:', error);
 			// 1 saniye sonra tekrar kontrol et
@@ -218,9 +226,20 @@ class RemoteGame {
 		}
 	}
 
-	close() {
+	async close() {
 		if (this.gameSocket) {
 			this.gameSocket.close();
+			try {
+				const response = await fetch(`https://45.157.16.17:8081/leave_room/${roomName}/`, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				});
+
+			} catch (error) {
+				console.error('Error fetching room leave:', error);
+			}
 		}
 	}
 }

@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       authLink.textContent = "Sign In/Sign Up";
       authLink.href = "/sign-up";
     }
+
 	// const code = new URLSearchParams(window.location.search).get('code');
 	// let response = "";
 	// if (code) {

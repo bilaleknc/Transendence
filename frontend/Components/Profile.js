@@ -53,44 +53,34 @@ class Profile extends HTMLElement {
             <div class="card shadow-sm mb-4">
               <div class="card-body">
                 <h5 class="card-title">Match History</h5>
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">Date</th>
-                      <th scope="col">Opponent</th>
-                      <th scope="col">Score</th>
-                    </tr>
-                  </thead>
-                  <tbody id="match-history">
-                    <!-- Match history will be populated here -->
-                  </tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Player 1</th>
+                        <th scope="col">Player 2</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Winner</th>
+                      </tr>
+                    </thead>
+                    <tbody id="match-history">
+                      <!-- Match history will be populated here -->
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
             <div class="card shadow-sm mb-4">
               <div class="card-body">
                 <h5 class="card-title">Statistics</h5>
-                <table class="table table-striped">
-                  <tbody id="statistics-list">
-                    <!-- Statistics will be populated here -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="card shadow-sm mb-4">
-              <div class="card-body">
-                <h5 class="card-title">Game Rooms</h5>
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">Room Name</th>
-                      <th scope="col">Join</th>
-                    </tr>
-                  </thead>
-                  <tbody id="game-rooms">
-                    <!-- Game rooms will be populated here -->
-                  </tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <tbody id="statistics-list">
+                      <!-- Statistics will be populated here -->
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -99,32 +89,34 @@ class Profile extends HTMLElement {
             <div class="card shadow-sm">
               <div class="card-body">
                 <h5 class="card-title mb-4">Friends</h5>
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">Image</th>
-                      <th scope="col">Username</th>
-                      <th scope="col">Profile</th>
-                      <th scope="col">Active</th>
-                    </tr>
-                  </thead>
-                  <tbody id="friends-list">
-                    <!-- Friends will be populated here -->
-                  </tbody>
-                </table>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Profile</th>
+                        <th scope="col">Active</th>
+                      </tr>
+                    </thead>
+                    <tbody id="friends-list">
+                      <!-- Friends will be populated here -->
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>  
+  </div>   
     `;
   }
 
   async fetchProfile() {
     try {
-      const response = await fetch('https://localhost:8080/profile', {
+      const response = await fetch('https://45.157.16.17:8080/profile', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -138,21 +130,12 @@ class Profile extends HTMLElement {
         throw new Error('Network response was not ok');
       }
       
-      const myGameRooms = [
-          { name: 'Room 1' },
-          { name: 'Room 2' },
-          { name: 'Room 3' },
-          { name: 'Room 4' },
-          { name: 'Room 5' }
-      ];
-      
       const data = await response.json();
       console.log(data);
       this.populateProfile(data);
       this.populateMatchHistory(data.matchHistory);
       this.calculateStatistics(data.matchHistory);
       this.populateFriends(data.friends);
-      this.populateGameRooms(myGameRooms);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -174,10 +157,13 @@ class Profile extends HTMLElement {
     const matchHistoryElement = this.querySelector('#match-history');
     matchHistory.forEach(match => {
       const row = document.createElement('tr');
+      const date = new Date(match.date).toLocaleString('tr-TR');
       row.innerHTML = `
-        <td>${match.date}</td>
-        <td>${match.opponent}</td>
+        <td>${date}</td>
+        <td>${match.player1}</td>
+        <td>${match.player2}</td>
         <td>${match.score}</td>
+        <td>${match.winner}</td>
       `;
       matchHistoryElement.appendChild(row);
     });
@@ -245,18 +231,6 @@ class Profile extends HTMLElement {
     });
   }
 
-  populateGameRooms(gameRooms) {
-    const gameRoomsList = this.querySelector('#game-rooms');
-    gameRooms.forEach(room => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${room.name}</td>
-        <td><a href="/game-room?name=${room.name}" class="btn bg-dark text-white">Join</a></td>
-      `;
-      gameRoomsList.appendChild(row);
-    });
-  }
-
   async updateProfile(e) {
     e.preventDefault();
     const fullname = this.querySelector('#profile-fullname').value;
@@ -274,7 +248,7 @@ class Profile extends HTMLElement {
       }
       last_name = fullname.split(' ')[fullname.split(' ').length - 1];
       
-      const response = await fetch('https://localhost:8080/update_profile', {
+      const response = await fetch('https://45.157.16.17:8080/update_profile', {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',

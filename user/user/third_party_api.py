@@ -45,7 +45,7 @@ def login_with_42(username, email, first_name, last_name, image):
         profile.save()
     token = TokenGenerator.generate_token(user)
     print(token)
-    return Response({"token": token}, status=status.HTTP_200_OK)
+    return Response({"token": token, "username": username}, status=status.HTTP_200_OK)
 
 def connect_api_google(code):
     response = requests.post(f"https://oauth2.googleapis.com/token", data={
@@ -81,4 +81,4 @@ def login_with_google(email, image, name, surname):
     profile.profile_picture = image
     profile.save()
     token = TokenGenerator.generate_token(user)
-    return Response({"token": token}, status=status.HTTP_200_OK)
+    return Response({"token": token, "username": username}, status=status.HTTP_200_OK)

@@ -38,6 +38,7 @@ class SocialMedia extends HTMLElement {
                                         <th scope="col">Player 1</th>
                                         <th scope="col">Player 2</th>
                                         <th scope="col">Score</th>
+                                        <th scope="col">Winner</th>
                                     </tr>
                                 </thead>
                                 <tbody id="match-history-list">
@@ -82,69 +83,84 @@ class SocialMedia extends HTMLElement {
         this.fetchLatestNews();
     }
 
-    fetchUserData() {
-        // Example user data
-        const users = [
-            { profileImage: "https://randomuser.me/api/portraits/men/1.jpg", username: "User 1" },
-            { profileImage: "https://randomuser.me/api/portraits/men/2.jpg", username: "User 2" },
-            { profileImage: "https://randomuser.me/api/portraits/men/3.jpg", username: "User 3" }
-        ];
-
-        // Populate user list
-        const userListBody = this.querySelector('#user-list-body');
+    async fetchUserData() {
+        const response = await fetch('https://45.157.16.17:8080/getuser', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+                'Authorization': `Token ${localStorage.getItem('access_token')}`
+              },
+        });
+        if (!response.ok) {
+            console.error("Kullanıcı verisi alınamadı");
+            return;
+        }
+        console.log(response);
+        const users = await response.json();
+    
+        const userListBody = document.querySelector('#user-list-body');
+        userListBody.innerHTML = '';
+    
         users.forEach(user => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><img src="${user.profileImage}" alt="${user.username}" class="img-fluid rounded-circle" width="50"></td>
+                <td><img src="${user.image}" alt="${user.username}" class="img-fluid rounded-circle" width="50"></td>
                 <td>${user.username}</td>
-                <td><button class="btn btn-primary">Profile</button></td>
-            `;
+                <td><a href="https://45.157.16.17:8082/member?username=${user.username}" class="btn btn-primary">Profile</a></td>
+                `;
             userListBody.appendChild(row);
         });
     }
 
-    fetchMatches() {
-        // Example match history data
-        const matches = [
-            { date: "2023-06-20", user1: "muerdoga", user2: "biekinci", score: "2-1", winner: "biekinci" },
-            { date: "2023-06-21", user1: "sakkus", user2: "muerdoga", score: "0-2", winner: "sakkus" },
-            { date: "2023-06-22", user1: "biekinci", user2: "muerdoga", score: "1-1", winner: "muerdoga"}
+    async fetchMatches() {
+        await this.fakeMatchHistoryGenerator();
+        const response = await fetch('https://45.157.16.17:8080/get_match_history', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+                'Authorization': `Token ${localStorage.getItem('access_token')}`
+            },
+        });
 
-        ];
-
-        // Populate match history
+        console.log(response);
+        const matches = await response.json();
+        console.log(matches);
         const matchHistoryList = this.querySelector('#match-history-list');
         matches.forEach(match => {
-            // bilgileri yazarken kazanan kişinin rengini değiştirmek için bir if else yapısı kullan
-            // kazanını yeşil renkte yaz
-            // kaybeden kişiyi kırmızı renkte yaz
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${match.date}</td>
-            `;
-            if (match.winner == match.user1) {
-                row.innerHTML += `
-                    <td style="color: green;">${match.user1}</td>
-                    <td style="color: red;">${match.user2}</td>
-                `;
-            }
-            else if (match.winner == match.user2) {
-                row.innerHTML += `
-                    <td style="color: red;">${match.user1}</td>
-                    <td style="color: green;">${match.user2}</td>
-                `;
-            }
-            else {
-                row.innerHTML += `
-                    <td>${match.user1}</td>
-                    <td>${match.user2}</td>
-                `;
-            }
-            row.innerHTML += `
+                <td>${match.player1}</td>
+                <td>${match.player2}</td>
                 <td>${match.score}</td>
+                <td>${match.winner}</td>
             `;
             matchHistoryList.appendChild(row);
-          });
+        });
+    }
+
+    async fakeMatchHistoryGenerator() {
+        const currentDate = new Date().toISOString();
+        const response = await fetch('https://45.157.16.17:8080/add_match_history', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+                'Authorization': `Token ${localStorage.getItem('access_token')}`
+            },
+            body: JSON.stringify({
+                "date": currentDate,
+                "player1": "muerdoga",
+                "player2": "test",
+                "score": "37-58",
+                "winner": "muerdoga"
+            })
+        });
+
+        console.log(response);
     }
 
     fetchPosts() {

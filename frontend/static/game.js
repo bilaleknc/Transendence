@@ -22,9 +22,10 @@ export class Game {
 
 	updateGameInterface(gameState) {
 		if (gameState.score !== undefined)
-   			screen.putScore(gameState.score);
-		if (gameState['paddle_l'] !== undefined)
+			screen.putScore(gameState.score);
+		if (gameState['paddle_l'] !== undefined){
 			this.lpaddle.y = gameState['paddle_l'] / 1000 * window.innerHeight;
+		}
 		if (gameState['paddle_r'] !== undefined)
 			this.rpaddle.y = gameState['paddle_r'] / 1000 * window.innerHeight;
 		if (gameState['ball_x'] !== undefined)

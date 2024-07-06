@@ -9,8 +9,8 @@ ENV DJANGO_SETTINGS_MODULE=pingpong.settings
 
 # Çalışma dizinini oluştur
 WORKDIR /app
+COPY . .
 
-COPY . /app
 
 
 # Bağımlılıkları kur
