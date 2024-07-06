@@ -13,7 +13,7 @@ class RemoteGame {
 		this.game = null;
 		this.text = "Welcome";
 		this.message = "";
-		this.playerUserName = localStorage.getItem("access_token");
+		this.playerUserName = localStorage.getItem("username");
 	}
 
 	start(roomName, playerNumber) {

@@ -88,9 +88,11 @@
 }
 
 .social-btn {
-  background-color: #007bff;
+  background-color: black;
+  color: white
 }
 
 .social-btn:hover {
-  background-color: #0056b3;
+  background-color: white;
+  color: gray;
 }

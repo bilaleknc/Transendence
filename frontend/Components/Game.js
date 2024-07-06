@@ -115,11 +115,15 @@ class Game extends HTMLElement {
 
     async joinRoom(room) {
         try {
-            const response = await fetch(`https://45.157.16.17:8081/join_room/${room}/`, {
+			// room'u ve username'i gönder
+			const roomData = {room: room, username: localStorage.getItem('username')}
+            const response = await fetch(`https://45.157.16.17:8081/join_room/`,
+				{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
-                }
+                },
+				body: JSON.stringify(roomData)
             });
             const data = await response.json();
 			alert(data.message);
@@ -150,7 +154,7 @@ class Game extends HTMLElement {
 	}
 
 
-    startGame(roomName, playerNumber, access_token) {
+    startGame(roomName, playerNumber) {
 		this.dsplNone();
 		this.initializeGameArea();
 		remoteGame.waitingForPlayers(roomName, playerNumber);

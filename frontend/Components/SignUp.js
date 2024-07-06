@@ -27,8 +27,8 @@ class Signup extends HTMLElement {
                 </div>
                 <button type="submit" class="btn">Giriş Yap</button>
                 <div class="social-login">
-                    <button id= "login-42" type="button" class="btn social-btn bg-dark">42 API ile Giriş Yap</button>
-                    <button id= "login-google" type="button" class="btn social-btn bg-dark" >Google ile Giriş Yap</button>
+                    <button id= "login-42" type="button" class="btn social-btn">42 API ile Giriş Yap</button>
+                    <button id= "login-google" type="button" class="btn social-btn" >Google ile Giriş Yap</button>
                     <div class="g-signin2" data-onsuccess="onSignIn"></div>
                 </div>
             </form>

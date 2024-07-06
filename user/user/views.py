@@ -201,8 +201,9 @@ def login_with_google(request):
 @permission_classes([IsAuthenticated])
 def profile(request):
     user = request.user
-    
+    profiles = Profile.objects.all()
     profile = Profile.objects.get(user=user)
+    match_history = profile.match_history
 
     friends = []
     for friend in profile.friends.all():
@@ -302,7 +303,7 @@ def remove_friend(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_all_users(request):
+def getUser(request):
     users = User.objects.all()
     data = []
     for user in users:
@@ -316,3 +317,49 @@ def get_all_users(request):
             "is_active": user.is_active
         })
     return Response(data, status=200)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMatchHistory(request):
+    profiles = Profile.objects.all()  
+    data = []
+    for profile in profiles:
+        for match in profile.match_history:
+            if match not in data:
+                if profile.user.username == match['winner']:
+                    data.append(match)
+    return Response(data, status=200)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def addMatchHistory(request):
+    date = request.data.get('date')
+    player1 = request.data.get('player1')
+    player2 = request.data.get('player2')
+    score = request.data.get('score')
+    winner = request.data.get('winner')
+    
+    if User.objects.filter(username=player1).exists():
+        player1_user = User.objects.get(username=player1)
+        player1_profile = Profile.objects.get(user=player1_user)
+        player1_profile.match_history.append({
+            "date": date,
+            "player1": player1,
+            "player2": player2,
+            "score": score,
+            "winner": winner
+        })
+        player1_profile.save()
+
+    if User.objects.filter(username=player2).exists():
+        player2_user = User.objects.get(username=player2)
+        player2_profile = Profile.objects.get(user=player2_user)
+        player2_profile.match_history.append({
+            "date": date,
+            "player1": player1,
+            "player2": player2,
+            "score": score,
+            "winner": winner
+        })
+        player2_profile.save()
+    return Response({"success": "Match history added successfully"}, status=200)

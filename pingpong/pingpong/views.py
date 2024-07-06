@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from .models import Rooms
 from .consumers import GameConsumer
+import json
 
 # Create your views here.
 def index(request):
@@ -48,23 +49,32 @@ def create_room(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
-def join_room(request, room_name):
+def join_room(request):
     if request.method == 'POST':
-        room = get_object_or_404(Rooms, room_name=room_name)
-        if room.players < 2:
-            room.players += 1
-            room.save()
-            if room.players == 2:
-                return JsonResponse({'status': 'start'})
+        data = json.loads(request.body.decode('utf-8'))
+        room_name = data.get('room')
+        username = data.get('username')
+        
+        room = Rooms.objects.filter(room_name=room_name)
+        if room.exists():
+            if username in [room[0].player1, room[0].player2]:
+                return JsonResponse({'status': 'success', 'message': 'Username already exists'})
+            elif room[0].players < 2:
+                room[0].players += 1
+                room[0].save()
+                if room[0].players == 2:
+                    return JsonResponse({'status': 'start'})
+                else:
+                    return JsonResponse({'status': 'waiting'})
             else:
-                return JsonResponse({'status': 'waiting'})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Room is full'})
+                return JsonResponse({'status': 'error', 'message': 'Room is full'})
+     
+
         
 @api_view(['GET'])
 @permission_classes([AllowAny])
 @csrf_exempt
-def leave_room(request, room_name):
+def leave_room(request, room_name, username):
 	if request.method == 'GET':
 		room = get_object_or_404(Rooms, room_name=room_name)
 		if room.players > 0:

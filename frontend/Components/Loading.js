@@ -118,7 +118,7 @@ class Loading extends HTMLElement {
         let data = document.querySelector("my-loading").getAttribute('data');
         let username = document.querySelector("my-loading").getAttribute('username');
         let password = document.querySelector("my-loading").getAttribute('password');
-
+		localStorage.setItem('username', username);
         try {
             const response = await fetch(`https://45.157.16.17:8080/otp?username=${username}&number=${value}`, {
                     method: 'POST',
