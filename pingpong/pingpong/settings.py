@@ -25,11 +25,11 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SSL_CERTIFICATE_PATH = "certs/certificate.crt"
 SSL_KEY_PATH = "certs/certificate.key"
 
-ALLOWED_HOSTS = ['185.249.202.33', '127.0.0.1', '172.17.0.2', '0.0.0.0', '*']
+ALLOWED_HOSTS = ['45.157.16.17', '45.157.16.17', '172.17.0.2', '0.0.0.0', '*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://127.0.0.1:8082",
+    "https://45.157.16.17:8082",
 ]
 
 # Application definition

@@ -78,7 +78,7 @@ class GameRooms extends HTMLElement {
 
 async fetchProfile() {
     try {
-      const response = await fetch('https://localhost:8080/profile', {
+      const response = await fetch('https://45.157.16.17:8080/profile', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -107,7 +107,7 @@ async fetchProfile() {
       ];
       
       const data = await response.json();
-      console.log(data);
+    //   console.log(data);
       this.populateMatchHistory(data.matchHistory);
       this.calculateStatistics(data.matchHistory);
       this.populateFriends(data.allUsers, data.username);

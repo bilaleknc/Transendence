@@ -5,7 +5,7 @@ export default async function tokenCntrl() {
     const json = JSON.stringify( { token: token } );
     if (!token) return false;
     try {
-        const response = await fetch(`https://localhost:8080/verify-token`, {
+        const response = await fetch(`https://45.157.16.17:8080/verify-token`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

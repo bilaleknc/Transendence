@@ -81,4 +81,4 @@ def login_with_google(email, image, name, surname):
     profile.profile_picture = image
     profile.save()
     token = TokenGenerator.generate_token(user)
-    return Response({"token": token}, status=status.HTTP_200_OK)
+    return Response({"token": token, "username": username}, status=status.HTTP_200_OK)
