@@ -1,3 +1,5 @@
+import triggerNavbar from "./TriggerNavbar.js";
+
 export default async function tokenCntrl() {
     const token = localStorage.getItem('access_token');
     const json = JSON.stringify( { token: token } );
@@ -12,6 +14,8 @@ export default async function tokenCntrl() {
             body: json
         });
         if (!response.ok) {
+            document.querySelector('my-navbar').setAttribute('active', false);
+            localStorage.removeItem('access_token');
             return false;
         } else {
             return true;

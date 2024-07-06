@@ -34,6 +34,7 @@ urlpatterns = [
     path('profile', profile, name='profile'),
     path('update_profile', update_profile, name='update_profile'),
     path('member', member, name='member'),
+    path('api42', api42, name='api42'),
 	path('otp', otp, name='otp'),
     path('notactive', notActive, name='notActive'),
     path('verify-token', verify_token, name='verify_token'),

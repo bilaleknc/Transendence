@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import environ
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'django_prometheus',
+    'timed_auth_token',
 ]
 
 MIDDLEWARE = [
@@ -88,10 +90,17 @@ PROMETHEUS_METRICS_ENABLED = True
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'timed_auth_token.authentication.TimedAuthTokenAuthentication'
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+}
+
+TIMED_AUTH_TOKEN = {
+    'DEFAULT_VALIDITY_DURATION': timedelta(minutes=1)
 }
 
 ROOT_URLCONF = 'user.urls'

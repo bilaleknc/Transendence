@@ -15,6 +15,15 @@ from user.third_party_api import connect_api_42, connect_api_google
 from rest_framework.exceptions import APIException
 import json
 from user.models import Profile
+from django.utils import timezone
+from django.shortcuts import redirect
+
+@api_view(['POST', 'GET'])
+@permission_classes([AllowAny])
+def api42(request):
+    code = request.GET.get('code')
+    return redirect(f"https://localhost:8082/api42?code={code}")
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -37,6 +46,12 @@ def verify_token(request):
         return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
     try:
         token = Token.objects.get(key=token_key)
+        print(timezone.now())
+        print(token.user.profile.last_login)
+        print(token.user.profile.last_login - timezone.now())
+        if timezone.now() - token.user.profile.last_login > timedelta(hours=24):
+            token.delete()
+            return Response({"error": "Token expired"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"message": "Token is valid", "user": token.user.username}, status=status.HTTP_200_OK)
     except Token.DoesNotExist:
         return Response({"error": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -174,6 +189,7 @@ def direct_google_login_page(request):
 @api_view(['POST', 'GET'])
 @permission_classes([AllowAny])
 def login_with_42(request):
+    
     try:
         code = request.data.get('code') if request.method == 'POST' else request.GET.get('code')
         if not code:
