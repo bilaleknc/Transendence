@@ -120,7 +120,7 @@ class Game {
         this.ball = ball;
         this.screen = screen;
         this.i = 0;
-
+        this.won_player = "";
         this.speedPlayer = 8;
         this.speedBall = 7;
         this.animationFlag = false;
@@ -148,6 +148,7 @@ class Game {
             let text = this.rightPlyrScore < this.leftPlyrScore ? "Left player won!" : "Right player won!";
             this.screen.putText(text, this.screen.width / 2, 40);
             this.screen.putScore(this.leftPlyrScore, this.rightPlyrScore);
+            this.won_player = this.rightPlyrScore < this.leftPlyrScore ? "Left" : "Right";
         }
         this.screen.putText("Press enter to start the game", this.screen.width / 2, this.screen.height / 2 - 35)
         this.leftPaddle.drawRect();
@@ -325,27 +326,70 @@ class Game {
 };
 
 
+// export default class Play {
+//     constructor() {
+//         // window.addEventListener("resize", this.loop.bind(this));
+//         this.screen = new Screen();
+//         this.pdlIceptionHeight = this.screen.getHghtOfPdlIncLoc();
+//         this.leftPpddl = new Draw(10, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
+//         this.rightPddl = new Draw(this.screen.width - 30, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
+//         this.ball = new Draw(this.screen.width / 2, this.screen.height / 2, 20, 0, this.screen.ctx);
+//         this.game = new Game(this.leftPpddl, this.rightPddl, this.ball, this.screen);
+//     }
+
+//     loop() {
+//         if (window.gameEnd) {
+//             return;
+//         }
+//         if (this.game.isOpen()) {
+//             this.game.begin();
+//         } else {
+//             this.game.inception();
+//         }
+//         requestAnimationFrame(this.loop.bind(this));
+//     }
+// }
+
 export default class Play {
-    constructor() {
-        // window.addEventListener("resize", this.loop.bind(this));
+    constructor(player1, player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+        console.log("player1", player1);
+        console.log("player2", player2);
         this.screen = new Screen();
         this.pdlIceptionHeight = this.screen.getHghtOfPdlIncLoc();
-        this.leftPpddl = new Draw(10, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
-        this.rightPddl = new Draw(this.screen.width - 30, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
+        this.leftPaddle = new Draw(10, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
+        this.rightPaddle = new Draw(this.screen.width - 30, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
         this.ball = new Draw(this.screen.width / 2, this.screen.height / 2, 20, 0, this.screen.ctx);
-        this.game = new Game(this.leftPpddl, this.rightPddl, this.ball, this.screen);
+        this.game = new Game(this.leftPaddle, this.rightPaddle, this.ball, this.screen);
     }
 
     loop() {
-        if (window.gameEnd) {
-            return;
-        }
-        if (this.game.isOpen()) {
-            this.game.begin();
-        } else {
-            this.game.inception();
-        }
-        requestAnimationFrame(this.loop.bind(this));
+        return new Promise((resolve) => {
+            const loopFunction = () => {
+                if (this.game.isOpen()) {
+                    this.game.begin();
+                } else {
+                    this.game.inception();
+                }
+                if (this.game.won_player != "") {
+                    console.log("this.game.won_player", this.game.won_player);
+                    if (this.game.won_player == "Left") {
+                        console.log("this.player1", this.player1);
+                        resolve(this.player1);
+                    }
+                    else {
+                        console.log("this.player2", this.player2);
+                        resolve(this.player2);
+                    }
+                    return;
+                }
+                requestAnimationFrame(loopFunction);
+            };
+            loopFunction();
+        });
     }
+    
 }
+
 

@@ -1,5 +1,4 @@
 class GameRooms extends HTMLElement {
-	// Constructor
 	constructor() {
 		super();
 		this.innerHTML = `

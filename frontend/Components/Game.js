@@ -1,6 +1,5 @@
 import Play from "../static/offline_pingpong.js";
 import remoteGame from "../static/remote_pingpong.js";
-import { Tournament } from "./Tournament.js"
 
 class Game extends HTMLElement {
     constructor() {
@@ -29,10 +28,12 @@ class Game extends HTMLElement {
                 </div>
             </div>
         `;
-        window.gameEnd = false;
+        window.gameEnd = false; 
         this.querySelector('#two-player').addEventListener('click', () => this.twoPlayer());
         this.querySelector('#remote').addEventListener('click', () => this.remotePlayer());
-		this.querySelector('#tournament').addEventListener('click', () => this.twoPlayer());
+		this.querySelector('#tournament').addEventListener('click', () => {
+            window.route({ target: { href: '/tournament' } });
+        });
         this.querySelector('#create-room').addEventListener('click', () => this.createRoom());
         this.querySelector('#refresh-rooms').addEventListener('click', () => this.fetchRooms());
     }
@@ -103,6 +104,7 @@ class Game extends HTMLElement {
 
     async createRoom() {
         const roomName = this.querySelector('#room-name').value;
+        console.log(roomName);
         if (roomName) {
             try {
                 const response = await fetch('https://45.157.16.17:8081/create_room/', {
@@ -199,11 +201,11 @@ class Game extends HTMLElement {
 		this.querySelector('#game-area').classList.remove('d-none');
 	}
 
-	startTournament(){
-		this.displayNone();
-		const tournament = new Tournament();
-		tournament.start();
-	}
+	// startTournament(){
+	// 	this.displayNone();
+	// 	const tournament = new Tournament();
+	// 	tournament.start();
+	// }
 }
 
 customElements.define('my-game', Game);

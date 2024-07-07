@@ -100,7 +100,6 @@ def login(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
-        print(username, password)
         try:
             user = Authenticator.authenticate(username=username, password=password)
         except AuthenticationFailed as e:

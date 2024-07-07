@@ -15,8 +15,8 @@ class Game:
 		self.maxScore = 5
 		self.dirX = 2.0
 		self.dirY = 0.0
-		self.speedBall = 4.0
-		self.speedPlayer = 20.0
+		self.speedBall = 3.0
+		self.speedPlayer = 2.0
 		self.beginPos = True
 		self.animationFlag = False
 		self.game_over = False
@@ -58,9 +58,10 @@ class Screen:
 		return (self._height / 2) - (self.paddleHeight() / 2)
 
 class Player:
-    def __init__(self, playerNumber):
+    def __init__(self, playerNumber, delay, username):
         self.playerNumber = playerNumber
-        self.username = None
+        self.username = username
+        self.delay = delay
   
   
 class PingPong:
@@ -75,7 +76,7 @@ class PingPong:
 		self.player1 = None
 		self.player2 = None
   
-		self.speedPlayer = 100
+		self.speedPlayer = 2
 		self.ready = False
 		self.game_over = False
   
@@ -83,9 +84,11 @@ class PingPong:
 		self.dir_y = 1
   
 		self.text = ""
-		self.player1 = ""
-		self.player2 =  ""
   
+	def calculate_adjusted_position(self, position, delay):
+		# Adjust the position based on the delay and the speed of the player
+		adjusted_position = position + self.speedPlayer * delay
+		return adjusted_position
 
 	def start_with_initial_values(self, message: dict) -> None:
 		"""Initialize game objects with initial values from the message."""
@@ -95,9 +98,11 @@ class PingPong:
 		self.ready = True
 
 
-	def update_paddle_position(self, message: dict ) -> None:
+	def update_paddle_position(self, message: dict, delay: float) -> None:
 		"""Update the position of the paddles based on the input direction."""
 		direction = message.get('direction')
+		time = message.get('time')
+		player = message.get('player')
 		net_height = self.screen._height - self.screen.paddleHeight()
 		if  self.game_over and direction == 'ENTER':
 			self.reset()
@@ -105,15 +110,15 @@ class PingPong:
 			self.game.rightPlyrScore = 0
 			self.dir_x = 3
 			self.dir_y = 1
+		try:
+			self._move_paddle(self.paddle_l, direction, net_height, time)
+			self._move_paddle(self.paddle_r, direction, net_height, time)
+		except AttributeError:
+			pass
 
-		if direction in ['UP', 'DOWN']:
-			self._move_paddle(self.paddle_l, direction, net_height)
-		elif direction in ['AUP', 'ADOWN']:
-			self._move_paddle(self.paddle_r, direction, net_height)
-
-	def _move_paddle(self, paddle, direction: str, net_height: int) -> None:
+	def _move_paddle(self, paddle, direction: str, net_height: int, time: float) -> None:
 		"""Move a paddle up or down within the screen boundaries."""
-		if direction in ['UP', 'AUP']:
+		if direction['up'] or direction['w']:
 			new_y = max(0, paddle._y - self.speedPlayer)
 		else:
 			new_y = min(net_height, paddle._y + self.speedPlayer)
@@ -191,7 +196,7 @@ class PingPong:
 			self.calculate_collision(self.paddle_r, 0)
 
 
-	def get_game_state(self) -> dict:
+	def get_game_state(self, delay: float) -> dict:
 		"""Return the current state of the game."""
 		if self.game.leftPlyrScore >= self.game.maxScore:
 			self.game_over = True

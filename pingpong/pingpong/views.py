@@ -20,7 +20,9 @@ def index(request):
 @csrf_exempt
 def get_rooms(request):
 	if request.method == "GET":
+		print("selam")
 		rooms = Rooms.objects.all()
+		print("selam2")
 		room_list = []
 		for room in rooms:
 			room_list.append(room.room_name)
@@ -57,12 +59,10 @@ def join_room(request):
         
         room = Rooms.objects.filter(room_name=room_name).first()
         if room:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!", room.players, "!!")
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!", type(room.players), "!!")
             if username in [room.player1, room.player2]:
-                return JsonResponse({'status': 'success', 'message': 'Username already exists'})
+                print("username already exits")
+                return JsonResponse({'status': 'success', 'message': 'username already exits'})
             elif room.players < 2:
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!", room.players, "!!")
                 room.player1 = username if room.players == 0 else room.player1
                 room.player2 = username if room.players == 1 else room.player2
                 room.players += 1
@@ -80,16 +80,23 @@ def join_room(request):
 @permission_classes([AllowAny])
 @csrf_exempt
 def leave_room(request, room_name, username):
-	if request.method == 'GET':
-		room = get_object_or_404(Rooms, room_name=room_name)
-		if room.players > 0:
-			room.players -= 1
-			room.save()
-			print("Odadan biri ayrıldı")
-			return JsonResponse({'status': 'success'})
-		else:
-			return JsonResponse({'status': 'error', 'message': 'Room is empty'})
-
+	try:
+		if request.method == 'GET':
+			room = Rooms.objects.get(room_name=room_name)
+			if room and room.players > 0:
+				room.players -= 1
+				if room.player1 == username:
+					room.player1 = None
+				elif room.player2 == username:
+					room.player2 = None
+				room.save()
+				print("Odadan biri ayrıldı")
+				return JsonResponse({'status': 'success'})
+			else:
+				return JsonResponse({'status': 'error', 'message': 'Room is empty'})
+	except Exception as e:
+		print(e)
+		return JsonResponse({'status': 'error', 'message': 'An error occured'})
 @csrf_exempt
 def check_room_status(request, room_name):
     if request.method == 'GET':

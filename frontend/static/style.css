@@ -2,7 +2,11 @@ body{
 	margin: 0; padding: 0;
 	align-items: center;
 	font-family: 'Roboto', sans-serif;
+	background: linear-gradient(45deg, #49a09d, #5f2c82);	
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
 }
+
 canvas {
 	background: #000;
 	margin: 0; padding: 0;
@@ -24,7 +28,7 @@ canvas {
 
 .bi:hover
 {
-	color: #007bff;
+	transform: scale(1.1);
 }
 
 body{
@@ -49,11 +53,6 @@ canvas {
 {
 	color: white;
 	font-size: 20px;
-}
-
-.bi:hover
-{
-	color: #007bff;
 }
 
 #error-content {

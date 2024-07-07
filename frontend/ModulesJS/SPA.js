@@ -49,11 +49,16 @@ class SPA {
       title: "social-media",
       description: "Social Media",
     },
-	"/game-rooms": {
-	  template: "/templates/game-rooms.html",
-	  title: "game-rooms",
-	  description: "Game Rooms",
-	},
+    "/game-rooms": {
+      template: "/templates/game-rooms.html",
+      title: "game-rooms",
+      description: "Game Rooms",
+    },
+    "/tournament": {
+      template: "/templates/tournament.html",
+      title: "tournament",
+      description: "Tournament",
+    },
   };
 
   authLocation = ["/game", "/profile", "/game-rooms", "/member", "/social-media" ];

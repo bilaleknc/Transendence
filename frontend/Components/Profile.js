@@ -2,119 +2,94 @@ class Profile extends HTMLElement {
   constructor() {
     super();
     this.innerHTML = `
-    <div id="profile-page" class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-12">
-        <div class="row">
-          <!-- Left Column: Profile Information -->
-          <div class="col-md-6">
-            <div class="card shadow-sm mb-4">
-              <div class="card-body">
-                <h5 class="card-title mb-4">Profile</h5>
-                <form id="profile-form" class="form">
-                  <div class="text-center mb-3">
-                    <img id="profile-image" src="https://via.placeholder.com/150" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;">
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-image-url" class="form-label">Profile Image URL</label>
-                    <input type="text" id="profile-image-url" name="image" class="form-control">
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-fullname" class="form-label">Full Name</label>
-                    <input type="text" id="profile-fullname" name="fullname" class="form-control">
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-username" class="form-label">Username</label>
-                    <input type="text" id="profile-username" name="username" class="form-control" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-email" class="form-label">Email</label>
-                    <input type="email" id="profile-email" name="email" class="form-control" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-instagram" class="form-label">Instagram Account</label>
-                    <input type="text" id="profile-instagram" name="instagram" class="form-control">
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-linkedin" class="form-label">Linkedin Account</label>
-                    <input type="text" id="profile-linkedin" name="linkedin" class="form-control">
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-registered" class="form-label">Registration Date</label>
-                    <input type="text" id="profile-registered" name="registered" class="form-control" readonly>
-                  </div>
-                  <div class="mb-3">
-                    <label for="profile-password" class="form-label">Password</label>
-                    <input type="password" id="profile-password" name="password" class="form-control">
-                  </div>
-                  <button type="submit" class="btn bg-dark w-100 text-white">Update</button>
-                </form>
-              </div>
-            </div>
+    <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="card-title">Match History</h3>
           </div>
-          <!-- Right Column: Match History, Statistics, Game Rooms -->
-          <div class="col-md-6">
-            <div class="card shadow-sm mb-4">
-              <div class="card-body">
-                <h5 class="card-title">Match History</h5>
-                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Player 1</th>
-                        <th scope="col">Player 2</th>
-                        <th scope="col">Score</th>
-                        <th scope="col">Winner</th>
-                      </tr>
-                    </thead>
-                    <tbody id="match-history">
-                      <!-- Match history will be populated here -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div class="card shadow-sm mb-4">
-              <div class="card-body">
-                <h5 class="card-title">Statistics</h5>
-                <div class="table-responsive">
-                  <table class="table table-striped">
-                    <tbody id="statistics-list">
-                      <!-- Statistics will be populated here -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+          <div class="card-body">
+            <table class="table table-striped" id="match-history">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Player 1</th>
+                  <th>Player 2</th>
+                  <th>Score</th>
+                  <th>Winner</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
           </div>
-          <!-- Friends List -->
-          <div class="col-md-12">
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title mb-4">Friends</h5>
-                <div class="table-responsive">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th scope="col">Image</th>
-                        <th scope="col">Username</th>
-                        <th scope="col">Profile</th>
-                        <th scope="col">Active</th>
-                      </tr>
-                    </thead>
-                    <tbody id="friends-list">
-                      <!-- Friends will be populated here -->
-                    </tbody>
-                  </table>
-                </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="card-title">Statistics</h3>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered" id="statistics-list"></table>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="card-title">Friends</h3>
+          </div>
+          <div class="card-body">
+            <table class="table table-hover" id="friends-list"></table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Profile</h3>
+          </div>
+          <div class="card-body">
+            <form id="profile-form">
+              <div class="mb-3 text-center">
+                <img id="profile-image" src="https://via.placeholder.com/150" class="img-thumbnail" alt="Profile Image">
               </div>
-            </div>
+              <div class="mb-3">
+                <label for="profile-fullname" class="form-label">Full Name</label>
+                <input type="text" id="profile-fullname" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="profile-username" class="form-label">Username</label>
+                <input type="text" id="profile-username" class="form-control" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="profile-email" class="form-label">Email</label>
+                <input type="email" id="profile-email" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="profile-registered" class="form-label">Registered Date</label>
+                <input type="text" id="profile-registered" class="form-control" disabled>
+              </div>
+              <div class="mb-3">
+                <label for="profile-instagram" class="form-label">Instagram</label>
+                <input type="text" id="profile-instagram" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="profile-linkedin" class="form-label">LinkedIn</label>
+                <input type="text" id="profile-linkedin" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="profile-password" class="form-label">Password</label>
+                <input type="password" id="profile-password" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="profile-image-url" class="form-label">Profile Image URL</label>
+                <input type="text" id="profile-image-url" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
-  </div>   
+  </div>
     `;
   }
 

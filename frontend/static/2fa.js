@@ -52,7 +52,7 @@ function moveToNextTextbox(event, currentTextbox) {
         );
   
         nextInput.focus();
-        obj[nextTextbox] = null;
+        obj[currentInput] = null;
       }
       event.preventDefault();
       return false;

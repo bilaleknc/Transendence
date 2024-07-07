@@ -37,7 +37,4 @@ export class Game {
 		if (gameState['leftPlyrScore'] !== undefined)
 			this.leftPlyrScore = gameState['leftPlyrScore'];
 	}
-
-
-	isOpen() { return this.animationFlag; }
 };

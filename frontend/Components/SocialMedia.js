@@ -1,11 +1,8 @@
-import ErrorUtils from "../ModulesJS/ErrorUtils.js";
-import TriggerNavbar from "../ModulesJS/TriggerNavbar.js";
-
 class SocialMedia extends HTMLElement {
     constructor() {
         super();
         this.innerHTML = `
-    <div class="container mt-5" style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+    <div class="container mt-5" style="padding: 20px; border-radius: 10px;">
     <div class="row justify-content-center">
         <div class="col-lg-12">
             <div class="row">
@@ -36,9 +33,12 @@ class SocialMedia extends HTMLElement {
                 <div class="col-md-6" style="height: auto;">
                     <div class="card shadow-sm mb-4">
                         <div class="card-body">
-                            <h5 class="card-title">Wall</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title">Wall</h5>
+                                <button id="refresh-posts" class="btn btn-warning bi bi-arrow-clockwise"></button>
+                            </div>
                             <div class="mb-3">
-                                <textarea id="post-content" class="form-control mb-2" placeholder="Mesajınız"></textarea>
+                                <textarea id="post-content" class="form-control mb-2" placeholder="What's on your mind?"></textarea>
                                 <button id="post-submit" class="btn btn-primary w-100">Gönder</button>
                             </div>
                             <ul id="posts-list" class="list-group" style="max-height: 400px; overflow-y: auto;">
@@ -86,6 +86,9 @@ class SocialMedia extends HTMLElement {
         this.fetchPosts();
         this.querySelector('#post-submit').addEventListener('click', () => {
             this.postSubmit();
+        });
+        this.querySelector('#refresh-posts').addEventListener('click', () => {
+            this.fetchPosts();
         });
     }
 
@@ -213,6 +216,9 @@ class SocialMedia extends HTMLElement {
 
     async postSubmit() {
         const postContent = this.querySelector('#post-content').value;
+        if (!postContent) {
+            return;
+        }
         const response = await fetch('https://45.157.16.17:8080/create_post', {
         method: 'POST',
         headers: {

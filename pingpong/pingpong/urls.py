@@ -23,6 +23,6 @@ urlpatterns = [
     path('create_room/', views.create_room),
     path('join_room/', views.join_room),
     path('check_room_status/<str:room_name>/', views.check_room_status),
-    path('leave_room/<str:room_name>/', views.leave_room),
+    path('leave_room/<str:room_name>/<str:username>/', views.leave_room),
     
 ]

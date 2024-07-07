@@ -21,6 +21,7 @@ class RemoteGame {
 		this.screen = new Screen();
 		this.screen.start();
 
+		this.roomName = roomName;
 		this.pdlIceptionHeight = this.screen.getHghtOfPdlIncLoc();
 		this.lpaddle = new Draw(10, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
 		this.rpaddle = new Draw(this.screen.width - 30, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
@@ -48,7 +49,7 @@ class RemoteGame {
 	createStartMessage() {
 		return {
 			type: 'START',
-			'player_name': 'PlayerName',
+			player_name: localStorage.getItem("username"),
 			paddle_l: this.getPaddleData(this.lpaddle),
 			paddle_r: this.getPaddleData(this.rpaddle),
 			screen: this.getScreenData(),
@@ -93,11 +94,14 @@ class RemoteGame {
 	}
 
 	initializeSocket(playerNumber) {
+		const time = new Date().getTime();
+
 		this.gameSocket.onopen = (e) => {
 			console.log('Chat socket connected');
 			console.log("message", this.message);
 			this.gameSocket.send(JSON.stringify({'message': {
                 type: 'JOIN',
+				time: time,
                 playerNumber: playerNumber,
 				username: localStorage.getItem("username")
             }}));
@@ -131,6 +135,7 @@ class RemoteGame {
 			this.game.updateGameInterface(data['data']);
 		}
 		if (data['action'] === 'game_over') {
+			print("game over")
 			this.text = data['data'];
 		}
 		if (data['action'] === 'countdown') {
@@ -141,9 +146,16 @@ class RemoteGame {
 	sendMessage(message) {
 		this.gameSocket.send(JSON.stringify({ 'message': message }));
 	}
-
+	
 	addKeyListeners() {
+		const directions = {
+			"w": false,
+			"s": false,
+			"up": false,
+			"down": false,
+		}
 		document.addEventListener("keydown", (e) => {
+			if (e.key == "Escape") this.close();
 			if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                 e.preventDefault();
             }
@@ -155,22 +167,49 @@ class RemoteGame {
 			if (this.game.beginPos) {
 				// if (e.key == "Escape") this.reset();
 				if (e.key == "Enter") this.movePlayer('ENTER');
-				if (e.key == "w" || e.key == "W") this.movePlayer('UP');
-				if (e.key == "s" || e.key == "S") this.movePlayer('DOWN');
-				if (e.key == "ArrowUp") this.movePlayer('AUP');
-				if (e.key == "ArrowDown") this.movePlayer('ADOWN');
+				if (e.key == "w" || e.key == "W") directions['w'] = true;
+				if (e.key == "s" || e.key == "S") directions['s'] = true;
+				if (e.key == "ArrowUp") directions['up'] = true;
+				if (e.key == "ArrowDown") directions['down'] = true;
+				this.movePaddle(direction);
 			}
 		});
+		document.addEventListener("keyup", (e) => {
+			if (this.game.beginPos) {
+				// if (e.key == "Escape") this.reset();
+				if (e.key == "w" || e.key == "W") directions['w'] = false;
+				if (e.key == "s" || e.key == "S") directions['s'] = false;
+				if (e.key == "ArrowUp") directions['up'] = false;
+				if (e.key == "ArrowDown") directions['down'] = false;
+				this.movePaddle(direction);
+			}
+		})
+
 		// // Sayfa kapatıldığında veya yenilendiğinde WebSocket'i kapat
 		window.addEventListener('beforeunload', this.close.bind(this));
 		window.addEventListener('unload', this.close.bind(this));
 	}
 
+	movePaddle(direction) {
+		const zaman = new Date().getTime();
+
+		const message = {
+			type: 'MOVE_PADDLE',
+			direction: direction,
+			time: zaman,
+			player: localStorage.getItem("username")
+		};
+		this.sendMessage(message);
+	}
+
 	movePlayer(direction) {
+		const zaman = new Date().getTime();
+
 		const message = {
 			type: 'MOVE',
 			direction: direction,
-			player: this.playerUserName
+			time: zaman,
+			player: localStorage.getItem("username")
 		};
 		this.sendMessage(message);
 	}
@@ -185,23 +224,25 @@ class RemoteGame {
 
 	async loop() {
 		this.screen.clear();
-		if (this.game.animationFlag) {
+		// if (this.game.animationFlag) {
+		// 	this.game.animationFlag = false;
+		// }
+		if (this.game.rightPlyrScore == this.game.maxScore || this.game.leftPlyrScore == this.game.maxScore) {
+			console.log("game is over");
+			this.reset();
+			this.text = this.game.rightPlyrScore < this.game.leftPlyrScore ? "Left player won!" : "Right player won!";
 			this.game.animationFlag = false;
-		}
-		if (this.game.isOpen()) {
-			console.log("game is open");
-			if (this.game.rightPlyrScore == this.game.maxScore || this.game.leftPlyrScore == this.game.maxScore) {
-				this.reset();
-				this.text = this.game.rightPlyrScore < this.game.leftPlyrScore ? "Left player won!" : "Right player won!";
-				this.game.animationFlag = false;
-				this.game.beginPos = true;
-			}
+			this.game.beginPos = true;
+			self.game_over = true
+			this.close();
+			return;
 		}
 		this.game.screen.putScore(this.game.leftPlyrScore, this.game.rightPlyrScore);
 		this.screen.putText(this.text, this.screen.width / 2, this.screen.height / 2 - 200);
 		this.game.lpaddle.drawRect();
 		this.game.rpaddle.drawRect();
 		this.game.ball.drawArc();
+		
 		requestAnimationFrame(this.loop.bind(this));
 	}
 
@@ -215,7 +256,6 @@ class RemoteGame {
 				}
 			});
 			const data = await response.json();
-			console.log(data)
 			if (data['message'] === 'waiting') {
 				this.text = "Waiting for players";
 				// 1 saniye sonra tekrar kontrol et
@@ -234,13 +274,17 @@ class RemoteGame {
 		if (this.gameSocket) {
 			this.gameSocket.close();
 			try {
-				const response = await fetch(`https://45.157.16.17:8081/leave_room/${roomName}/`, {
+				const response = await fetch(`https://45.157.16.17:8081/leave_room/${this.roomName}/${localStorage.getItem("username")}`, {
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
 					}
 				});
-
+				console.log("leave room");
+				const data = await response.json();
+				if (data.status === 'success')
+					this.fetchRooms();
+				
 			} catch (error) {
 				console.error('Error fetching room leave:', error);
 			}

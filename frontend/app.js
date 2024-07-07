@@ -12,6 +12,7 @@ import "./Components/Member.js"
 import "./Components/GameRooms.js"
 import "./Components/SocialMedia.js"
 import "./Components/Api42.js"
+import "./Components/Tournament.js"
 import triggerNavbar from "./ModulesJS/TriggerNavbar.js";
 
 console.log(localStorage.getItem('access_token'))

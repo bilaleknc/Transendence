@@ -19,9 +19,11 @@ class GameConsumer(AsyncWebsocketConsumer):
 		)
 		await self.accept()
 		self.pong = self.create_game_instance()
+		self.pong.last_update_time = time.time()
 		asyncio.ensure_future(self.game_loop())
 	
 	async def disconnect(self, close_code):
+		print("!!!!!!!!!disconnet   !!!!!!!!!!!!")
 		await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -48,17 +50,26 @@ class GameConsumer(AsyncWebsocketConsumer):
 			await self.send_group_message('waiting_for_players')
 		else:
 			await self.countdown()
-			await self.send_group_message('game_started','')
+			await self.send_group_message('game_started', '')
 			while connected_players == 2:
-				if self.pong.game_over == False and self.pong.ready == True:
-					game_state = self.pong.get_game_state()
-					await self.send_group_message('game_status' , game_state)
-					if self.pong.game_over:
-						self.send_group_message('game_over', '')
-				await asyncio.sleep(0.05)
-    
+				if not self.pong.game_over:
+	
+					current_time = time.time()
+					delay = current_time - self.pong.last_update_time
+					self.pong.last_update_time = current_time
+					game_state = self.pong.get_game_state(delay)
+					await self.send_group_message('game_status', game_state)
+					# Update last_update_time after sending the game state
+					self.pong.last_update_time = time.time()
+					now_time = time.time()
+					while time.time() - now_time < 0.05:
+						await asyncio.sleep(0.005)
+				else:
+					await self.send_group_message('game_over', '')
+					break
 	async def send_group_message(self, event: str, message: str = None) -> None:
 		"""Send a message to the group."""
+			
 		await self.channel_layer.group_send(
 			self.room_group_name,
 			{
@@ -71,19 +82,28 @@ class GameConsumer(AsyncWebsocketConsumer):
 		)
 
 	async def receive(self, text_data):
-		
 		data = json.loads(text_data)
 		message = data.get('message')
 		if message['type'] == 'START':
 			self.pong.start_with_initial_values(message)
 		elif message['type'] == 'JOIN':     
-			self.pong.player = Player(message['playerNumber'])
-			if message['playerNumber'] == 1:
-				self.player1 = message['username']
+			front_time = message['time'] / 1000.0
+			current_time = time.time()
+			delay = current_time - front_time
+			if message["playerNumber"] == 1:
+				self.pong.player1 = Player(1, delay, message['username']) 
 			else:
-				self.player2 = message['username']
+				self.pong.player2 = Player(2, delay, message['username'])
 		elif message['type'] == 'MOVE':
-				self.pong.update_paddle_position(message)
+			front_time = message['time'] / 1000.0
+			current_time = time.time()
+			delay = current_time - front_time
+			self.pong.update_paddle_position(message, delay)
+		elif message['type'] == 'MOVE_PADDLE':
+			front_time = message['time'] / 1000.0
+			current_time = time.time()
+			delay = current_time - front_time
+			self.pong.update_paddle_position(message, delay)
 
 
 	def create_game_instance(self):
@@ -91,12 +111,12 @@ class GameConsumer(AsyncWebsocketConsumer):
 			self.game_instances[self.room_name] = PingPong()
 		return self.game_instances[self.room_name]
 
-
 	async def game_message(self, event):
 		message = event['message']
-		await self.send(text_data=json.dumps(message))
-    
-
+		try:
+			await self.send(text_data=json.dumps(message))
+		except Exception as e:
+			print(e)
 
 # class GameConsumer(AsyncWebsocketConsumer):
 # 	game_instances = {}
