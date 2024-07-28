@@ -27,6 +27,20 @@ export class Draw {
 	get y() { return this._y };
 	get radius() { return this._radius; }
 
+	getAllData() {
+		return {
+			"_x": this._x,
+			"_y": this._y,
+			"_radius": this._radius,
+			"end": this.end,
+			"_width": this._width,
+			"_height": this._height,
+			"Rx": this._x,
+			"Ry": this._y,
+			"Rradius": this._radius,
+			"Rend": this.end,
+		}
+	}
 	reset() {
 		this._x = this.Rx;
 		this._y = this.Ry;

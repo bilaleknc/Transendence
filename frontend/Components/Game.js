@@ -1,5 +1,5 @@
 import Play from "../static/offline_pingpong.js";
-import remoteGame from "../static/remote_pingpong.js";
+import RemoteGame from "../static/remote_pingpong.js";
 
 class Game extends HTMLElement {
     constructor() {
@@ -16,26 +16,13 @@ class Game extends HTMLElement {
 			<div class="d-flex justify-content-center align-items-center" style="height=800px;">
             	<div id="game-area" class="d-none"></div>
 			</div>
-            <div id="room-list" class="container mt-5 d-none">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h2>Available Rooms</h2>
-                    <button id="refresh-rooms" class="btn btn-warning">Refresh</button>
-                </div>
-                <ul id="rooms" class="list-group"></ul>
-                <div class="input-group mt-3">
-                    <input type="text" id="room-name" class="form-control" placeholder="Enter room name">
-                    <button id="create-room" class="btn btn-success">Create Room</button>
-                </div>
-            </div>
         `;
         window.gameEnd = false; 
-        this.querySelector('#two-player').addEventListener('click', () => this.twoPlayer());
-        this.querySelector('#remote').addEventListener('click', () => this.remotePlayer());
+        this.querySelector('#two-player').addEventListener('click', () => window.route( {target: { href: '/game-area'}} ));
+        this.querySelector('#remote').addEventListener('click', () => window.route( {target: { href: '/remote-game'}} ));
 		this.querySelector('#tournament').addEventListener('click', () => {
             window.route({ target: { href: '/tournament' } });
         });
-        this.querySelector('#create-room').addEventListener('click', () => this.createRoom());
-        this.querySelector('#refresh-rooms').addEventListener('click', () => this.fetchRooms());
     }
 
     disconnectedCallback() {
@@ -76,85 +63,6 @@ class Game extends HTMLElement {
         await this.fetchRooms();
     }
 
-
-	async fetchRooms() {
-    try {
-        const response = await fetch('https://45.157.16.17:8081/get_rooms');
-        const data = await response.json();
-        const roomList = this.querySelector('#rooms');
-        roomList.innerHTML = '';
-        data.rooms.forEach(room => {
-            const roomItem = document.createElement('li');
-            roomItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-            roomItem.textContent = room;
-            const joinButton = document.createElement('button');
-            joinButton.classList.add('btn', 'btn-primary');
-            joinButton.textContent = 'Join';
-            joinButton.addEventListener('click', (e) => {
-				
-				this.joinRoom(room)
-			});
-            roomItem.appendChild(joinButton);
-            roomList.appendChild(roomItem);
-        });
-    } catch (error) {
-        console.error('Error fetching rooms:', error);
-    }
-}
-
-    async createRoom() {
-        const roomName = this.querySelector('#room-name').value;
-        console.log(roomName);
-        if (roomName) {
-            try {
-                const response = await fetch('https://45.157.16.17:8081/create_room/', {
-                    method: 'POST',
-                    headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json',
-						'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-                    },
-                    body: JSON.stringify({ room_name: roomName })
-                });
-                const data = await response.json();
-				alert(data.status);
-                if (data.status === 'success') {
-                    this.fetchRooms();
-                    this.querySelector('#room-name').value = '';
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                console.error('Error creating room:', error);
-            }
-        }
-    }
-
-    async joinRoom(room) {
-        try {
-			// room'u ve username'i gönder
-			const roomData = {room: room, username: localStorage.getItem('username')}
-            const response = await fetch(`https://45.157.16.17:8081/join_room/`,
-				{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-				body: JSON.stringify(roomData)
-            });
-            const data = await response.json();
-			alert(data.message);
-			if (data.message === 'waiting') {
-				console.log("game de join room waiting")
-                this.startGame(room, 1); // Player 1
-                alert('Waiting for another player to join...');
-            } else if (data.message === 'start')
-                this.startGame(room, 2); // Player 2
-        } catch (error) {
-            console.error('Error joining room:', error);
-        }
-    }
-
 	async leaveRoom(room) {
 		try {
 			const response = await fetch(`https://45.157.16.17:8081/leave_room/${room}/`, {
@@ -167,14 +75,14 @@ class Game extends HTMLElement {
 			if (data.status === 'success')
 				this.fetchRooms();
 		} catch (error) {
-			console.error('Error leaving room:', error);
+			return;
 		}
 	}
 
     startGame(roomName, playerNumber) {
-		console.log("game de start game")
 		this.dsplNone();
 		this.initializeGameArea();
+        const remoteGame = new RemoteGame(roomName);
 		remoteGame.waitingForPlayers(roomName, playerNumber);
     }
 

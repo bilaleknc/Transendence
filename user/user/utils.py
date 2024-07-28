@@ -49,7 +49,7 @@ def getUserbyPlatform(token, platform):
 def generate_otp():
     totp = pyotp.TOTP(pyotp.random_base32(), interval=60)
     otp = totp.now()
-    expired_date = datetime.now() + timedelta(minutes=1)
+    expired_date = datetime.now() + timedelta(minutes=3)
     print("OTP:!!!!! ", otp)
     return {'otp': otp, 'otp_expired_date': expired_date}
 
@@ -102,11 +102,13 @@ def generate_email(user):
     VerificationCode.objects.create(code=otp_code['otp'], expired_date=otp_code['otp_expired_date'], user=user.profile)
 
 def twoFactor(user):
-    otp_code = generate_otp()
-    receiver = user.email
-    subject = 'Transcendence Email Verification'
-    message = f'''
-    Hello {user.username},
+	if not user:
+		return
+	otp_code = generate_otp()
+	receiver = user.email
+	subject = 'Transcendence Email Verification'
+	message = f'''
+	Hello {user.username},
 
     You can use the one-time code below to log in to your Transcendence account:
 
@@ -117,14 +119,14 @@ def twoFactor(user):
     Regards,
     Transcendence Team
     '''
-    from_email = os.getenv("EMAIL")
-    recipient_list = [receiver]
-    print(receiver)
-    print("sent emailden önce")
-    print(receiver, subject, message, from_email, recipient_list)
-    send_custom_mail(subject, message, from_email, recipient_list)
-    print("sent emailden sonra")
-    verificationCode = VerificationCode.objects.get(user=user.profile)
-    verificationCode.code = otp_code['otp']
-    verificationCode.expired_date = otp_code['otp_expired_date']
-    verificationCode.save()
+	from_email = os.getenv("EMAIL")
+	recipient_list = [receiver]
+	print(receiver)
+	print("sent emailden önce")
+	print(receiver, subject, message, from_email, recipient_list)
+	send_custom_mail(subject, message, from_email, recipient_list)
+	print("sent emailden sonra")
+	verificationCode = VerificationCode.objects.get(user=user.profile)
+	verificationCode.code = otp_code['otp']
+	verificationCode.expired_date = otp_code['otp_expired_date']
+	verificationCode.save()

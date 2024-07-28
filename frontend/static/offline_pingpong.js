@@ -134,7 +134,7 @@ class Game {
         }
         this.leftPlyrScore = 0;
         this.rightPlyrScore = 0;
-        this.maxScore = 2;
+        this.maxScore = 5;
         this.dirX = 2.0;
         this.dirY = 0.0;
     
@@ -354,8 +354,6 @@ export default class Play {
     constructor(player1, player2) {
         this.player1 = player1;
         this.player2 = player2;
-        console.log("player1", player1);
-        console.log("player2", player2);
         this.screen = new Screen();
         this.pdlIceptionHeight = this.screen.getHghtOfPdlIncLoc();
         this.leftPaddle = new Draw(10, this.pdlIceptionHeight, 20, this.screen.paddleHeight(), this.screen.ctx);
@@ -365,29 +363,12 @@ export default class Play {
     }
 
     loop() {
-        return new Promise((resolve) => {
-            const loopFunction = () => {
-                if (this.game.isOpen()) {
-                    this.game.begin();
-                } else {
-                    this.game.inception();
-                }
-                if (this.game.won_player != "") {
-                    console.log("this.game.won_player", this.game.won_player);
-                    if (this.game.won_player == "Left") {
-                        console.log("this.player1", this.player1);
-                        resolve(this.player1);
-                    }
-                    else {
-                        console.log("this.player2", this.player2);
-                        resolve(this.player2);
-                    }
-                    return;
-                }
-                requestAnimationFrame(loopFunction);
-            };
-            loopFunction();
-        });
+		if (this.game.isOpen()) {
+			this.game.begin();
+		} else {
+			this.game.inception();
+		}
+		requestAnimationFrame(this.loop.bind(this));
     }
     
 }

@@ -42,6 +42,7 @@ class Tournament extends HTMLElement {
     }
 
     addPlayerInput() {
+        
         const playerList = this.querySelector('#player-list');
         const inputGroup = document.createElement('div');
         inputGroup.classList.add('input-group', 'mb-3');
@@ -67,7 +68,24 @@ class Tournament extends HTMLElement {
         playerList.appendChild(inputGroup);
     }
 
+    checkPlayerNames() {
+        const playerInputs = this.querySelectorAll('#player-list input');
+        const playerNames = [];
+        playerInputs.forEach(input => {
+            if (input.value.trim() !== '') {
+                playerNames.push(input.value.trim());
+            }
+        });
+
+        const uniquePlayerNames = new Set(playerNames);
+        return playerNames.length === uniquePlayerNames.size;
+    }
+
     startTournament() {
+        if (!this.checkPlayerNames()) {
+            this.displayMessage('Please enter unique player names.', 'danger');
+            return;
+        }
         const playerInputs = this.querySelectorAll('#player-list input');
         playerInputs.forEach(input => {
             if (input.value.trim() !== '') {
@@ -123,7 +141,7 @@ class Tournament extends HTMLElement {
             </div>
         `;
 
-        nextMatchInfo.innerHTML = `<h4 class="text-center text-white f">Next Match: ${this.players[this.currentRound + 2] || 'Final'}</h4>`;
+        nextMatchInfo.innerHTML = `<h4 class="text-center text-white f">Next Match: ${this.players[this.currentRound + 2] || ''}</h4>`;
 
         const play = new Play(player1, player2);
         return play;

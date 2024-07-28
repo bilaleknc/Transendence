@@ -1,7 +1,12 @@
+import error from "../ModulesJS/ErrorUtils.js";
+
 class Profile extends HTMLElement {
   constructor() {
     super();
     this.innerHTML = `
+    <div id="error-content">
+        <my-error name="" content=""><my-error>
+    </div>
     <div class="container mt-5">
     <div class="row">
       <div class="col-md-8">
@@ -34,6 +39,14 @@ class Profile extends HTMLElement {
         </div>
         <div class="card mb-4">
           <div class="card-header">
+            <h3 class="card-title">Graphs</h3>
+          </div>
+          <div class="card-body">
+            <canvas id="myChart" width="400" height="400"></canvas>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-header">
             <h3 class="card-title">Friends</h3>
           </div>
           <div class="card-body">
@@ -41,7 +54,7 @@ class Profile extends HTMLElement {
           </div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 mb-4">
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Profile</h3>
@@ -49,7 +62,7 @@ class Profile extends HTMLElement {
           <div class="card-body">
             <form id="profile-form">
               <div class="mb-3 text-center">
-                <img id="profile-image" src="https://via.placeholder.com/150" class="img-thumbnail" alt="Profile Image">
+                <img id="profile-image" src="https://via.placeholder.com/150" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
               </div>
               <div class="mb-3">
                 <label for="profile-fullname" class="form-label">Full Name</label>
@@ -57,7 +70,7 @@ class Profile extends HTMLElement {
               </div>
               <div class="mb-3">
                 <label for="profile-username" class="form-label">Username</label>
-                <input type="text" id="profile-username" class="form-control" disabled>
+                <input type="text" id="profile-username" class="form-control" disabled autocomplete="username">
               </div>
               <div class="mb-3">
                 <label for="profile-email" class="form-label">Email</label>
@@ -77,7 +90,7 @@ class Profile extends HTMLElement {
               </div>
               <div class="mb-3">
                 <label for="profile-password" class="form-label">Password</label>
-                <input type="password" id="profile-password" class="form-control">
+                <input type="password" id="profile-password" class="form-control" autocomplete="new-password">
               </div>
               <div class="mb-3">
                 <label for="profile-image-url" class="form-label">Profile Image URL</label>
@@ -101,7 +114,8 @@ class Profile extends HTMLElement {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-          'Authorization': `Token ${localStorage.getItem('access_token')}`
+        //   'Authorization': `Token ${localStorage.getItem('access_token')}`,
+		      'Authorization': `Bearer ${localStorage.getItem('access')}`
         }
       });
       
@@ -110,13 +124,12 @@ class Profile extends HTMLElement {
       }
       
       const data = await response.json();
-      console.log(data);
       this.populateProfile(data);
       this.populateMatchHistory(data.matchHistory, data.username);
       this.calculateStatistics(data.matchHistory, data.username);
       this.populateFriends(data.friends);
     } catch (error) {
-      console.error('Error:', error);
+      return;
     }
   }
 
@@ -156,7 +169,7 @@ class Profile extends HTMLElement {
     let totalLosses = 0;
     let totalScored = 0;
     let totalConceded = 0;
-
+  
     matchHistory.forEach(match => {
       if (match.player1 === username) {
         totalScored += parseInt(match.score.split('-')[0]);
@@ -176,7 +189,7 @@ class Profile extends HTMLElement {
         }
       }
     });
-
+  
     const statisticsList = this.querySelector('#statistics-list');
     statisticsList.innerHTML = `
       <tr>
@@ -200,7 +213,39 @@ class Profile extends HTMLElement {
         <td>${totalConceded}</td>
       </tr>
     `;
-  }
+  
+    const ctx = this.querySelector('#myChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Wins', 'Losses', 'Goals Scored', 'Goals Conceded'],
+        datasets: [{
+          label: 'Statistics',
+          data: [totalWins, totalLosses, totalScored, totalConceded],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)'
+          ],
+          borderColor: [
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }  
 
   populateFriends(friends) {
     const friendsList = this.querySelector('#friends-list');
@@ -245,7 +290,8 @@ class Profile extends HTMLElement {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-          'Authorization': `Token ${localStorage.getItem('access_token')}`
+          'Authorization': `Token ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('access')}`,
         },
         body: JSON.stringify({
           first_name: first_name.trim(),
@@ -265,12 +311,12 @@ class Profile extends HTMLElement {
 
       const resData = await response.json();
       if (resData.error) {
-        alert(resData.error);
+        error.call(this, {"error": resData.error})
       } else {
-        alert('Profile updated successfully');
+        error.call(this, {"success": 'Profile updated successfully'})
       }
     } catch (error) {
-      console.error('Error:', error);
+      return;
     }
   }
 

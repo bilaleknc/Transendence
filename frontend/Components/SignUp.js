@@ -1,6 +1,4 @@
 import error from "../ModulesJS/ErrorUtils.js";
-import triggerNavbar from "../ModulesJS/TriggerNavbar.js";
-
 class Signup extends HTMLElement {
 	constructor() {
 	  super();
@@ -16,11 +14,11 @@ class Signup extends HTMLElement {
                 <h2 class="text-center">Giriş Yap</h2>
                 <div class="input-group">
                     <label for="login-username">Kullanıcı Adı</label>
-                    <input type="text" id="login-username" required>
+                    <input type="text" id="login-username" required autocomplete="username">
                 </div>
                 <div class="input-group">
                     <label for="login-password">Şifre</label>
-                    <input type="password" id="login-password" required>
+                    <input type="password" id="login-password" required autocomplete="current-password">
                 </div>
                 <div id="error-content">
                     <my-error name="" content=""><my-error>
@@ -28,7 +26,6 @@ class Signup extends HTMLElement {
                 <button type="submit" class="btn">Giriş Yap</button>
                 <div class="social-login">
                     <button id= "login-42" type="button" class="btn social-btn">42 API ile Giriş Yap</button>
-                    <button id= "login-google" type="button" class="btn social-btn" >Google ile Giriş Yap</button>
                     <div class="g-signin2" data-onsuccess="onSignIn"></div>
                 </div>
             </form>
@@ -40,15 +37,15 @@ class Signup extends HTMLElement {
 			</div>
 			<div class="input-group">
 				<label for="register-email">Email</label>
-				<input type="email" id="register-email" name="email" required>
+                <input type="email" id="register-email" name="email" required autocomplete="username">
 			</div>
 			<div class="input-group">
 				<label for="register-password">Şifre</label>
-				<input type="password" id="register-password" name="password" required>
+                <input type="password" id="register-password" name="password" required autocomplete="new-password">
 			</div>
 			<div class="input-group">
 				<label for="register-password2">Şifre Tekrar</label>
-				<input type="password" id="register-password2" name="password2" required>
+                <input type="password" id="register-password2" name="password2" required autocomplete="new-password">
 			</div>
             <div id="error-content">
                 <my-error name="" content=""><my-error>
@@ -74,7 +71,6 @@ class Signup extends HTMLElement {
         .addEventListener('click', () => this.setAttribute('active', 'false'));
         this.querySelector('#login-42')
         .addEventListener('click', () => this.ApiRemoteSign('42'));
-        this.querySelector('#login-google').addEventListener('click', () => this.ApiRemoteSign('google'))
 		this.querySelector('#login-form').addEventListener('submit', (e) => this.login(e));
 		this.querySelector('#register-form').addEventListener('submit', (e) => this.register(e));
 	}
@@ -106,13 +102,10 @@ class Signup extends HTMLElement {
         }
     }
 
-	// 42 API ve Google API ile giriş işlemi
 	async ApiRemoteSign(provider) {
 		let url = ''
 		if (provider === '42')
 			url = 'https://45.157.16.17:8080/direct_42_login_page';
-		else
-            url = 'https://45.157.16.17:8080/direct_google_login_page';
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: {
@@ -127,16 +120,6 @@ class Signup extends HTMLElement {
 		}
 	}
 
-    // Google OAuth 2.0 ile giriş işlemi
-    async  googleSign() {
-        const googleClientId = '204922017437-i21jnhaels3usdqpacphkc8r093f4lq6.apps.googleusercontent.com';
-        const redirectUri = 'https://45.157.16.17:8082';
-        const scope = 'profile email';
-        const responseType = 'token';
-    
-        const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}`;
-        const googleWindow = window.open(authUrl, '_target');
-    }
 
 	async login(e) {
 		e.preventDefault();
@@ -146,7 +129,6 @@ class Signup extends HTMLElement {
 		fetch('https://45.157.16.17:8080/login', {
 			method: 'POST',
 			headers: {
-				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi'
 			},
@@ -156,20 +138,19 @@ class Signup extends HTMLElement {
 				})
 		}).then(response => response.json())
 		.then(data => {
-			if (data.success) {
-                error.call(this, data, 0);
-                this.innerHTML = `<my-loading page="login" username="${username}""></my-loading>`
-			}else {
-                error.call(this, data, 0);
-            }
+			console.log(data)
+			if (data.ok) {
+				this.innerHTML = `<my-loading page="login" username="${username}""></my-loading>`
+			} else {
+				error.call(this, data, 0);
+			}
 		}).catch((error) => {
-            console.error('Error:', error);
+            return;
         });
 	}
 
     async register(e) {
         e.preventDefault();
-        console.log("register");
     
         const username = this.querySelector('#register-username').value;
         const email = this.querySelector('#register-email').value;
@@ -198,11 +179,9 @@ class Signup extends HTMLElement {
                 error.call(this, resData, 1);
                 return;
             }
-            console.log(resData);
             error.call(this, resData, 1);
             this.innerHTML = `<my-loading page="register" username="${username}" password="${password}"></my-loading>`
         } catch (error) {
-            console.log('Error:', error);
         }
     }
 

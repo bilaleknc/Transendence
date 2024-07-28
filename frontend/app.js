@@ -9,13 +9,14 @@ import "./Components/Loading.js"
 import "./Components/Profile.js"
 import "./Components/Error.js"
 import "./Components/Member.js"
-import "./Components/GameRooms.js"
+// import "./Components/GameRooms.js"
 import "./Components/SocialMedia.js"
 import "./Components/Api42.js"
 import "./Components/Tournament.js"
+import "./Components/Rooms.js"
+import "./Components/GameArea.js"
 import triggerNavbar from "./ModulesJS/TriggerNavbar.js";
 
-console.log(localStorage.getItem('access_token'))
-if (localStorage.getItem('access_token'))
+if (localStorage.getItem('access'))
     triggerNavbar();
 

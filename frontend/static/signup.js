@@ -21,5 +21,3 @@ document.addEventListener('DOMContentLoaded', function() {
         loginToggle.classList.remove('active');
     });
   });
-
-  console.log("Signup")

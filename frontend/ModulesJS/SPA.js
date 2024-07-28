@@ -49,19 +49,24 @@ class SPA {
       title: "social-media",
       description: "Social Media",
     },
-    "/game-rooms": {
-      template: "/templates/game-rooms.html",
-      title: "game-rooms",
-      description: "Game Rooms",
-    },
     "/tournament": {
       template: "/templates/tournament.html",
       title: "tournament",
       description: "Tournament",
     },
+    "/remote-game": {
+      template: "/templates/remote-game.html",
+      title: "remote-game",
+      description: "Remote",
+    },
+    "/game-area": {
+      template: "/templates/game-area.html",
+      title: "game-area",
+      description: "Remote",
+    },
   };
 
-  authLocation = ["/game", "/profile", "/game-rooms", "/member", "/social-media" ];
+  authLocation = ["/game", "/profile", "/member", "/social-media", "/remote-game", "/game-area"];
 
   dom_main = document.querySelector("main");
 
@@ -112,7 +117,6 @@ class SPA {
     if (location.length == 0) location = "/";
     const route = this.urlRoutes[location] || this.urlRoutes["404"];
     const temp_href = new HTMLTemplate(route.title);
-    console.log(route);
     const load = new HTMLTemplate(this.urlRoutes["/loading"].title);
     load.bindingToElement(this.dom_main);
     let self = this;

@@ -7,17 +7,6 @@ from django.core.files import File
 import urllib
 from datetime import timedelta
 
-
-# class Stats(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     total_games = models.IntegerField(default=0)
-#     total_wins = models.IntegerField(default=0)
-#     total_losses = models.IntegerField(default=0)
-#     points = models.IntegerField(default=0)
-    
-#     class Meta:
-#         db_table = 'stats'
-
 class Profile(models.Model):
     ColorChoices = [
         ('white', 'White'),
@@ -29,7 +18,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     nickname = models.CharField(max_length=100, unique=False, blank=False, null=True)
     last_login = models.DateTimeField(null=True, blank=True)
-    # stats = models.OneToOneField(Stats, on_delete=models.CASCADE, null=True)
     profile_picture = models.URLField(
         default='https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg',
         blank=True,
@@ -43,10 +31,6 @@ class Profile(models.Model):
     blocked_users = models.ManyToManyField('Profile', blank=True, related_name='users_blocked')
     instagram = models.URLField(blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
-    #  matchHistory: [
-        # { "date": "2021-01-01", "player1": "sakkus", "player2": "biekinci", "score": "2-0", "winner": "sakkus" },
-        # { "date": "2021-01-02", "player1": "sakkus", "player2": "biekinci", "score": "2-1", "winner": "sakkus" },
-    # ]
     match_history = models.JSONField(default=list)
     friends = models.ManyToManyField('Profile', blank=True, related_name='profile_friends')
     last_activity = models.DateTimeField(auto_now_add=True)
@@ -86,6 +70,10 @@ class Post(models.Model):
     username = models.CharField(max_length=100, unique=False, blank=False, null=True)
     date = models.DateTimeField(auto_now_add=True)
     message = models.TextField()
+    title = models.CharField(max_length=100, unique=False, blank=False, null=True)
+    location = models.CharField(max_length=100, unique=False, blank=False, null=True)
+    max_people = models.IntegerField(default=0)
+    applicants = models.JSONField(default=list)
 
     class Meta:
         db_table = 'post'

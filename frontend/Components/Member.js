@@ -1,7 +1,12 @@
+import error from "../ModulesJS/ErrorUtils.js";
+
 class Member extends HTMLElement {
   constructor() {
     super();
     this.innerHTML = `
+    <div id="error-content">
+                <my-error name="" content=""><my-error>
+    </div>
     <div class="container mt-4">
     <div class="row">
       <div class="col-md-4">
@@ -72,12 +77,14 @@ class Member extends HTMLElement {
       const username = new URLSearchParams(window.location.search).get('username');
       const response = await fetch(`https://45.157.16.17:8080/member?username=${username}`, {
         headers: {
-          'Authorization': `Token ${localStorage.getItem('access_token')}`
+          'Authorization': `Token ${localStorage.getItem('access')}`,
+          'Authorization': `Bearer ${localStorage.getItem('access')}`,
+					'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+
         }
       });
       if (response.status !== 200) {
-        alert('User not found');
-        window.location.href = '/';
+        window.route({ target: { href: '/' } });
       }
       const data = await response.json();
       this.populateProfile(data);
@@ -85,7 +92,7 @@ class Member extends HTMLElement {
       this.calculateStatistics(data.matchHistory);
       this.checkFriendStatus(data.is_friend);
     } catch (error) {
-      console.error('Error:', error);
+      return;
     }
   }
 
@@ -96,19 +103,23 @@ class Member extends HTMLElement {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('access_token')}`
+          'Authorization': `Token ${localStorage.getItem('access')}`,
+          'Authorization': `Bearer ${localStorage.getItem('access')}`,
+					'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+
         },
         body: JSON.stringify({ username })
       });
       const data = await response.json();
       if (response.status === 200) {
         this.checkFriendStatus(true);
-        alert("Friend added");
+        error.call(this, {"success": "friend added"})
       } else {
-        alert(data.error || "An error occurred");
+        const errData = data.error || "An error occurred";
+        error.call(this, {"error": errData})
       }
     } catch (error) {
-      console.error('Error:', error);
+      return;
     }
   }
 
@@ -119,19 +130,24 @@ class Member extends HTMLElement {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Token ${localStorage.getItem('access_token')}`
+          'Authorization': `Token ${localStorage.getItem('access')}`,
+		      'Authorization': `Bearer ${localStorage.getItem('access')}`,
+					'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+
+
         },
         body: JSON.stringify({ username })
       });
       const data = await response.json();
       if (response.status === 200) {
         this.checkFriendStatus(false);
-        alert("Friend removed");
+        error.call(this, {"success": "friend removed"})
       } else {
-        alert(data.error || "An error occurred");
+        const errData = data.error || "An error occurred";
+        error.call(this, {"error": errData})
       }
     } catch (error) {
-      console.error('Error:', error);
+      return;
     }
   }
 
@@ -219,6 +235,7 @@ class Member extends HTMLElement {
       </tr>
     `;
   }
+  
 }
 
 customElements.define('my-member', Member);

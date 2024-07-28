@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-^aak9*pyy=3t=+zj%73u1_+q(p+oj*5pz!h)yl9wpx%q$-)9@+
 env = environ.Env()
 environ.Env.read_env()
 
-#Mail Config
+#Mail Configmi
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
@@ -63,8 +63,8 @@ INSTALLED_APPS = [
     'corsheaders',
     "oauthlib",
     'rest_framework_swagger',
-    'rest_framework',
     'drf_yasg',
+    'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'django_prometheus',
@@ -86,18 +86,21 @@ MIDDLEWARE = [
     'user.middleware.UpdateLastActivityMiddleware',
 ]
 
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=3),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
 PROMETHEUS_METRICS_ENABLED = True
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'timed_auth_token.authentication.TimedAuthTokenAuthentication'
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
 
 TIMED_AUTH_TOKEN = {
@@ -216,6 +219,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 ]
 
 

@@ -20,9 +20,7 @@ def index(request):
 @csrf_exempt
 def get_rooms(request):
 	if request.method == "GET":
-		print("selam")
 		rooms = Rooms.objects.all()
-		print("selam2")
 		room_list = []
 		for room in rooms:
 			room_list.append(room.room_name)
@@ -34,10 +32,9 @@ def get_rooms(request):
 @permission_classes([AllowAny])
 def create_room(request):
     if request.method == "POST":
-        # get room name from request
-        print("!!!!!!", request.data)
-        
         room_name = request.data.get("room_name")
+        if not room_name.isalnum():
+            return JsonResponse({"status": "error", "message": "Room name must be alphanumeric"})
         if room_name:
             if Rooms.objects.filter(room_name=room_name).exists():
                 return JsonResponse({"status": "success", "message": "Room name already exists"})
@@ -52,19 +49,27 @@ def create_room(request):
 @permission_classes([AllowAny])
 @csrf_exempt
 def join_room(request):
+    # alfanumaric olmayan karakterlerin kontrolü yapılmalı ve sql injection önlenmeli
+    print("saddsdsadsa")
+    data = json.loads(request.body.decode('utf-8'))
+    if data.get('room').isalnum() == False:
+        return JsonResponse({'status': 'error', 'message': 'Room name must be alphanumeric'})
+    if data.get('username') == '':
+        return JsonResponse({'status': 'error', 'message': 'Username is required'})
     if request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))
         room_name = data.get('room')
         username = data.get('username')
         
         room = Rooms.objects.filter(room_name=room_name).first()
         if room:
             if username in [room.player1, room.player2]:
-                print("username already exits")
-                return JsonResponse({'status': 'success', 'message': 'username already exits'})
+                print(f"username already exits {username}")
+                return JsonResponse({'error': 'username already exits'})
             elif room.players < 2:
-                room.player1 = username if room.players == 0 else room.player1
-                room.player2 = username if room.players == 1 else room.player2
+                if room.players == 0:
+                      room.player1 = username
+                else:
+                      room.player2 = username
                 room.players += 1
                 room.save()
                 if room.players == 2:
@@ -97,11 +102,19 @@ def leave_room(request, room_name, username):
 	except Exception as e:
 		print(e)
 		return JsonResponse({'status': 'error', 'message': 'An error occured'})
+
 @csrf_exempt
-def check_room_status(request, room_name):
+def check_room_status(request, room_name, username):
     if request.method == 'GET':
         room = get_object_or_404(Rooms, room_name=room_name)
+        if (room.players != 2) and (room.player1 and room.player2) and (room.player1 == username or room.player2 == username):
+              room.players += 1
         if room.players == 2:
-            return JsonResponse({'status': 'success', 'message': 'start'})
+            return JsonResponse({
+                'status': 'success',
+                'message': 'start',
+                'player1': room.player1,
+                'player2': room.player2
+            })
         else:
             return JsonResponse({'status': 'success', 'message': 'waiting'})

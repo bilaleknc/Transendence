@@ -8,9 +8,9 @@ export default class HTMLTepmlate {
 	}
   
 	async getContent() {
-	  let response = await fetch(`./templates/${this.fileName}.html`)
-	  let text = await response.text();
-	  return text;
+		let response = await fetch(`./templates/${this.fileName}.html`)
+		let text = await response.text();
+		return text;
 	}
   
 	/**
@@ -18,7 +18,6 @@ export default class HTMLTepmlate {
 	 */
 	bindingToElement(element) {
 	  this.getContent()
-		.then((res) => (element.innerHTML = res))
-		.catch((err) => console.log(`ERROR [Component.innerHtml]: ${err}`));
+		.then((res) => { element.innerHTML = res; })
 	}
   }

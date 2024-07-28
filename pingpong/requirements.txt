@@ -1,5 +1,5 @@
 asgiref==3.4.1
-channels==3.0.4
+channels
 daphne==3.0.2
 Django>=3.2,<4.2.10
 uvicorn
@@ -9,3 +9,4 @@ psycopg2-binary
 djangorestframework
 django-cors-headers
 django-sslserver
+channels_redis

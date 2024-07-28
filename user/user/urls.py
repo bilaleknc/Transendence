@@ -6,7 +6,12 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django_prometheus.exports import ExportToDjangoView
-
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
+from . import views
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -21,7 +26,13 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
+
+
+
 urlpatterns = [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+	path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     re_path(r'^$', schema_view.as_view(), name='schema-swagger-ui'),
     path('admin/', admin.site.urls),
 	path('login_with_42', login_with_42, name='login_with_42'),
@@ -54,6 +65,7 @@ urlpatterns = [
     path('add_match_history', addMatchHistory, name='add_match_history'),
     path('create_post', create_post, name='create_post'),
     path('get_post', get_post, name='get_post'),
+    path('add_applicant', add_applicant, name='add_applicant'),
 ]
 
 

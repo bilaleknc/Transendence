@@ -1,12 +1,9 @@
 export class Screen {
 	constructor() {
 		this._ratio = 6;
-	}
-
-	start() {
-		let shadowRoot = document.querySelector('my-game');
-		this._canvas = document.querySelector("canvas");
+		this._canvas = document.querySelector("#game-canvas");
 		this._ctx = this._canvas.getContext("2d");
+		
 		this._canvas.width = 1200;
 		this._canvas.height = 800;
 		this._width = this._canvas.width;
@@ -31,15 +28,19 @@ export class Screen {
 	paddleHeight() { return this.height / this._ratio; };
 
 	putText(text, x, y) {
+		this._ctx.fillStyle = "white";
 		this._ctx.font = "30px Arial";
 		this._ctx.textAlign = "center";
 		this._ctx.fillText(text, x, y);
 	};
 
-	putScore(plyrLeft, plyrRight) {
+	putScore(plyrLeft, plyrRight, player1, player2) {
 		this._ctx.font = "30px Arial";
 		this._ctx.textAlign = "justify";
-		this._ctx.fillText(`${plyrLeft}-${plyrRight}`, this.width / 2, this.paddleHeight());
+		if (!player1 && !player2) {
+			player1 = "", player2 = "";
+		}
+		this._ctx.fillText(`${player1 + "	" + plyrLeft}-${plyrRight + "	" + player2}`, this.width / 2, this.paddleHeight());
 	};
 
 	clear() { this._ctx.clearRect(0, 0, this.width, this.height); };

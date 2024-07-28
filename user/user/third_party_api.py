@@ -1,5 +1,6 @@
-import os
 import random
+from random import randrange
+import os
 from django.conf import settings
 import requests
 from django.contrib.auth.models import User
@@ -9,6 +10,7 @@ from user.utils import generate_email
 from user.auth_tools import Authenticator, TokenGenerator
 from rest_framework import status
 from user.models import Profile
+from rest_framework_simplejwt.tokens import RefreshToken
 
 def connect_api_42(code):
     response = requests.post(f"https://api.intra.42.fr/oauth/token", data={
@@ -30,22 +32,27 @@ def connect_api_42(code):
 
 
 def login_with_42(username, email, first_name, last_name, image):
+    print("!!!!sealasmmdssmsad!!!!")
     user = User.objects.filter(email=email).first()
     if not user:
+        usernameDiff = username
+        while  User.objects.filter(username=usernameDiff):
+            usernameDiff = usernameDiff + str(randrange(1000))
+        username = usernameDiff
         user = User.objects.create_user(username=username, email=email)
         user.first_name = first_name
         user.last_name = last_name
         user.save()
-
         profile = Profile.objects.filter(user=user).first()
         if not profile:
             profile = Profile(user=user)
         profile.nickname = username
         profile.profile_picture = image
         profile.save()
-    token = TokenGenerator.generate_token(user)
-    print(token)
-    return Response({"token": token, "username": username}, status=status.HTTP_200_OK)
+        user.profile = profile
+        user.save()
+    refresh = RefreshToken.for_user(user)
+    return Response({"access": str(refresh.access_token), "refresh": str(refresh), "username": user.username}, status=status.HTTP_200_OK)
 
 def connect_api_google(code):
     response = requests.post(f"https://oauth2.googleapis.com/token", data={
@@ -58,7 +65,7 @@ def connect_api_google(code):
 
     if response.status_code == 200:
         data_google = requests.get(
-            f"https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token={response.json()['access_token']}"
+            f"https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access={response.json()['access']}"
         )
         print(data_google.json())
         # user        | {'id': '100206833384934867256', 'email': 'erenerdogan037@gmail.com', 'verified_email': True, 'name': 'Mustafa Eren Erdoğan', 'given_name': 'Mustafa Eren', 'family_name': 'Erdoğan', 'picture': 'https://lh3.googleusercontent.com/a/ACg8ocKKx0KFeVWboJlC4WQsBCi0W_i5RAA6dVSWFyjqznSC6o17QmHW6g=s96-c'}

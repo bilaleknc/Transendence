@@ -32,6 +32,7 @@ services:
       - ./user:/app
     ports:
       - "8080:8080"
+      - "5678:5678"  # Add this line for debugging port
     networks:
       - nw
     depends_on:
@@ -39,6 +40,7 @@ services:
         condition: service_healthy
     env_file:
       - ./user/.env
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8080"]
 
   user_db:
     container_name: user_db
@@ -57,8 +59,6 @@ services:
       interval: 3s
       timeout: 3s
       retries: 3
-
-
 
   pinpong:
     container_name: pingpong
@@ -103,34 +103,8 @@ services:
       - ./frontend:/usr/share/nginx/html/
     networks:
       - nw
-    
-  # prometheus:
-  #   container_name: prometheus
-  #   image: prom/prometheus
-  #   ports:
-  #     - "9090:9090"
-  #   volumes:
-  #     - ./devops/prometheus.yml:/etc/prometheus/prometheus.yml
-  #   networks:
-  #     - nw
-  
-  # grafana:
-  #   container_name: grafana
-  #   image: grafana/grafana
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=eren
-  #     - GF_SECURITY_ADMIN_PASSWORD=12345
-  #   volumes:
-  #     - ./devops:/var/lib/grafana
-  #   networks:
-  #     - nw
-  #   depends_on:
-  #     - prometheus
 
 volumes:
   user_data:
   pingpong_data:
 
-  

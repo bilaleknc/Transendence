@@ -34,11 +34,15 @@ class SocialMedia extends HTMLElement {
                     <div class="card shadow-sm mb-4">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="card-title">Wall</h5>
+                                <h5 class="card-title">Tournament Offers</h5>
                                 <button id="refresh-posts" class="btn btn-warning bi bi-arrow-clockwise"></button>
                             </div>
                             <div class="mb-3">
-                                <textarea id="post-content" class="form-control mb-2" placeholder="What's on your mind?"></textarea>
+                                <input type="text" id="post-title" class="form-control mb-2" placeholder="Title">
+                                <textarea id="post-message" class="form-control mb-2" placeholder="Message"></textarea>
+                                <input type="datetime-local" id="post-date" class="form-control mb-2" placeholder="Date">
+                                <input type="text" id="post-location" class="form-control mb-2" placeholder="Location">
+                                <input type="number" id="post-max-people" class="form-control mb-2" placeholder="Max People">
                                 <button id="post-submit" class="btn btn-primary w-100">Gönder</button>
                             </div>
                             <ul id="posts-list" class="list-group" style="max-height: 400px; overflow-y: auto;">
@@ -98,26 +102,23 @@ class SocialMedia extends HTMLElement {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-                'Authorization': `Token ${localStorage.getItem('access_token')}`
+		  		'Authorization': `Bearer ${localStorage.getItem('access')}`
               },
         });
         if (!response.ok) {
-            console.error("Kullanıcı verisi alınamadı");
             return;
         }
-        console.log(response);
         const users = await response.json();
     
         const userListBody = document.querySelector('#user-list-body');
         userListBody.innerHTML = '';
     
-        console.log(users);
         users.forEach(user => {
             const row = document.createElement('tr');
             if(user.is_active){
                 row.innerHTML = `
                 <td class="text-success">Online</td>
-                <td><img src="${user.image}" style="width: 50px; height: 50px; border-radius: 50%;"></td>
+                <td><img src="${user.image}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"></td>
                 <td>${user.username}</td>
                 <td><a href="https://45.157.16.17:8082/member?username=${user.username}" class="btn btn-primary">Profile</a></td>
                 `;
@@ -140,7 +141,7 @@ class SocialMedia extends HTMLElement {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-                'Authorization': `Token ${localStorage.getItem('access_token')}`
+				'Authorization': `Bearer ${localStorage.getItem('access')}`
             },
         });
 
@@ -160,83 +161,110 @@ class SocialMedia extends HTMLElement {
         });
     }
 
-    async fakeMatchHistoryGenerator() {
-        const currentDate = new Date().toISOString();
-        const response = await fetch('https://45.157.16.17:8080/add_match_history', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-                'Authorization': `Token ${localStorage.getItem('access_token')}`
-            },
-            body: JSON.stringify({
-                "date": currentDate,
-                "player1": "sakkus",
-                "player2": "biekinci",
-                "score": "1-1",
-                "winner": "sakkus"
-            })
-        });
-
-        console.log(response);
-    }
-
     async fetchPosts() {
         const response = await fetch('https://45.157.16.17:8080/get_post', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-                'Authorization': `Token ${localStorage.getItem('access_token')}`
-              },
+				'Authorization': `Bearer ${localStorage.getItem('access')}`
+            },
         });
+        
         if (!response.ok) {
-            console.error("Kullanıcı verisi alınamadı");
             return;
-        }        
-
+        }
+    
         const posts = await response.json();
-
+    
         const postsList = this.querySelector('#posts-list');
         postsList.innerHTML = '';
         posts.forEach(post => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item');
-             const date = post.date ? new Date(post.date).toLocaleString('tr-TR') : '';
-
-            listItem.innerHTML = `
-                <h6 class="mb-0 font-weight-bold">${post.username}</h6>
-                <p class="mb-0 text-muted font-italic">${post.message}</p>
-                <small class="text-muted d-block text-right">${date}</small>
+            const row = document.createElement('li');
+            const date = post.date ? new Date(post.date).toLocaleString('tr-TR') : '';
+            row.className = 'list-group-item';
+            row.innerHTML = `
+                <h5 class="card-title mb-2">${post.title}</h5>
+                <p class="card-text mb-2">${post.message}</p>
+                <p class="card-text mb-2"><b>Date:</b> ${date}</p>
+                <p class="card-text mb-2"><b>Location:</b> ${post.location}</p>
+                <p class="card-text mb-2"><b>Max People:</b> ${post.max_people}</p>
+                <p class="card-text mb-2"><b>Applicants:</b> ${post.applicants.join(', ')}</p>
             `;
-            postsList.appendChild(listItem);
+            if (post.max_people > post.applicants.length && post.applicants.indexOf(localStorage.getItem('username')) === -1) {
+                row.innerHTML += `<button class="btn btn-primary" data-post-id="${post.id}">Apply</button>`;
+            }
+    
+            const applyButton = row.querySelector('.btn-primary');
+            if (applyButton) {
+                applyButton.addEventListener('click', async (event) => {
+                    const postId = event.target.getAttribute('data-post-id');
+                    await this.addApplicant(postId);
+                });
+            }
+    
+            postsList.appendChild(row);
         });
+    }
+    
+    
+    async addApplicant(postId) {
+        const response = await fetch('https://45.157.16.17:8080/add_applicant', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+				'Authorization': `Bearer ${localStorage.getItem('access')}`
+            },
+            body: JSON.stringify({ post_id: postId })
+        })
+    
+        if (!response.ok) {
+            return;
+        }
+    
+        await this.fetchPosts();
     }
 
     async postSubmit() {
-        const postContent = this.querySelector('#post-content').value;
-        if (!postContent) {
+        const title = this.querySelector('#post-title').value;
+        const message = this.querySelector('#post-message').value;
+        const date = this.querySelector('#post-date').value;
+        const location = this.querySelector('#post-location').value;
+        const maxPeople = this.querySelector('#post-max-people').value;
+
+        if (!title || !message || !date || !location || !maxPeople) {
             return;
         }
+
+        const formattedDate = new Date(date).toISOString();
+
         const response = await fetch('https://45.157.16.17:8080/create_post', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-          'Authorization': `Token ${localStorage.getItem('access_token')}`
-        },
-        body: JSON.stringify({
-            "content": postContent
-        })
-      });
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
+				'Authorization': `Bearer ${localStorage.getItem('access')}`
+            },
+            body: JSON.stringify({
+                title: title,
+                message: message,
+                date: formattedDate,
+                location: location,
+                max_people: maxPeople
+            })
+        });
         if (!response.ok) {
-            console.error("Gönderi oluşturulamadı");
             return;
         }
         await this.fetchPosts();
-        this.querySelector('#post-content').value = '';
+        this.querySelector('#post-title').value = '';
+        this.querySelector('#post-message').value = '';
+        this.querySelector('#post-date').value = '';
+        this.querySelector('#post-location').value = '';
+        this.querySelector('#post-max-people').value = '';
     }
 }
 

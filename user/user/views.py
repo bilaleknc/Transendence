@@ -1,4 +1,5 @@
 import requests
+from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.conf import settings
 import threading
@@ -17,6 +18,7 @@ import json
 from user.models import Profile, Post
 from django.utils import timezone
 from django.shortcuts import redirect
+from rest_framework_simplejwt.tokens import RefreshToken
 
 @api_view(['POST', 'GET'])
 @permission_classes([AllowAny])
@@ -69,7 +71,14 @@ def otp(request):
             token = TokenGenerator.generate_token(user)
             user.is_active = True
             user.save()
-            return Response({"success": "User registered successfully", "token": token,}, status=200)
+            refresh = RefreshToken.for_user(user)
+            return Response({
+				"success": "User registered successfully", 
+				"token": token,
+				"username": user.username,
+				"refresh": str(refresh),
+				"access": str(refresh.access_token),
+			}, status=200)
         else:
             return Response({"wrong": "Please check your mailbox for incoming mail"}, status=401)
     return Response({"success": "User registered successfully"}, status=204)
@@ -101,14 +110,16 @@ def login(request):
         username = request.data.get('username')
         password = request.data.get('password')
         try:
-            user = Authenticator.authenticate(username=username, password=password)
+            user = authenticate(username=username, password=password)
+            print(user)
         except AuthenticationFailed as e:
             return Response({"detail": str(e)}, status=401)
+        if user is None:
+           return Response({"error": "Invalid creditional"}, status=401)
         print("authenticator'den sonra")
         twoFactor(user)
         print("twoFactor'den sonra")
-        return Response({"success": "logging on...", "username": username}, status=200)    
-    return Response({"error": "Method not allowed"}, status=405)
+        return Response({"success": "success", "ok": 1}, status=201)    
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -175,7 +186,6 @@ def direct_google_login_page(request):
 @api_view(['POST', 'GET'])
 @permission_classes([AllowAny])
 def login_with_42(request):
-    
     try:
         code = request.data.get('code') if request.method == 'POST' else request.GET.get('code')
         if not code:
@@ -203,9 +213,11 @@ def login_with_google(request):
 @permission_classes([IsAuthenticated])
 def profile(request):
     user = request.user
-    
+
     profiles = Profile.objects.all()
     profile = Profile.objects.get(user=user)
+    print("profile.profile_picture profile.profile_picture profile.profile_picture")
+    print(profile.profile_picture)
     match_history = profile.match_history
 
     friends = []
@@ -291,13 +303,13 @@ def member(request):
         "email": member.email,
         "registered": member.date_joined,
         "matchHistory": member_profile.match_history,
-        "instagram": profile.instagram,
-        "linkedin": profile.linkedin,
+        "instagram": member_profile.instagram,
+        "linkedin": member_profile.linkedin,
         "active": member_is_active,
         "is_friend": is_friend
     }
     return Response(data, status=200)
- 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_friend(request):
@@ -360,12 +372,16 @@ def getMatchHistory(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def addMatchHistory(request):
+    print(request.data)
     date = request.data.get('date')
     player1 = request.data.get('player1')
     player2 = request.data.get('player2')
     score = request.data.get('score')
     winner = request.data.get('winner')
 
+    print ("ADD MATCH HISTORY")
+    print(date, player1, player2, score, winner)
+    
     if User.objects.filter(username=player1).exists():
         player1_user = User.objects.get(username=player1)
         player1_profile = Profile.objects.get(user=player1_user)
@@ -403,17 +419,61 @@ def get_post(request):
             "id": post.id,
             "username": post.username,
             "date": post.date,
-            "message": post.message
+            "message": post.message,
+            "title": post.title,
+            "location": post.location,
+            "max_people": post.max_people,
+            "applicants": post.applicants
         })
     return Response(data, status=200)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_post(request):
-    user = request.user
-    username = user.username
+    try:
+        user = request.user
+        username = user.username
+        date = request.data.get('date')
+        message = request.data.get('message')
+        title = request.data.get('title')
+        location = request.data.get('location')
+        max_people = request.data.get('max_people')
 
-    content = request.data.get('content')
-    post = Post.objects.create(username=username, date=timezone.now(), message=content)
-    post.save()
-    return Response({"success": "Post created successfully"}, status=200)
+        # Hata ayıklama çıktıları
+        print(f"Received data: {request.data}")
+        print(f"User: {username}")
+        print(f"Date: {date}, Message: {message}, Title: {title}, Location: {location}, Max People: {max_people}")
+
+        post = Post(
+            username=username,
+            date=date,
+            message=message,
+            title=title,
+            location=location,
+            max_people=max_people
+        )
+
+        post.save()
+        return Response({"success": "Post created successfully"}, status=200)
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return Response({"error": str(e)}, status=400)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_applicant(request):
+    try:
+        user = request.user
+        post_id = request.data.get('post_id')
+        post = Post.objects.get(id=post_id)
+        applicant = user.username
+        applicants = post.applicants
+        if applicant in applicants:
+            return Response({"error": "You have already applied for this post"}, status=400)
+        applicants.append(applicant)
+        post.applicants = applicants
+        post.save()
+        return Response({"success": "Applicant added successfully"}, status=200)
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)

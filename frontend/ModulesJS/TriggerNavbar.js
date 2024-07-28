@@ -6,6 +6,10 @@ export default function triggerNavbar () {
         if (flag) {
             document.querySelector('my-navbar').setAttribute('active', true);
         }else {
+			localStorage.removeItem("access");
+			localStorage.removeItem("refresh");
+			localStorage.removeItem("username");
+			localStorage.removeItem("room");
             document.querySelector('my-navbar').setAttribute('active', false);
         }
     })
