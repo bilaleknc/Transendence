@@ -74,7 +74,7 @@ class Profile extends HTMLElement {
               </div>
               <div class="mb-3">
                 <label for="profile-email" class="form-label">Email</label>
-                <input type="email" id="profile-email" class="form-control">
+                <input type="email" id="profile-email" class="form-control" disabled>
               </div>
               <div class="mb-3">
                 <label for="profile-registered" class="form-label">Registered Date</label>
@@ -148,6 +148,7 @@ class Profile extends HTMLElement {
 
   populateMatchHistory(matchHistory, username) {
     const matchHistoryElement = this.querySelector('#match-history');
+    matchHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
     matchHistory.forEach(match => {
       const row = document.createElement('tr');
       const date = new Date(match.date).toLocaleString('tr-TR');
@@ -249,22 +250,28 @@ class Profile extends HTMLElement {
 
   populateFriends(friends) {
     const friendsList = this.querySelector('#friends-list');
+    friendsList.innerHTML = ''; // Clear existing friends list
+  
     friends.forEach(friend => {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td><img src="${friend.image}" alt="${friend.username}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;"></td>
         <td>${friend.username}</td>
-        <td><a href="/member?username=${friend.username}" class="btn bg-dark text-white">Profile</a></td>
+        <td><a href="#" data-username="${friend.username}" class="btn btn-primary btn-sm">Profile</a></td>
+        ${friend.active ? `<td><span class="badge bg-success text-white">Online</span></td>` : `<td><span class="badge bg-danger text-white">Offline</span></td>`}
       `;
-      if (friend.active) {
-        row.innerHTML += `<td><span class="badge bg-success text-white">Online</span></td>`;
-      }
-      else {
-        row.innerHTML += `<td><span class="badge bg-danger text-white">Offline</span></td>`;
-      }
       friendsList.appendChild(row);
     });
-  }
+  
+    // Attach event listeners to friend profile links
+    friendsList.querySelectorAll('a[data-username]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const username = link.dataset.username;
+        window.route({ target: { href: `/member?username=${username}` } });
+      });
+    });
+  }  
 
   async updateProfile(e) {
     e.preventDefault();
@@ -308,7 +315,7 @@ class Profile extends HTMLElement {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
+      
       const resData = await response.json();
       if (resData.error) {
         error.call(this, {"error": resData.error})

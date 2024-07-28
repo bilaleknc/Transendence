@@ -42,7 +42,7 @@ class SocialMedia extends HTMLElement {
                                 <textarea id="post-message" class="form-control mb-2" placeholder="Message"></textarea>
                                 <input type="datetime-local" id="post-date" class="form-control mb-2" placeholder="Date">
                                 <input type="text" id="post-location" class="form-control mb-2" placeholder="Location">
-                                <input type="number" id="post-max-people" class="form-control mb-2" placeholder="Max People">
+                                <input type="number" id="post-max-people" class="form-control mb-2" placeholder="Max People" min="1">
                                 <button id="post-submit" class="btn btn-primary w-100">Gönder</button>
                             </div>
                             <ul id="posts-list" class="list-group" style="max-height: 400px; overflow-y: auto;">
@@ -102,36 +102,41 @@ class SocialMedia extends HTMLElement {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-		  		'Authorization': `Bearer ${localStorage.getItem('access')}`
-              },
+                'Authorization': `Bearer ${localStorage.getItem('access')}`
+            },
         });
+
         if (!response.ok) {
             return;
         }
+
         const users = await response.json();
-    
-        const userListBody = document.querySelector('#user-list-body');
+        const userListBody = this.querySelector('#user-list-body');
+        if (!userListBody) return;
+
         userListBody.innerHTML = '';
-    
+
         users.forEach(user => {
+            if (user.username === localStorage.getItem('username')) {
+                return;
+            }
             const row = document.createElement('tr');
-            if(user.is_active){
-                row.innerHTML = `
-                <td class="text-success">Online</td>
-                <td><img src="${user.image}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"></td>
-                <td>${user.username}</td>
-                <td><a href="https://45.157.16.17:8082/member?username=${user.username}" class="btn btn-primary">Profile</a></td>
-                `;
-            }
-            else{
-                row.innerHTML = `
-                <td class="text-danger">Offline</td>
-                <td><img src="${user.image}" style="width: 50px; height: 50px; border-radius: 50%;"></td>
-                <td>${user.username}</td>
-                <td><a href="https://45.157.16.17:8082/member?username=${user.username}" class="btn btn-primary">Profile</a></td>
-                `;
-            }
+            row.innerHTML = `
+            <td class="${user.is_active ? 'text-success' : 'text-danger'}">${user.is_active ? 'Online' : 'Offline'}</td>
+            <td><img src="${user.image}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"></td>
+            <td>${user.username}</td>
+            <td><button class="btn btn-primary" data-username="${user.username}">Profile</button></td>
+            `;
             userListBody.appendChild(row);
+        });
+
+        // Dinleyicileri yalnızca bir kez ekleyin
+        const profileButtons = this.querySelectorAll('button[data-username]');
+        profileButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const username = button.getAttribute('data-username');
+                window.route({target: { href: '/member?username=' + username }});
+            });
         });
     }
 
@@ -141,23 +146,37 @@ class SocialMedia extends HTMLElement {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-CSRFToken': 'sgCUgxQk3cN51WA7p0uKTXsZbYsnDSupQgS3ktHTfmDK00t8woOMSXuVMchJwlTi',
-				'Authorization': `Bearer ${localStorage.getItem('access')}`
+                'Authorization': `Bearer ${localStorage.getItem('access')}`
             },
         });
 
         const matches = await response.json();
         const matchHistoryList = this.querySelector('#match-history-list');
+        if (!matchHistoryList) return;
+
+        matchHistoryList.innerHTML = '';
+
         matches.forEach(match => {
             const row = document.createElement('tr');
             const date = match.date ? new Date(match.date).toLocaleString('tr-TR') : '';
             row.innerHTML = `
                 <td>${date}</td>
-                <td><a href="https://45.157.16.17:8082/member?username=${match.player1}">${match.player1}</a></td>
-                <td><a href="https://45.157.16.17:8082/member?username=${match.player2}">${match.player2}</a></td>
+                <td><a href="#" data-username="${match.player1}">${match.player1}</a></td>
+                <td><a href="#" data-username="${match.player2}">${match.player2}</a></td>
                 <td>${match.score}</td>
                 <td>${match.winner}</td>
             `;
             matchHistoryList.appendChild(row);
+        });
+
+        // Dinleyicileri yalnızca bir kez ekleyin
+        const playerLinks = this.querySelectorAll('a[data-username]');
+        playerLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const username = link.getAttribute('data-username');
+                window.route({target: { href: '/member?username=' + username }});
+            });
         });
     }
 
@@ -198,7 +217,7 @@ class SocialMedia extends HTMLElement {
             const applyButton = row.querySelector('.btn-primary');
             if (applyButton) {
                 applyButton.addEventListener('click', async (event) => {
-                    const postId = event.target.getAttribute('data-post-id');
+                    const postId = applyButton.getAttribute('data-post-id');
                     await this.addApplicant(postId);
                 });
             }
@@ -232,11 +251,14 @@ class SocialMedia extends HTMLElement {
         const message = this.querySelector('#post-message').value;
         const date = this.querySelector('#post-date').value;
         const location = this.querySelector('#post-location').value;
-        const maxPeople = this.querySelector('#post-max-people').value;
+        let maxPeople = this.querySelector('#post-max-people').value;
 
         if (!title || !message || !date || !location || !maxPeople) {
             return;
         }
+
+        if (maxPeople < 1)
+            maxPeople = 1;
 
         const formattedDate = new Date(date).toISOString();
 

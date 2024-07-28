@@ -52,11 +52,11 @@ class PingPong:
 
 	def move_paddle(self, message) -> None:
 		if message['w'] == True:
-			self.paddle_l['_y'] = max(0, self.paddle_l["_y"] - self.speedPlayer)
+			self.paddle_l['_y'] = max(5, self.paddle_l["_y"] - self.speedPlayer)
 		if message['s'] == True:
 			self.paddle_l['_y'] = min(self.screen['_height'] - self.paddleHeight(), self.paddle_l["_y"] + self.speedPlayer)
 		if message['up'] == True:
-			self.paddle_r['_y'] = max(0, self.paddle_r["_y"] - self.speedPlayer)
+			self.paddle_r['_y'] = max(5, self.paddle_r["_y"] - self.speedPlayer)
 		if message['down'] == True:
 			self.paddle_r['_y'] = min(self.screen['_height'] - self.paddleHeight(), self.paddle_r["_y"] + self.speedPlayer)
 		

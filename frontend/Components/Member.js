@@ -69,7 +69,6 @@ class Member extends HTMLElement {
     this.fetchProfile();
     this.querySelector('#add-friend').addEventListener('click', () => this.addFriend());
     this.querySelector('#remove-friend').addEventListener('click', () => this.removeFriend());
-    this.querySelector('#profile-form').addEventListener('submit', (e) => this.updateProfile(e));
   }
 
   async fetchProfile() {

@@ -108,39 +108,39 @@ class Screen {
 };
 
 class Game {
-    /**
-     * @param {Draw} leftPaddle 
-     * @param {Draw} rightPaddle 
-     * @param {Draw} ball 
-     * @param {Screen} screen 
-     */
-    constructor(leftPaddle, rightPaddle, ball, screen) {
-        this.leftPaddle = leftPaddle;
-        this.rightPaddle = rightPaddle;
-        this.ball = ball;
-        this.screen = screen;
-        this.i = 0;
-        this.won_player = "";
-        this.speedPlayer = 8;
-        this.speedBall = 7;
-        this.animationFlag = false;
-        this.beginPos = true;
-        this.key = {
-            "enter":        false,
-            "arrowUp":      false,
-            "arrowDown":    false,
-            "w":            false,
-            "s":            false,
-        }
-        this.leftPlyrScore = 0;
-        this.rightPlyrScore = 0;
-        this.maxScore = 5;
-        this.dirX = 2.0;
-        this.dirY = 0.0;
-    
-        this.keyDown();
-        this.keyUp();
-    }
+	/**
+	 * @param {Draw} leftPaddle 
+	 * @param {Draw} rightPaddle 
+	 * @param {Draw} ball 
+	 * @param {Screen} screen 
+	 */
+	constructor(leftPaddle, rightPaddle, ball, screen) {
+		this.leftPaddle = leftPaddle;
+		this.rightPaddle = rightPaddle;
+		this.ball = ball;
+		this.screen = screen;
+		this.i = 0;
+		this.won_player = "";
+		this.speedPlayer = 12;
+		this.speedBall = 7;
+		this.animationFlag = false;
+		this.beginPos = true;
+		this.key = {
+			"enter": false,
+			"arrowUp": false,
+			"arrowDown": false,
+			"w": false,
+			"s": false,
+		}
+		this.leftPlyrScore = 0;
+		this.rightPlyrScore = 0;
+		this.maxScore = 5;
+		this.dirX = 2.0;
+		this.dirY = 0.0;
+
+		this.keyDown();
+		this.keyUp();
+	}
 
     inception() {
         this.screen.clear();
@@ -271,56 +271,56 @@ class Game {
         
     }
 
-    keyCntrl() {
-        if (this.beginPos)
-            return;
-        let height = this.screen.height;
-        if (this.key["w"] && this.leftPaddle.y - this.speedPlayer >= 0)
-            this.leftPaddle.y -= this.speedPlayer;
-        if (this.key["s"] && this.leftPaddle.y + this.speedPlayer <= height - this.screen.paddleHeight())
-            this.leftPaddle.y = this.leftPaddle.y + this.speedPlayer;
-        if (this.key["arrowUp"] && this.rightPaddle.y - this.speedPlayer >= 0)
-            this.rightPaddle.y = this.rightPaddle.y - this.speedPlayer;
-        if (this.key["arrowDown"] && this.rightPaddle.y + this.speedPlayer <= height - this.screen.paddleHeight())
-            this.rightPaddle.y = this.rightPaddle.y + this.speedPlayer;
-    }
+	keyCntrl() {
+		if (this.beginPos)
+			return;
+		let height = this.screen.height;
+		if ((this.key["w"]) && this.leftPaddle.y - this.speedPlayer >= 0)
+			this.leftPaddle.y -= this.speedPlayer;
+		if (this.key["s"] && this.leftPaddle.y + this.speedPlayer <= height - this.screen.paddleHeight())
+			this.leftPaddle.y = this.leftPaddle.y + this.speedPlayer;
+		if (this.key["arrowUp"] && this.rightPaddle.y - this.speedPlayer >= 0)
+			this.rightPaddle.y = this.rightPaddle.y - this.speedPlayer;
+		if (this.key["arrowDown"] && this.rightPaddle.y + this.speedPlayer <= height - this.screen.paddleHeight())
+			this.rightPaddle.y = this.rightPaddle.y + this.speedPlayer;
+	}
 
-    keyDown() {
-        document.addEventListener("keydown", (e) => {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                e.preventDefault();
-            }
-            if (e.key == "Enter" && this.beginPos){
-                this.beginPos = false;
-                this.animationFlag = true;
-                this.rightPlyrScore = 0;
-                this.leftPlyrScore = 0;
-            }
-            if (e.key == "Escape")
-                this.#reset()
-            if (e.key == "w")
-                this.key["w"] = true;
-            if (e.key == "s")
-                this.key["s"] = true;
-            if (e.key == "ArrowUp")
-                this.key["arrowUp"] = true;
-            if (e.key == "ArrowDown")
-                this.key["arrowDown"] = true;
-        });
-    }
+	keyDown() {
+		document.addEventListener("keydown", (e) => {
+			if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+				e.preventDefault();
+			}
+			if (e.key == "Enter" && this.beginPos) {
+				this.beginPos = false;
+				this.animationFlag = true;
+				this.rightPlyrScore = 0;
+				this.leftPlyrScore = 0;
+			}
+			if (e.key == "Escape")
+				this.#reset()
+			if (e.key == "w" || e.key == "W")
+				this.key["w"] = true;
+			if (e.key == "s" || e.key == "S")
+				this.key["s"] = true;
+			if (e.key == "ArrowUp")
+				this.key["arrowUp"] = true;
+			if (e.key == "ArrowDown")
+				this.key["arrowDown"] = true;
+		});
+	}
 
-    keyUp() {
-        document.addEventListener("keyup", (e) => {
-            if (e.key == "w")
-                this.key["w"] = false;
-            if (e.key == "s")
-                this.key["s"] = false;
-            if (e.key == "ArrowUp")
-                this.key["arrowUp"] = false;
-            if (e.key == "ArrowDown")
-                this.key["arrowDown"] = false;
-        });
-    }
+	keyUp() {
+		document.addEventListener("keyup", (e) => {
+			if (e.key == "w" || e.key == "W")
+				this.key["w"] = false;
+			if (e.key == "s" || e.key == "S")
+				this.key["s"] = false;
+			if (e.key == "ArrowUp")
+				this.key["arrowUp"] = false;
+			if (e.key == "ArrowDown")
+				this.key["arrowDown"] = false;
+		});
+	}
 
     isOpen() { return this.animationFlag; }    
 };
@@ -369,8 +369,32 @@ export default class Play {
 			this.game.inception();
 		}
 		requestAnimationFrame(this.loop.bind(this));
-    }
-    
+	}
+
+	tournamentLoop() {
+		return new Promise((resolve) => {
+			const loopFunction = () => {
+				if (this.game.isOpen()) {
+					this.game.begin();
+				} else {
+					this.game.inception();
+				}
+				if (this.game.won_player != "") {
+					if (this.game.won_player == "Left") {
+						resolve(this.player1);
+					}
+					else {
+						resolve(this.player2);
+					}
+					return;
+				}
+				requestAnimationFrame(loopFunction);
+			};
+			loopFunction();
+		});
+	}
+
+
 }
 
 

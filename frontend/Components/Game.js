@@ -8,9 +8,9 @@ class Game extends HTMLElement {
             <main id="main-content" class="d-flex justify-content-center align-items-center bg-gradient vh-100 pb-10">
                 <div id="button-options" class="d-flex flex-column align-items-center w-50">
                     <h1 class="mb-3">Game Options</h1>
-                    <button id="two-player" class="btn btn-dark w-25 p-3 mt-2">Two Player</button>
-                    <button id="remote" class="btn btn-dark w-25 p-3 mt-2">Remote Player</button>
-                    <button id="tournament" class="btn btn-dark w-25  p-3 mt-2">Tournament</button>
+                    <button id="two-player" class="btn btn-dark w-50 p-3 mt-2">Two Player</button>
+                    <button id="remote" class="btn btn-dark w-50 p-3 mt-2">Remote Player</button>
+                    <button id="tournament" class="btn btn-dark w-50  p-3 mt-2">Tournament</button>
                 </div>
             </main>
 			<div class="d-flex justify-content-center align-items-center" style="height=800px;">

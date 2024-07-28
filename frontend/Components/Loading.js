@@ -148,6 +148,7 @@ class Loading extends HTMLElement {
                 }
             } catch (error) {
                 error.call(this, {"errror": error}, 0)
+				console.log("error burda");
             }
         }
     }

@@ -72,6 +72,7 @@ class Rooms extends HTMLElement {
         try {
             const response = await fetch('https://45.157.16.17:8081/get_rooms');
             const data = await response.json();
+            
             const roomList = this.querySelector('#rooms');
             roomList.innerHTML = '';
             data.rooms.forEach(room => {

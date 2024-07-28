@@ -72,13 +72,13 @@ class SPA {
 
   constructor() {
     document.addEventListener("click", (e) => {
+      e.preventDefault();
       const { target } = e;
       if (target.matches("nav a"));
       else if (target.matches("a img")) e.target.parentElement.click();
       else {
         return;
       }
-      e.preventDefault();
       this.urlRoute(e);
     });
 
@@ -89,8 +89,12 @@ class SPA {
   }
 
   urlRoute(event) {
-    if (event.preventDefault) event.preventDefault();
-    window.history.pushState({}, "", event.target.href);
+	if (event && event.target) {
+		if (event.preventDefault) event.preventDefault();
+		window.history.pushState({}, "", event.target.href);
+	} else {
+		return;
+	}
     this.urlLocationHandler();
   }
 
@@ -123,6 +127,7 @@ class SPA {
     setTimeout(() => {
       temp_href.bindingToElement(self.dom_main);
       document.title = route.title + " Ft_transdance";
+      console.log(route.title);
       document
         .querySelector('meta[name="description"]')
         .setAttribute("content", route.description);

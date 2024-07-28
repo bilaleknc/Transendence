@@ -20,7 +20,6 @@ export default class WS {
     onclose(e) { 
         this.isOpen = false;
         this.socket = null;
-        console.log("onclose");
     };
 
     onopen(e) {
@@ -47,7 +46,7 @@ export default class WS {
             try{
                 this.socket?.send(messageStr);
             } catch(error) { 
-                console.log(error);
+                return;
             }
         }
     }  

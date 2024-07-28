@@ -19,6 +19,8 @@ export default class RemoteGame {
 		this.player1 = null;
 		this.player2 = null;
 
+		this.flag = 0;
+
 		this.directions = {
 			"w": false,
 			"s": false,
@@ -49,10 +51,13 @@ export default class RemoteGame {
 	keyUp(e) {
 		if (this.ws.isOpen == false) return;
 		// if (e.key == "Escape") this.reset();
-		if (e.key == "w" || e.key == "W") this.directions['w'] = false;
-		if (e.key == "s" || e.key == "S") this.directions['s'] = false;
-		if (e.key == "ArrowUp") this.directions['up'] = false;
-		if (e.key == "ArrowDown") this.directions['down'] = false;
+		if (this.player1 == localStorage.getItem('username')) {
+			if (e.key == "w" || e.key == "W") this.directions['w'] = false;
+			if (e.key == "s" || e.key == "S") this.directions['s'] = false;
+		} else {
+			if (e.key == "ArrowUp") this.directions['up'] = false;
+			if (e.key == "ArrowDown") this.directions['down'] = false;
+		}
 		clearInterval(this.keyDownInterval);
 		this.keyDownInterval = null;
 		this.movePaddle(this.directions);
@@ -63,12 +68,14 @@ export default class RemoteGame {
 		if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
 			e.preventDefault();
 		}
-		
+		if (this.player1 == localStorage.getItem('username')) {
+			if (e.key == "w" || e.key == "W") this.directions['w'] = true;
+			if (e.key == "s" || e.key == "S") this.directions['s'] = true;
+		} else {
+			if (e.key == "ArrowUp") this.directions['up'] = true;
+			if (e.key == "ArrowDown") this.directions['down'] = true;
+		}
 		// if (e.key == "Escape") this.reset();
-		if (e.key == "w" || e.key == "W") this.directions['w'] = true;
-		if (e.key == "s" || e.key == "S") this.directions['s'] = true;
-		if (e.key == "ArrowUp") this.directions['up'] = true;
-		if (e.key == "ArrowDown") this.directions['down'] = true;
 		if (!this.keyDownInterval) {
 			this.keyDownInterval = setInterval(() => {
 				this.movePaddle(this.directions);
@@ -99,7 +106,6 @@ export default class RemoteGame {
 			this.score = this.ws.message.data['score'];
 		}
 		if (this.ws.message?.action == 'game_end') {
-			console.log("endssss");
 			document.removeEventListener('keydown', this.keyDownHandler);
 			document.removeEventListener('keyup', this.keyUpHandler);
 			this.gameAnimation = false
@@ -119,7 +125,13 @@ export default class RemoteGame {
 			this.screen.putText("Bye Bye", this.screen.width / 2, this.screen.height / 2 - 100);
 			this.screen.putText(`Game End`, this.screen.width / 2, this.screen.height / 2 - 50);
 			this.screen.putText(message, this.screen.width / 2, this.screen.height / 2);
-			this.saveGameResult(new Date().getTime(), this.player1, this.player2, `${this.score.player1}-${this.score.player2}`, player);
+			if (this.player1 == this.playerUserName && this.flag == 0){
+				this.flag += 1;
+				this.saveGameResult(new Date().getTime(), this.player1, this.player2, `${this.score.player1}-${this.score.player2}`, player);
+			}
+			setTimeout(() => {
+        		window.route({ target: { href: '/' } });
+			}, 4000);
 			return;
 		}
 		this.lpaddle.drawRect();
@@ -180,6 +192,8 @@ export default class RemoteGame {
 	}
 
 	saveGameResult(date, player1, player2, score, winner) {
+		if (player1 != this.playerUserName)
+			return
 		const data = {
 			date: date,
 			player1: player1,
@@ -205,8 +219,6 @@ export default class RemoteGame {
 			console.error('Error:', error);
 		});
 	}
-
-	
 }
 
 // const roomName = "room1";

@@ -1,6 +1,8 @@
 import uuid
 import random
+import re
 import string
+from rest_framework import serializers
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
@@ -32,6 +34,18 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+        # Şifre karmaşıklık kontrolü
+        password = attrs['password']
+        if not re.search(r'[A-Z]', password):
+            raise serializers.ValidationError({"password": "Password must contain at least one uppercase letter."})
+        if not re.search(r'[a-z]', password):
+            raise serializers.ValidationError({"password": "Password must contain at least one lowercase letter."})
+        if not re.search(r'[0-9]', password):
+            raise serializers.ValidationError({"password": "Password must contain at least one digit."})
+        if not re.search(r'[\W_]', password):  # Alphanumeric dışındaki karakterler için
+            raise serializers.ValidationError({"password": "Password must contain at least one special character."})
+        
         return attrs
 
     def create(self, validated_data):
@@ -67,6 +81,18 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         if attrs['new_password'] != attrs['new_password2']:
             raise serializers.ValidationError({"new_password": "Password fields didn't match."})
+        
+        # Şifre karmaşıklık kontrolü
+        password = attrs['new_password']
+        if not re.search(r'[A-Z]', password):
+            raise serializers.ValidationError({"new_password": "Password must contain at least one uppercase letter."})
+        if not re.search(r'[a-z]', password):
+            raise serializers.ValidationError({"new_password": "Password must contain at least one lowercase letter."})
+        if not re.search(r'[0-9]', password):
+            raise serializers.ValidationError({"new_password": "Password must contain at least one digit."})
+        if not re.search(r'[\W_]', password):
+            raise serializers.ValidationError({"new_password": "Password must contain at least one special character."})
+        
         return attrs
 
 class RegisterWith42Serializer(serializers.Serializer):
